@@ -1,32 +1,54 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+    <Nav />
     <router-view />
   </div>
 </template>
 
+<script>
+import Nav from './components/Nav.vue'
+
+export default {
+  components: {
+    Nav
+  }
+}
+</script>
+
 <style>
+/* Global styles live here! */
+
+/* 300 is light, 400 is standard, 700 is bold */
+/* Might want to pull in `family=Red+Rose:wght@500` */
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;700&display=swap');
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Raleway', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
 }
 
-#nav {
-  padding: 30px;
+h1 {
+  font-family: Copperplate;
+  font-size: 40pt;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.page {
+  display: flex;
+  justify-content: center;
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+.roundedButton {
+  background-color: #ef6f6c;
+  border-radius: 20px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 18pt;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  border-style: none;
 }
 </style>

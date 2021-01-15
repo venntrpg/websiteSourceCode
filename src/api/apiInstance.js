@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const instance = axios.create({
-  baseURL: 'https://jsonplaceholder.typicode.com'
+  baseURL: 'topazgryphon.org:3004'
 })
 
 export default instance
