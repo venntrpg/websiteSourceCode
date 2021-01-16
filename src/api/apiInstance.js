@@ -1,7 +1,8 @@
 import axios from 'axios'
 
+// TODO: Make this https
 const instance = axios.create({
-  baseURL: 'topazgryphon.org:3004'
+  baseURL: 'http://topazgryphon.org:3004'
 })
 
 export default instance
