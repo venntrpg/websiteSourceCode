@@ -1,30 +1,33 @@
 <template>
   <div class="signUp page">
-    <div v-if="isLoggedIn">
+    <div v-if="isLoggedIn" class="smallPageWidth">
       <h1>SIGN UP</h1>
       <div class="usernameSection">
         <body>
           Enter a username:
         </body>
-        <input type="text" name="username" class="smallTopMargin wide" v-model="username">
+        <input type="text" name="username" class="smallTopMargin wide" v-model="fields.username">
       </div>
       <div class="password1Section topMargin">
         <body>
           Enter a password:
         </body>
-        <input type="password" name="password1" class="smallTopMargin wide" v-model="password1">
+        <input type="password" name="password1" class="smallTopMargin wide" v-model="fields.password1">
       </div>
       <div class="password1Section topMargin">
         <body>
           Re-enter your password:
         </body>
-        <input type="password" name="password2" class="smallTopMargin wide" v-model="password2">
+        <input type="password" name="password2" class="smallTopMargin wide" v-model="fields.password2">
       </div>
-      <button class="topMargin roundedButton wide">
+      <button v-on:click="signupButton()" class="topMargin roundedButton wide noSelect">
         SIGN UP
       </button>
+      <div v-if="showErrorMessage" class="topMargin">
+        <body v-text="errorMessageText" class="errorMessage"></body>
+      </div>
     </div>
-    <div v-else>
+    <div v-else class="smallPageWidth">
       You are already signed in. Log out?
     </div>
   </div>
@@ -37,19 +40,38 @@ export default {
   name: 'SignUp',
   data () {
     return {
-      username: '',
-      password1: '',
-      password2: ''
+      fields: {
+        username: '',
+        password1: '',
+        password2: ''
+      },
+      errorMessage: ''
     }
   },
   computed: {
     ...mapState(['signupSuccess', 'signupErrorMessage']),
     isLoggedIn: function () {
       return localStorage.getItem('auth') !== undefined
+    },
+    showErrorMessage: function () {
+      return this.errorMessage !== '' || this.signupErrorMessage !== ''
+    },
+    errorMessageText: function () {
+      return this.signupErrorMessage !== '' ? this.errorMessage : this.signupErrorMessage
     }
   },
   methods: {
-    ...mapActions(['signup'])
+    ...mapActions(['signup']),
+    signupButton () {
+      if (this.fields.username === '') {
+        this.errorMessage = 'You need to choose a user name :)'
+      } else if (this.fields.password1 === '' || this.fields.password1 !== this.fields.password2) {
+        this.errorMessage = 'Make sure your passwords match! They should be longer than 8 characters. Also, please use a unique password (no big security promises here)'
+      } else {
+        this.errorMessage = ''
+        this.signup(this.fields.username, this.fields.password1)
+      }
+    }
   }
 }
 </script>
@@ -58,12 +80,16 @@ export default {
 .topMargin {
   margin-top: 15px;
 }
-
 .smallTopMargin {
   margin-top: 2px;
 }
 
 .wide {
   width: 100%;
+}
+
+.errorMessage {
+  font-size: 10pt;
+  color: var(--red-700);
 }
 </style>

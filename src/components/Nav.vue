@@ -38,14 +38,14 @@ export default {
 .nav {
   display: flex;
   justify-content: space-between;
-  background-color: #4B4A67;
+  background-color: var(--purple-500);
   font-size: 18pt;
 }
 
 .homeLink {
   padding-left: 15px;
   padding-right: 15px;
-  background-color: #4B4A67;
+  background-color: var(--purple-500);
   text-decoration: none;
   color: white;
   font-family: Copperplate, 'Raleway', sans-serif;
@@ -53,10 +53,10 @@ export default {
   font-size: 30pt;
 }
 .homeLink:hover {
-  color: #fce994;
+  color: var(--yellow-400);
 }
 .homeLink:active {
-  color: #fadf63;
+  color: var(--yellow-500);
 }
 
 .right {
@@ -70,20 +70,20 @@ export default {
 }
 
 .linkButton {
-  border-radius: 20px;
+  border-radius: 2px;
   text-decoration: none;
   padding-left: 10px;
   padding-right: 10px;
   padding-top: 2px;
   padding-bottom: 2px;
-  background-color: #ef6f6c;
+  background-color: var(--purple-500);
   color: white;
   font-weight: 500;
 }
 .linkButton:hover {
-  background-color: #ec5855;
+  background-color: var(--purple-600);
 }
 .linkButton:active {
-  background-color: #ea423e;
+  background-color: var(--purple-700);
 }
 </style>

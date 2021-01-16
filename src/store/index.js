@@ -52,6 +52,7 @@ const actions = {
         if (response.success && response.success === 1 && response.auth_token) {
           commit('username', username)
           localStorage.setItem('auth', response.auth_token)
+          this.$router.push({ name: '/' })
         }
         commit('signupResult', response)
       }
@@ -63,6 +64,7 @@ const actions = {
         if (response.success && response.success === 1 && response.auth_token) {
           commit('username', username)
           localStorage.setItem('auth', response.auth_token)
+          this.$router.push({ name: '/' })
         }
         commit('loginResult', response)
       }
