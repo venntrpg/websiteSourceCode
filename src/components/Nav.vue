@@ -3,13 +3,21 @@
     <div class="left">
       <router-link to="/" class="homeLink">VENNT</router-link>
     </div>
-    <div v-if="isLoggedIn" class="right">
-      <router-link to="/login" class="login linkButton rightItem">LOGIN</router-link>
-      <router-link to="/signup" class="signup linkButton rightItem">SIGNUP</router-link>
+    <div v-if="!isLoggedIn" class="right">
+      <router-link to="/login" class="login linkButton rightItem notMobile">LOGIN</router-link>
+      <router-link to="/signup" class="signup linkButton rightItem notMobile">SIGNUP</router-link>
+      <!-- TODO: Update this link to be a dropdown with more items (instead of just linking to the login page) -->
+      <router-link to="/login" class="login rightItem mobileOnly">
+        <!-- SVG comes from https://material.io/resources/icons/?icon=view_headline&style=baseline -->
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" class="rightItem dropDownLink">
+          <path d="M0 0h24v24H0V0z" fill="none"/>
+          <path d="M4 15h16v-2H4v2zm0 4h16v-2H4v2zm0-8h16V9H4v2zm0-6v2h16V5H4z"/>
+        </svg>
+      </router-link>
     </div>
     <div v-else class="right">
       <div class="logout rightItem">
-        LOGOUT
+        <button v-on:click="logout()" class="linkButton btn noSelect">LOGOUT</button>
       </div>
     </div>
   </div>
@@ -23,12 +31,15 @@
 // TODO: Replace text with links
 // TODO: Make logout button call logout api & redirect to home page
 
+import { mapActions, mapState } from 'vuex'
+
 export default {
   name: 'Nav',
   computed: {
-    isLoggedIn: function () {
-      return localStorage.getItem('auth') !== undefined
-    }
+    ...mapState(['isLoggedIn'])
+  },
+  methods: {
+    ...mapActions(['logout'])
   }
 }
 </script>
@@ -80,10 +91,32 @@ export default {
   color: white;
   font-weight: 500;
 }
-.linkButton:hover {
+.linkButton:hover,
+.dropDownLink:hover {
   background-color: var(--purple-600);
 }
-.linkButton:active {
+.linkButton:active,
+.dropDownLink:active {
   background-color: var(--purple-700);
+}
+
+.dropDownLink {
+  height: 35px;
+  width: 35px;
+  fill: white;
+}
+
+/* Mobile Styles */
+.mobileOnly {
+  display: none;
+}
+
+@media screen and (max-width: 400px) {
+  .notMobile {
+    display: none;
+  }
+  .mobileOnly {
+    display: flex;
+  }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
-  <div class="signUp page">
-    <div v-if="isLoggedIn" class="smallPageWidth">
+  <div class="page">
+    <div v-if="!isLoggedIn" class="smallPageWidth">
       <h1>SIGN UP</h1>
       <div class="usernameSection">
         <body>
@@ -20,11 +20,9 @@
         </body>
         <input type="password" name="password2" class="smallTopMargin wide" v-model="fields.password2">
       </div>
-      <button v-on:click="signupButton()" class="topMargin roundedButton wide noSelect">
-        SIGN UP
-      </button>
-      <div v-if="showErrorMessage" class="topMargin">
-        <body v-text="errorMessageText" class="errorMessage"></body>
+      <button v-on:click="signupButton()" class="topMargin btn roundedButton wide noSelect">SIGN UP</button>
+      <div class="topMargin">
+        <body v-text="getErrorMessage" class="errorMessage"></body>
       </div>
     </div>
     <div v-else class="smallPageWidth">
@@ -34,7 +32,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: 'SignUp',
@@ -49,27 +47,20 @@ export default {
     }
   },
   computed: {
-    ...mapState(['signupSuccess', 'signupErrorMessage']),
-    isLoggedIn: function () {
-      return localStorage.getItem('auth') !== undefined
-    },
-    showErrorMessage: function () {
-      return this.errorMessage !== '' || this.signupErrorMessage !== ''
-    },
-    errorMessageText: function () {
-      return this.signupErrorMessage !== '' ? this.errorMessage : this.signupErrorMessage
+    ...mapState(['signupErrorMsg', 'isLoggedIn']),
+    getErrorMessage () {
+      return this.errorMessage === '' ? this.signupErrorMsg : this.errorMessage
     }
   },
   methods: {
-    ...mapActions(['signup']),
     signupButton () {
       if (this.fields.username === '') {
         this.errorMessage = 'You need to choose a user name :)'
-      } else if (this.fields.password1 === '' || this.fields.password1 !== this.fields.password2) {
+      } else if (this.fields.password1 === '' || this.fields.password1 !== this.fields.password2 || this.fields.password1.length < 8) {
         this.errorMessage = 'Make sure your passwords match! They should be longer than 8 characters. Also, please use a unique password (no big security promises here)'
       } else {
         this.errorMessage = ''
-        this.signup(this.fields.username, this.fields.password1)
+        this.$store.dispatch('signup', { username: this.fields.username, password: this.fields.password1 })
       }
     }
   }

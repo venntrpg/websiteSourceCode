@@ -4,8 +4,10 @@ import instance from '@/api/apiInstance'
 https://github.com/joshmiller17/vennt-server#create-an-account
 */
 const signup = (username, password) => {
+  // For some reason, I need to build this JSON by hand ¯\_(ツ)_/¯
+  const postBody = '{"register":"' + username + '","password":"' + password + '"}'
   return instance
-    .post('', { register: username, password: password })
+    .post('/', postBody)
     .then(response => {
       return response.data
     })
@@ -15,8 +17,10 @@ const signup = (username, password) => {
 https://github.com/joshmiller17/vennt-server#login
 */
 const login = (username, password) => {
+  // For some reason, I need to build this JSON by hand ¯\_(ツ)_/¯
+  const postBody = '{"login":"' + username + '","password":"' + password + '"}'
   return instance
-    .post('', { login: username, password: password })
+    .post('/', postBody)
     .then(response => {
       return response.data
     })
@@ -29,7 +33,9 @@ const logout = auth => {
   return instance
     .get('/logout', {
       params: {
-        auth_token: auth
+        q: {
+          auth_token: auth
+        }
       }
     })
     .then(response => {

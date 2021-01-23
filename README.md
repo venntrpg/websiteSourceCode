@@ -1,6 +1,7 @@
 # venntrpg website source code
 
-Website source code lives here.
+Website: https://venntrpg.github.io/
+Readable source code lives here
 
 ## Project setup
 ```

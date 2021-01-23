@@ -1,8 +1,10 @@
 import axios from 'axios'
 
-// TODO: Make this https
 const instance = axios.create({
-  baseURL: 'http://topazgryphon.org:3004'
+  baseURL: 'https://topazgryphon.org:3004'
 })
+
+instance.defaults.headers.common['Content-Type'] = 'application/x-www-form-urlencoded'
+instance.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 
 export default instance
