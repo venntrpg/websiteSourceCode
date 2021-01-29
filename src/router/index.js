@@ -29,6 +29,33 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "login" */ '../views/Login.vue')
   },
+  {
+    path: '/character/:section',
+    name: 'Character',
+    // route level code-splitting
+    // this generates a separate chunk (character.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "Character" */ '../views/Character.vue')
+  },
+  {
+    path: '/characterCreation',
+    name: 'CharacterCreation',
+    // route level code-splitting
+    // this generates a separate chunk (characterCreation.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "CharacterCreation" */ '../views/CharacterCreation.vue')
+  },
+  {
+    path: '/style',
+    name: 'Style',
+    // route level code-splitting
+    // this generates a separate chunk (style.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "CharacterCreation" */ '../views/Style.vue')
+  },
   { path: '*', component: NotFoundComponent }
 ]
 

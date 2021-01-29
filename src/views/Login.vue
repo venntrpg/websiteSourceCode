@@ -3,20 +3,20 @@
     <div v-if="!isLoggedIn" class="smallPageWidth">
       <h1>LOG IN</h1>
       <div class="usernameSection">
-        <body>
+        <div>
           Enter your username:
-        </body>
+        </div>
         <input type="text" name="username" class="smallTopMargin wide" v-model="fields.username">
       </div>
       <div class="passwordSection topMargin">
-        <body>
+        <div>
           Enter your password:
-        </body>
+        </div>
         <input type="password" name="password" class="smallTopMargin wide" v-model="fields.password">
       </div>
       <button v-on:click="loginButton()" class="topMargin btn roundedButton wide noSelect">LOG IN</button>
       <div class="topMargin">
-        <body v-text="getErrorMessage" class="errorMessage"></body>
+        <div v-text="getErrorMessage" class="errorMessage"></div>
       </div>
     </div>
     <div v-else class="smallPageWidth">

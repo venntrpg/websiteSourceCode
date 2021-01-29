@@ -5,11 +5,14 @@ import router from '@/router/index'
 
 Vue.use(Vuex)
 
+// TDOD add helper function for logging out the user if they've timed out.
+
 const state = {
   isLoggedIn: false,
   username: '',
   signupErrorMsg: '',
-  loginErrorMsg: ''
+  loginErrorMsg: '',
+  characters: {}
 }
 
 const getters = {
@@ -29,6 +32,12 @@ const mutations = {
   },
   setLoginErrorMsg (state, loginErrorMsg) {
     state.loginErrorMsg = loginErrorMsg
+  },
+  clearCharactersList (state) {
+    state.characters.clear()
+  },
+  addToCharactersList (state, character) {
+    state.characters.set(character.id, character)
   }
 }
 
@@ -53,6 +62,7 @@ const actions = {
       }
     })
   },
+
   login: ({ commit }, { username, password }) => {
     console.log('logging in!')
     if (username === undefined || password === undefined) {
@@ -72,6 +82,7 @@ const actions = {
       }
     })
   },
+
   logout: ({ commit }) => {
     console.log('logging out!')
     const auth = localStorage.getItem('auth')
@@ -88,6 +99,36 @@ const actions = {
           localStorage.removeItem('auth')
           router.push({ name: 'Home' })
         }
+      }
+    })
+  },
+
+  // CHARACTER RELATED API CALLS
+  createCharacter: ({ commit }, { character }) => {
+    const auth = localStorage.getItem('auth')
+    if (auth === null) {
+      return
+    }
+    return api.login(auth, character).then(response => {
+      if (response && response.success && response.success === true) {
+        console.log(response)
+        // add the new id to our current character data, and append it to the character list.
+        character.set('id', response.id)
+        commit('addToCharactersList', character)
+      }
+    })
+  },
+
+  listCharacters: ({ commit }) => {
+    const auth = localStorage.getItem('auth')
+    if (auth === null) {
+      return
+    }
+    return api.listCharacters(auth).then(response => {
+      if (response && response.success && response.success === true) {
+        console.log(response)
+        // It would be pretty neat if we called getCharacter automatically for every id we get here automatically. idk
+        // Maybe we just need a new api that doesn't require that we ask for this info twice
       }
     })
   }

@@ -1,19 +1,24 @@
 <template>
   <div class="page">
-    <div>
-      <h1>h1 header</h1>
-      <h2>h2 header</h2>
-      <h3>h3 header</h3>
-      <h4>h4 header</h4>
-      <body><i>italic</i></body>
-      <body><b>bold</b></body>
-      <body>normal text</body>
-    </div>
+    <HomePageLoggedOut v-if="!isLoggedIn" />
+    <HomePageLoggedIn v-else />
   </div>
 </template>
 
 <script>
 
+import HomePageLoggedOut from '../components/HomePage/HomePageLoggedOut.vue'
+import HomePageLoggedIn from '../components/HomePage/HomePageLoggedIn.vue'
+import { mapState } from 'vuex'
+
 export default {
+  name: 'Home',
+  components: {
+    HomePageLoggedOut,
+    HomePageLoggedIn
+  },
+  computed: {
+    ...mapState(['isLoggedIn'])
+  }
 }
 </script>

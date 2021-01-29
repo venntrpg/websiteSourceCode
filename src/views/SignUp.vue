@@ -3,26 +3,26 @@
     <div v-if="!isLoggedIn" class="smallPageWidth">
       <h1>SIGN UP</h1>
       <div class="usernameSection">
-        <body>
+        <div>
           Enter a username:
-        </body>
+        </div>
         <input type="text" name="username" class="smallTopMargin wide" v-model="fields.username">
       </div>
       <div class="password1Section topMargin">
-        <body>
+        <div>
           Enter a password:
-        </body>
+        </div>
         <input type="password" name="password1" class="smallTopMargin wide" v-model="fields.password1">
       </div>
       <div class="password1Section topMargin">
-        <body>
+        <div>
           Re-enter your password:
-        </body>
+        </div>
         <input type="password" name="password2" class="smallTopMargin wide" v-model="fields.password2">
       </div>
       <button v-on:click="signupButton()" class="topMargin btn roundedButton wide noSelect">SIGN UP</button>
       <div class="topMargin">
-        <body v-text="getErrorMessage" class="errorMessage"></body>
+        <div v-text="getErrorMessage" class="errorMessage"></div>
       </div>
     </div>
     <div v-else class="smallPageWidth">

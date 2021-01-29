@@ -14,7 +14,7 @@ export default {
     Nav
   },
   // This sets the isLoggedIn parameter if we have already logged in but the page was refreshed
-  beforeMount: function () {
+  beforeMount () {
     if (localStorage.getItem('auth') !== null) {
       this.setIsLoggedIn(true)
     }
@@ -42,6 +42,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
 
   /* COLORS */
+  /* Originally came from https://coolors.co/7e8987-4b4a67-fadf63-e6af2e-ef6f6c */
+  --purple-300: #615f85;
+  --purple-400: #565576;
   --purple-500: #4b4a67;
   --purple-600: #403f58;
   --purple-700: #353549;
@@ -52,6 +55,11 @@ export default {
 
   --yellow-400: #fce994;
   --yellow-500: #fadf63;
+
+  --yellow-rod-400: #E6AF2E;
+
+  height: 100vh;
+  background: var(--purple-300);
 }
 
 h1 {
@@ -66,6 +74,14 @@ h1 {
 .smallPageWidth {
   width: 100%;
   max-width: 300px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.largePageWidth {
+  width: 100%;
+  max-width: 1050px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .roundedButton {
