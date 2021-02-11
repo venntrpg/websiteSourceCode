@@ -64,7 +64,7 @@ export default {
   font-size: 30pt;
 }
 .homeLink:hover {
-  color: var(--yellow-400);
+  color: var(--yellow-300);
 }
 .homeLink:active {
   color: var(--yellow-500);

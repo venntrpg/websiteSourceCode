@@ -9,6 +9,9 @@
       <div><i>italic</i></div>
       <div><b>bold</b></div>
       <div>normal text</div>
+      <div>
+        <div></div>
+      </div>
     </div>
   </div>
 </template>
@@ -19,3 +22,13 @@ export default {
   name: 'Style'
 }
 </script>
+
+<style scoped>
+.colorSquare {
+  height: 30px;
+  width: 30px;
+}
+.mainColor {
+  background-color: var(--purple-500);
+}
+</style>

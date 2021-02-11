@@ -53,18 +53,24 @@ export default {
   --red-600: #ec5855;
   --red-700: #ea423e;
 
-  --yellow-400: #fce994;
-  --yellow-500: #fadf63;
+  --yellow-300: #eec972;
+  --yellow-500: #e6af2e;
+  --yellow-600: #e0a51b;
 
-  --yellow-rod-400: #E6AF2E;
-
+  /* Background Styles*/
   height: 100vh;
-  background: var(--purple-300);
 }
 
 h1 {
-  font-family: Copperplate;
   font-size: 40pt;
+  font-weight: 400;
+}
+
+.link {
+  color: var(--yellow-500);
+}
+.link:hover {
+  color: var(--yellow-600);
 }
 
 .page {
@@ -74,6 +80,12 @@ h1 {
 .smallPageWidth {
   width: 100%;
   max-width: 300px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.mediumPageWidth {
+  width: 100%;
+  max-width: 500px;
   margin-left: 20px;
   margin-right: 20px;
 }
@@ -92,6 +104,7 @@ h1 {
   padding-left: 10px;
   padding-right: 10px;
   color: white;
+  justify-content: center;
 }
 .roundedButton:hover {
   background-color: var(--red-600);
@@ -107,6 +120,7 @@ h1 {
   display: flex;
   cursor: pointer;
   font-size: 18pt;
+  text-decoration: none;
 }
 
 /* This isn't working - stuck with blue highlights for now I guess */

@@ -2,7 +2,7 @@ import instance from '@/api/apiInstance'
 
 // ------------------------- ACCOUNT APIS ------------------------- //
 
-//https://github.com/joshmiller17/vennt-server#create-an-account
+// https://github.com/joshmiller17/vennt-server#create-an-account
 const signup = (username, password) => {
   // For some reason, I need to build this JSON by hand ¯\_(ツ)_/¯
   // const postBody = '{"register":"' + username + '","password":"' + password + '"}'
