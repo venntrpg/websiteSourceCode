@@ -25,12 +25,6 @@
 
 <script>
 
-// do router links like
-// <router-link to="/">Home</router-link>
-
-// TODO: Replace text with links
-// TODO: Make logout button call logout api & redirect to home page
-
 import { mapActions, mapState } from 'vuex'
 
 export default {

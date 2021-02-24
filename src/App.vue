@@ -57,8 +57,11 @@ export default {
   --yellow-500: #e6af2e;
   --yellow-600: #e0a51b;
 
+  --bg-color: #f7f7f7;
+
   /* Background Styles*/
   height: 100vh;
+  background-color: var(--bg-color);
 }
 
 h1 {

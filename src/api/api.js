@@ -1,4 +1,4 @@
-import instance from '@/api/apiInstance'
+import backendApi from '@/api/backendApi'
 
 // ------------------------- ACCOUNT APIS ------------------------- //
 
@@ -7,7 +7,7 @@ const signup = (username, password) => {
   // For some reason, I need to build this JSON by hand ¯\_(ツ)_/¯
   // const postBody = '{"register":"' + username + '","password":"' + password + '"}'
   const postBody = { register: username, password: password }
-  return instance
+  return backendApi
     .post('/', JSON.stringify(postBody))
     .then(response => {
       return response.data
@@ -19,7 +19,7 @@ const login = (username, password) => {
   // For some reason, I need to build this JSON by hand ¯\_(ツ)_/¯
   // const postBody = '{"login":"' + username + '","password":"' + password + '"}'
   const postBody = { login: username, password: password }
-  return instance
+  return backendApi
     .post('/', JSON.stringify(postBody))
     .then(response => {
       return response.data
@@ -28,7 +28,7 @@ const login = (username, password) => {
 
 // https://github.com/joshmiller17/vennt-server#logout
 const logout = auth => {
-  return instance
+  return backendApi
     .get('/logout', {
       params: {
         q: {
@@ -45,7 +45,7 @@ const logout = auth => {
 
 // https://github.com/joshmiller17/vennt-server#create-a-character
 const createCharacter = (auth, character) => {
-  return instance
+  return backendApi
     .get('/create_character', {
       params: {
         q: {
@@ -80,7 +80,7 @@ const createCharacter = (auth, character) => {
 
 // https://github.com/joshmiller17/vennt-server#get-characters
 const listCharacters = auth => {
-  return instance
+  return backendApi
     .get('/get_characters', {
       params: {
         q: {
@@ -95,7 +95,7 @@ const listCharacters = auth => {
 
 // https://github.com/joshmiller17/vennt-server#get-character
 const getCharacter = (auth, id) => {
-  return instance
+  return backendApi
     .get('/get_character', {
       params: {
         q: {
@@ -113,7 +113,7 @@ const getCharacter = (auth, id) => {
 
 // https://github.com/joshmiller17/vennt-server#create-a-campaign
 const createCampaign = (auth, name) => {
-  return instance
+  return backendApi
     .get('/create_campaign', {
       params: {
         q: {
@@ -129,7 +129,7 @@ const createCampaign = (auth, name) => {
 
 // https://github.com/joshmiller17/vennt-server#get-campaigns
 const listCampaigns = auth => {
-  return instance
+  return backendApi
     .get('/get_campaigns', {
       params: {
         q: {
@@ -144,7 +144,7 @@ const listCampaigns = auth => {
 
 // https://github.com/joshmiller17/vennt-server#view-active-campaign-invites
 const listCampaignInvites = auth => {
-  return instance
+  return backendApi
     .get('/view_campaign_invites', {
       params: {
         q: {

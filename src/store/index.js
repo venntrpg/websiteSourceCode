@@ -8,11 +8,12 @@ Vue.use(Vuex)
 // TDOD add helper function for logging out the user if they've timed out.
 
 const state = {
-  isLoggedIn: false,
+  isLoggedIn: false, // This variable is set in App.vue on loading the website
   username: '',
   signupErrorMsg: '',
   loginErrorMsg: '',
-  characters: {}
+  characters: {},
+  randomName: ''
 }
 
 const getters = {
@@ -38,6 +39,9 @@ const mutations = {
   },
   addToCharactersList (state, character) {
     state.characters.set(character.id, character)
+  },
+  setRandomName (state, name) {
+    state.randomName = name
   }
 }
 
