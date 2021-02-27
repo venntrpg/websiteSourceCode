@@ -5,10 +5,10 @@
       <div v-if="isNewCharacter">
         <h2>Step 1: Choose a name</h2>
         <div>
-          Enter a name. You can always come back to this step at the end of your process. Or you can generate a random name :o
+          Enter a name for your character. You can always come back to this step later.
         </div>
-        <button v-on:click="randomNameButton()">Random name?</button>
-        <div v-text="randomName"></div>
+        <input type="text" name="charName" placeholder="Bilbo Baggins" class="input" v-model="character.name">
+        <button v-on:click="randomNameButton">Dice</button>
         <h2>Step 2: Choose a Gift</h2>
         <h2>Step 3: Create your backstory</h2>
         Do this somewhere else for now. Also make Tides, Grates, and Quests
@@ -70,8 +70,12 @@ export default {
     }
     this.creationFlow = localStorage.getItem('creation-flow')
   },
+  mounted () {
+    // call silly api for getting random names
+    this.$store.dispatch('getRandomNames')
+  },
   computed: {
-    ...mapState(['isLoggedIn', 'randomName']),
+    ...mapState(['isLoggedIn', 'randomNames']),
     isNewCharacter () {
       return this.creationFlow === NEW_CREATION_FLOW
     },
@@ -89,7 +93,16 @@ export default {
       this.creationFlow = IMPORT_CREATION_FLOW
     },
     randomNameButton () {
-      this.$store.dispatch('getRandomName')
+      console.log(this.randomNames.length)
+      if (this.randomNames.length < 3) {
+        // need to get more random names
+        this.$store.dispatch('getRandomNames')
+      }
+      if (this.randomNames.length > 0) {
+        // pop item off front of array
+        this.character.name = this.randomNames[0]
+        this.$store.commit('shiftRandomNames')
+      }
     }
   }
 }
@@ -102,7 +115,12 @@ h1 {
 }
 
 .btn {
-    margin-bottom: 8px;
-  }
+  margin-bottom: 8px;
+}
+
+.input {
+  margin-top: 5px;
+  max-width: 300px;
+}
 
 </style>

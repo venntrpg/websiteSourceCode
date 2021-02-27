@@ -6,19 +6,19 @@
         <div>
           Enter a username:
         </div>
-        <input type="text" name="username" class="smallTopMargin wide" v-model="fields.username">
+        <input type="text" name="username" placeholder="Username" class="input smallTopMargin wide" v-model="fields.username">
       </div>
       <div class="password1Section topMargin">
         <div>
           Enter a password:
         </div>
-        <input type="password" name="password1" class="smallTopMargin wide" v-model="fields.password1">
+        <input type="password" name="password1" placeholder="Password" class="input smallTopMargin wide" v-model="fields.password1">
       </div>
       <div class="password1Section topMargin">
         <div>
           Re-enter your password:
         </div>
-        <input type="password" name="password2" class="smallTopMargin wide" v-model="fields.password2">
+        <input type="password" name="password2" placeholder="Verify Password" class="input smallTopMargin wide" v-model="fields.password2">
       </div>
       <button v-on:click="signupButton()" class="topMargin btn roundedButton wide noSelect">SIGN UP</button>
       <div class="topMargin">

@@ -6,13 +6,13 @@
         <div>
           Enter your username:
         </div>
-        <input type="text" name="username" class="smallTopMargin wide" v-model="fields.username">
+        <input type="text" name="username" placeholder="Username" class="input smallTopMargin wide" v-model="fields.username">
       </div>
       <div class="passwordSection topMargin">
         <div>
           Enter your password:
         </div>
-        <input type="password" name="password" class="smallTopMargin wide" v-model="fields.password">
+        <input type="password" name="password" placeholder="Password" class="input smallTopMargin wide" v-model="fields.password">
       </div>
       <button v-on:click="loginButton()" class="topMargin btn roundedButton wide noSelect">LOG IN</button>
       <div class="topMargin">

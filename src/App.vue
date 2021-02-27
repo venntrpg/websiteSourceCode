@@ -57,11 +57,19 @@ export default {
   --yellow-500: #e6af2e;
   --yellow-600: #e0a51b;
 
-  --bg-color: #f7f7f7;
+  --gray-900: #303030;
+  --gray-800: #2a2a2a;
+  --gray-700: #4d4e50;
+  --gray-600: #818181;
+  --gray-500: #afafb0;
+  --gray-400: #d1d1d1;
+  --gray-300: #efefef;
+  --gray-200: #f7f7f7;
+  --gray-100: #fbfbfb;
 
   /* Background Styles*/
   height: 100vh;
-  background-color: var(--bg-color);
+  background-color: var(--gray-200);
 }
 
 h1 {
@@ -124,6 +132,28 @@ h1 {
   cursor: pointer;
   font-size: 18pt;
   text-decoration: none;
+}
+
+.input {
+  resize: vertical;
+  font-family: 'Raleway', sans-serif;
+  font-size: 15px;
+  line-height: 16px;
+  height: 40px;
+  width: 100%;
+  border-radius: 5px;
+  color: var(--color-ink);
+  padding: 12px 10px;
+  background: white;
+  border: 1px solid var(--gray-400);
+  outline: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 /* This isn't working - stuck with blue highlights for now I guess */

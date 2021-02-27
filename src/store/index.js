@@ -13,7 +13,7 @@ const state = {
   signupErrorMsg: '',
   loginErrorMsg: '',
   characters: {},
-  randomName: ''
+  randomNames: []
 }
 
 const getters = {
@@ -40,8 +40,11 @@ const mutations = {
   addToCharactersList (state, character) {
     state.characters.set(character.id, character)
   },
-  setRandomName (state, name) {
-    state.randomName = name
+  appendRandomNames (state, randomNames) {
+    state.randomNames = state.randomNames.concat(randomNames)
+  },
+  shiftRandomNames (state) {
+    state.randomNames.shift()
   }
 }
 
@@ -133,6 +136,16 @@ const actions = {
         console.log(response)
         // It would be pretty neat if we called getCharacter automatically for every id we get here automatically. idk
         // Maybe we just need a new api that doesn't require that we ask for this info twice
+      }
+    })
+  },
+
+  // RANDOM OTHER API CALLS
+
+  getRandomNames: ({ commit }) => {
+    return api.getRandomNames().then(response => {
+      if (response.length && response.length > 0) {
+        commit('appendRandomNames', response)
       }
     })
   }
