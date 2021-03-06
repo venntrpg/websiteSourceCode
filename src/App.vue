@@ -68,7 +68,7 @@ export default {
   --gray-100: #fbfbfb;
 
   /* Background Styles*/
-  height: 100vh;
+  min-height: calc(100vh - 42px); /* 42px comes from nav */
   background-color: var(--gray-200);
 }
 
@@ -85,6 +85,7 @@ h1 {
 }
 
 .page {
+  margin-top: 42px; /* 42px to account for the nav */
   display: flex;
   justify-content: center;
 }
@@ -144,7 +145,7 @@ h1 {
   border-radius: 5px;
   color: var(--color-ink);
   padding: 12px 10px;
-  background: white;
+  background-color: white;
   border: 1px solid var(--gray-400);
   outline: none;
   -webkit-box-shadow: none;
@@ -154,6 +155,12 @@ h1 {
   appearance: none;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
+}
+.input:hover {
+  border: solid 1px var(--gray-500);
+}
+.input:focus {
+  border: solid 1px var(--yellow-600);
 }
 
 /* This isn't working - stuck with blue highlights for now I guess */

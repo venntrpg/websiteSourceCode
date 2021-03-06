@@ -9,10 +9,7 @@
       <!-- TODO: Update this link to be a dropdown with more items (instead of just linking to the login page) -->
       <router-link to="/login" class="login rightItem mobileOnly">
         <!-- SVG comes from https://material.io/resources/icons/?icon=view_headline&style=baseline -->
-        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" class="rightItem dropDownLink">
-          <path d="M0 0h24v24H0V0z" fill="none"/>
-          <path d="M4 15h16v-2H4v2zm0 4h16v-2H4v2zm0-8h16V9H4v2zm0-6v2h16V5H4z"/>
-        </svg>
+        <MenuSVG class="rightItem dropDownLink" />
       </router-link>
     </div>
     <div v-else class="right">
@@ -25,10 +22,14 @@
 
 <script>
 
+import MenuSVG from './Common/MenuSVG.vue'
 import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'Nav',
+  components: {
+    MenuSVG
+  },
   computed: {
     ...mapState(['isLoggedIn'])
   },
@@ -41,6 +42,11 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 42px;
   display: flex;
   justify-content: space-between;
   background-color: var(--purple-500);
