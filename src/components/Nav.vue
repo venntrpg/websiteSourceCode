@@ -8,7 +8,6 @@
       <router-link to="/signup" class="signup linkButton rightItem notMobile">SIGNUP</router-link>
       <!-- TODO: Update this link to be a dropdown with more items (instead of just linking to the login page) -->
       <router-link to="/login" class="login rightItem mobileOnly">
-        <!-- SVG comes from https://material.io/resources/icons/?icon=view_headline&style=baseline -->
         <MenuSVG class="rightItem dropDownLink" />
       </router-link>
     </div>
@@ -39,7 +38,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .nav {
   position: fixed;

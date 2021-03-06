@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="sideBar">
+    <div class="sideBar" v-bind:class="getShowSidebarClass">
       This is a sidebar, hopefully :o
     </div>
-    <div class="page sideBarPage">
+    <div class="page sideBarPage" v-bind:class="getShowSidebarClass">
       <div class="largePageWidth">
         <h1>CHARACTER CREATION</h1>
         <div v-if="isNewCharacter">
@@ -13,7 +13,7 @@
           </div>
           <div class="alignRow">
             <input type="text" name="charName" placeholder="Bilbo Baggins" class="input nameInput" v-model="character.name">
-            <button v-on:click="randomNameButton" class="btn roundedButton">
+            <button v-on:click="randomNameButton" class="btn roundedButton" :disabled="randomNamesDisabled">
               <div class="randomNameButtonContents">
                 <RefreshSVG class="matchText" /> Random name
               </div>
@@ -90,12 +90,18 @@ export default {
     this.$store.dispatch('getRandomNames')
   },
   computed: {
-    ...mapState(['isLoggedIn', 'randomNames']),
+    ...mapState(['isLoggedIn', 'randomNames', 'randomNamesDisabled']),
     isNewCharacter () {
       return this.creationFlow === NEW_CREATION_FLOW
     },
     isImportCharacter () {
       return this.creationFlow === IMPORT_CREATION_FLOW
+    },
+    getShowSidebarClass () {
+      if (this.character.name === '') {
+        return 'hidden'
+      }
+      return ''
     }
   },
   methods: {
@@ -108,15 +114,13 @@ export default {
       this.creationFlow = IMPORT_CREATION_FLOW
     },
     randomNameButton () {
-      console.log(this.randomNames.length)
       if (this.randomNames.length < 3) {
         // need to get more random names
         this.$store.dispatch('getRandomNames')
       }
       if (this.randomNames.length > 0) {
         // pop item off front of array
-        this.character.name = this.randomNames[0]
-        this.$store.commit('shiftRandomNames')
+        this.character.name = this.$store.dispatch('getRandomName')
       }
     }
   }
@@ -136,9 +140,15 @@ export default {
   -webkit-box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 28%);
   box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 28%);
 }
+.sideBar.hidden {
+  display: none;
+}
 
 .sideBarPage {
   margin-left: 400px;
+}
+.sideBarPage.hidden {
+  margin-left: 0px;
 }
 
 h1 {

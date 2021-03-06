@@ -13,7 +13,8 @@ const state = {
   signupErrorMsg: '',
   loginErrorMsg: '',
   characters: {},
-  randomNames: []
+  randomNames: [],
+  randomNamesDisabled: true
 }
 
 const getters = {
@@ -41,15 +42,20 @@ const mutations = {
     state.characters.set(character.id, character)
   },
   appendRandomNames (state, randomNames) {
+    state.randomNamesDisabled = false
     state.randomNames = state.randomNames.concat(randomNames)
   },
   shiftRandomNames (state) {
     state.randomNames.shift()
+  },
+  randomNamesIsDisabled (state) {
+    state.randomNamesDisabled = true
   }
 }
 
 const actions = {
-  // ACCOUNT RELATED API CALLS
+  // ------------------------- ACCOUNT APIS ------------------------- //
+
   signup: ({ commit }, { username, password }) => {
     console.log('singing up!')
     if (username === undefined || password === undefined) {
@@ -110,7 +116,8 @@ const actions = {
     })
   },
 
-  // CHARACTER RELATED API CALLS
+  // ------------------------- CHARACTER APIS ------------------------- //
+
   createCharacter: ({ commit }, { character }) => {
     const auth = localStorage.getItem('auth')
     if (auth === null) {
@@ -140,14 +147,28 @@ const actions = {
     })
   },
 
-  // RANDOM OTHER API CALLS
+  // ------------------------- OTHER / RANDOM APIS ------------------------- //
 
   getRandomNames: ({ commit }) => {
     return api.getRandomNames().then(response => {
       if (response.length && response.length > 0) {
         commit('appendRandomNames', response)
+      } else {
+        // either the server or the proxy is down :(
+        commit('randomNamesIsDisabled')
       }
     })
+  },
+
+  // ------------------------- NON-API ACTIONS ------------------------- //
+
+  // This get pops the last name off the list
+  getRandomName: ({ commit, state }) => {
+    if (state.randomNames.length > 0) {
+      const name = state.randomNames[0]
+      commit('shiftRandomNames')
+      return name
+    }
   }
 }
 

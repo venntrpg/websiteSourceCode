@@ -49,6 +49,7 @@ export default {
   --purple-600: #403f58;
   --purple-700: #353549;
 
+  --red-300: #f49c9a;
   --red-500: #ef6f6c;
   --red-600: #ec5855;
   --red-700: #ea423e;
@@ -118,10 +119,13 @@ h1 {
   color: white;
   justify-content: center;
 }
-.roundedButton:hover {
+.roundedButton:disabled {
+  background-color: var(--red-300);
+}
+.roundedButton:hover:not(:disabled) {
   background-color: var(--red-600);
 }
-.roundedButton:active {
+.roundedButton:active:not(:disabled) {
   background-color: var(--red-700);
 }
 
@@ -133,6 +137,9 @@ h1 {
   cursor: pointer;
   font-size: 18pt;
   text-decoration: none;
+}
+.btn:disabled {
+  cursor: default;
 }
 
 .input {
