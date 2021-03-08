@@ -48,6 +48,8 @@ export default {
   --purple-500: #4b4a67;
   --purple-600: #403f58;
   --purple-700: #353549;
+  --purple-800: #2b2a3a;
+  --purple-900: #201f2b;
 
   --red-300: #f49c9a;
   --red-500: #ef6f6c;
@@ -109,6 +111,8 @@ h1 {
   margin-right: 20px;
 }
 
+/* General Styles */
+
 .roundedButton {
   background-color: var(--red-500);
   border-radius: 20px;
@@ -168,6 +172,48 @@ h1 {
 }
 .input:focus {
   border: solid 1px var(--yellow-600);
+}
+
+/* Nav Styles - useful for subnav styles */
+
+.navButton {
+  text-decoration: none;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  background-color: var(--purple-500);
+  color: white;
+  font-weight: 500;
+}
+.navButton:hover {
+  background-color: var(--purple-600);
+}
+.navButton:active {
+  background-color: var(--purple-700);
+}
+
+.subNav {
+  position: fixed;
+  top: 42px;
+  left: 0;
+  width: 100%;
+  height: 38px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--purple-700);
+  font-size: 18pt;
+}
+.subNavButton {
+  background-color: var(--purple-700);
+  height: 32px;
+}
+.subNavButton:hover {
+  background-color: var(--purple-800);
+}
+.subNavButton:active {
+  background-color: var(--purple-900);
 }
 
 /* This isn't working - stuck with blue highlights for now I guess */

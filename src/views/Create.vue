@@ -1,9 +1,13 @@
 <template>
   <div>
-    <div class="sideBar" v-bind:class="getShowSidebarClass">
+    <div class="subNav">
+      <button v-on:click="createNavButton()" v-bind:class="getMobileSidebarClass" class="btn navButton subNavButton noSelect createNavButton">CREATE CHARACTER</button>
+      <button v-on:click="statsNavButton()" v-bind:class="getMobileSidebarClass" class="btn navButton subNavButton noSelect statsNavButton">SHOW STATS</button>
+    </div>
+    <div class="sideBar" v-bind:class="[getHiddenSidebarClass, getMobileSidebarClass]">
       This is a sidebar, hopefully :o
     </div>
-    <div class="page sideBarPage" v-bind:class="getShowSidebarClass">
+    <div class="page sideBarPage" v-bind:class="[getHiddenSidebarClass, getMobileSidebarClass]">
       <div class="largePageWidth">
         <h1>CHARACTER CREATION</h1>
         <div v-if="isNewCharacter">
@@ -11,9 +15,9 @@
           <div>
             Enter a name for your character. You can always come back to this step later. Or, press the button to generate a random name.
           </div>
-          <div class="alignRow">
+          <div class="alignRow nameRow">
             <input type="text" name="charName" placeholder="Bilbo Baggins" class="input nameInput" v-model="character.name">
-            <button v-on:click="randomNameButton" class="btn roundedButton" :disabled="randomNamesDisabled">
+            <button v-on:click="randomNameButton" class="btn roundedButton randomNameButton" :disabled="randomNamesDisabled">
               <div class="randomNameButtonContents">
                 <RefreshSVG class="matchText" /> Random name
               </div>
@@ -53,6 +57,7 @@ export default {
   },
   data () {
     return {
+      showingStats: false,
       creationFlow: '',
       character: {
         name: '',
@@ -97,9 +102,15 @@ export default {
     isImportCharacter () {
       return this.creationFlow === IMPORT_CREATION_FLOW
     },
-    getShowSidebarClass () {
+    getHiddenSidebarClass () {
       if (this.character.name === '') {
         return 'hidden'
+      }
+      return ''
+    },
+    getMobileSidebarClass () {
+      if (this.showingStats) {
+        return 'showStats'
       }
       return ''
     }
@@ -112,6 +123,12 @@ export default {
     importCharacterButton () {
       localStorage.setItem('creation-flow', IMPORT_CREATION_FLOW)
       this.creationFlow = IMPORT_CREATION_FLOW
+    },
+    createNavButton () {
+      this.showingStats = false
+    },
+    statsNavButton () {
+      this.showingStats = true
     },
     randomNameButton () {
       if (this.randomNames.length < 3) {
@@ -132,11 +149,11 @@ export default {
 .sideBar {
   position: fixed;
   z-index: 1;
-  top: 42px;
+  top: 42px; /* 42px is the height of the nav bar */
   left: 0;
   overflow-x: hidden;
   width: 400px;
-  height: calc(100vh - 42px); /* 42px is the height of the nav bar */
+  min-height: calc(100vh - 42px); /* 42px is the height of the nav bar */
   -webkit-box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 28%);
   box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 28%);
 }
@@ -181,6 +198,60 @@ h1 {
   border-radius: 10px;
   border: 1px solid var(--gray-400);
   padding: 10px;
+}
+
+/* Styles for showing the subnav */
+.subNav {
+  display: none;
+  justify-content: center;
+}
+.createNavButton:not(.showStats) {
+  display: none;
+}
+.statsNavButton.showStats {
+  display: none;
+}
+
+@media screen and (max-width: 1000px) {
+  .subNav {
+    display: flex;
+  }
+  .page {
+    margin-top: 80px; /* 42px + 38px to account for the navs */
+  }
+  .sideBar {
+    top: 80px; /* 42px + 38px to account for the navs */
+    min-height: calc(100vh - 80px);
+    width: 100%;
+  }
+  .sideBar:not(.showStats) {
+    display: none;
+  }
+  .sideBar.showStats {
+    display: flex;
+  }
+  .sideBarPage:not(.showStats) {
+    display: flex;
+    margin-left: 0px;
+  }
+  .sideBarPage.showStats {
+    display: none;
+  }
+}
+
+/* mobile styles */
+@media screen and (max-width: 600px) {
+  .nameRow {
+    display: block;
+  }
+  .nameInput {
+    margin-right: 0px;
+    max-width: 100%;
+  }
+  .randomNameButton {
+    margin-top: 8px;
+    width: 100%;
+  }
 }
 
 </style>

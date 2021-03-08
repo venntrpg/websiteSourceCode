@@ -1,19 +1,19 @@
 <template>
   <div class="nav">
     <div class="left">
-      <router-link to="/" class="homeLink">VENNT</router-link>
+      <router-link to="/" class="navButton homeLink">VENNT</router-link>
     </div>
     <div v-if="!isLoggedIn" class="right">
-      <router-link to="/login" class="login linkButton rightItem notMobile">LOGIN</router-link>
-      <router-link to="/signup" class="signup linkButton rightItem notMobile">SIGNUP</router-link>
+      <router-link to="/login" class="login navButton rightItem notMobile">LOGIN</router-link>
+      <router-link to="/signup" class="signup navButton rightItem notMobile">SIGNUP</router-link>
       <!-- TODO: Update this link to be a dropdown with more items (instead of just linking to the login page) -->
-      <router-link to="/login" class="login rightItem mobileOnly">
-        <MenuSVG class="rightItem dropDownLink" />
+      <router-link to="/login" class="login navButton rightItem mobileOnly">
+        <MenuSVG class="dropDownLink" />
       </router-link>
     </div>
     <div v-else class="right">
       <div class="logout rightItem">
-        <button v-on:click="logout()" class="linkButton btn noSelect">LOGOUT</button>
+        <button v-on:click="logout()" class="navButton btn noSelect">LOGOUT</button>
       </div>
     </div>
   </div>
@@ -54,18 +54,19 @@ export default {
 .homeLink {
   padding-left: 15px;
   padding-right: 15px;
-  background-color: var(--purple-500);
-  text-decoration: none;
-  color: white;
+  padding-top: 0px;
+  padding-bottom: 0px;
   font-family: Copperplate, 'Raleway', sans-serif;
   font-weight: 500;
   font-size: 30pt;
 }
 .homeLink:hover {
   color: var(--yellow-300);
+  background-color: var(--purple-500);
 }
 .homeLink:active {
   color: var(--yellow-500);
+  background-color: var(--purple-500);
 }
 
 .right {
@@ -76,26 +77,6 @@ export default {
 
 .rightItem {
   margin-right: 10px;
-}
-
-.linkButton {
-  border-radius: 2px;
-  text-decoration: none;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-  background-color: var(--purple-500);
-  color: white;
-  font-weight: 500;
-}
-.linkButton:hover,
-.dropDownLink:hover {
-  background-color: var(--purple-600);
-}
-.linkButton:active,
-.dropDownLink:active {
-  background-color: var(--purple-700);
 }
 
 .dropDownLink {
