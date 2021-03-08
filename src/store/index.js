@@ -158,17 +158,6 @@ const actions = {
         commit('randomNamesIsDisabled')
       }
     })
-  },
-
-  // ------------------------- NON-API ACTIONS ------------------------- //
-
-  // This get pops the last name off the list
-  getRandomName: ({ commit, state }) => {
-    if (state.randomNames.length > 0) {
-      const name = state.randomNames[0]
-      commit('shiftRandomNames')
-      return name
-    }
   }
 }
 

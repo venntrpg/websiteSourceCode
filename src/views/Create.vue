@@ -17,7 +17,7 @@
           </div>
           <div class="alignRow nameRow">
             <input type="text" name="charName" placeholder="Bilbo Baggins" class="input nameInput" v-model="character.name">
-            <button v-on:click="randomNameButton" class="btn roundedButton randomNameButton" :disabled="randomNamesDisabled">
+            <button v-on:click="randomNameButton()" class="btn roundedButton randomNameButton" :disabled="randomNamesDisabled">
               <div class="randomNameButtonContents">
                 <RefreshSVG class="matchText" /> Random name
               </div>
@@ -137,7 +137,8 @@ export default {
       }
       if (this.randomNames.length > 0) {
         // pop item off front of array
-        this.character.name = this.$store.dispatch('getRandomName')
+        this.character.name = this.randomNames[0]
+        this.$store.commit('shiftRandomNames')
       }
     }
   }
