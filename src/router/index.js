@@ -36,7 +36,7 @@ const routes = [
     // this generates a separate chunk (character.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "Character" */ '../views/Character.vue')
+      import(/* webpackChunkName: "character" */ '../views/Character.vue')
   },
   {
     path: '/create',
@@ -54,7 +54,7 @@ const routes = [
     // this generates a separate chunk (style.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "CharacterCreation" */ '../views/Style.vue')
+      import(/* webpackChunkName: "style" */ '../views/Style.vue')
   },
   { path: '*', component: NotFoundComponent }
 ]

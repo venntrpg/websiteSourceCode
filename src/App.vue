@@ -32,7 +32,7 @@ export default {
 
 /* 300 is light, 400 is standard, 700 is bold */
 /* Might want to pull in `family=Red+Rose:wght@500` as backup for Copperplate */
-@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap');
 
 /* STYLES */
 
@@ -81,10 +81,13 @@ h1 {
 }
 
 .link {
-  color: var(--yellow-500);
+  color: black;
 }
 .link:hover {
-  color: var(--yellow-600);
+  color: var(--red-500);
+}
+.link:active {
+  color: var(--red-700);
 }
 
 .page {
@@ -113,6 +116,20 @@ h1 {
 
 /* General Styles */
 
+.btn {
+  border-style: hidden;
+  font-family: 'Raleway', sans-serif;
+  display: flex;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: inherit;
+  padding: 0px;
+  box-sizing: inherit;
+}
+.btn:disabled {
+  cursor: default;
+}
+
 .roundedButton {
   background-color: var(--red-500);
   border-radius: 20px;
@@ -120,6 +137,8 @@ h1 {
   padding-bottom: 2px;
   padding-left: 10px;
   padding-right: 10px;
+  font-weight: 500;
+  font-size: 18pt;
   color: white;
   justify-content: center;
 }
@@ -131,19 +150,6 @@ h1 {
 }
 .roundedButton:active:not(:disabled) {
   background-color: var(--red-700);
-}
-
-.btn {
-  font-weight: 500;
-  border-style: hidden;
-  font-family: 'Raleway', sans-serif;
-  display: flex;
-  cursor: pointer;
-  font-size: 18pt;
-  text-decoration: none;
-}
-.btn:disabled {
-  cursor: default;
 }
 
 .input {
@@ -185,6 +191,7 @@ h1 {
   background-color: var(--purple-500);
   color: white;
   font-weight: 500;
+  font-size: 18pt;
 }
 .navButton:hover {
   background-color: var(--purple-600);
@@ -217,7 +224,7 @@ h1 {
 }
 
 /* This isn't working - stuck with blue highlights for now I guess */
-.noSelect {
-  -webkit-tap-highlight-color: transparent;
+.noSelect:focus {
+  outline:0;
 }
 </style>
