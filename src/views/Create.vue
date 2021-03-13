@@ -167,7 +167,7 @@ export default {
     this.creationFlow = localStorage.getItem('creation-flow')
     if (this.creationFlow === NEW_CREATION_FLOW) {
       const rawChar = localStorage.getItem('creation-create-wip')
-      if (rawChar !== undefined) {
+      if (rawChar) {
         try {
           const char = JSON.parse(rawChar)
           // TODO: Might want to do this row by row to ensure we don't get values imported incorrectly
