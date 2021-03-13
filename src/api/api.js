@@ -172,9 +172,13 @@ const getRandomNames = () => {
     })
     .then(response => {
       if (response.data.contents) {
-        const ret = JSON.parse(response.data.contents)
-        if (ret && ret.length > 0) {
-          return ret
+        try {
+          const ret = JSON.parse(response.data.contents)
+          if (ret && ret.length > 0) {
+            return ret
+          }
+        } catch (e) {
+          return response.data
         }
       }
       return response.data
