@@ -180,6 +180,13 @@ h1 {
   border: solid 1px var(--yellow-600);
 }
 
+.card {
+  display: flex;
+  background-color: white;
+  border: 1px solid var(--gray-400);
+  border-radius: 10px;
+}
+
 /* Nav Styles - useful for subnav styles */
 
 .navButton {

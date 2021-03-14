@@ -42,8 +42,8 @@
           <div class="alignRow nameRow">
             <input type="text" name="charName" placeholder="Bilbo Baggins" class="input nameInput" v-model="create.name">
             <button v-on:click="randomNameButton()" class="btn roundedButton randomNameButton" :disabled="randomNamesDisabled">
-              <div class="randomNameButtonContents">
-                <RefreshSVG class="matchText" /> Random name
+              <div class="btnContents">
+                <RefreshSVG class="matchText" />Random name
               </div>
             </button>
           </div>
@@ -51,27 +51,9 @@
           <h2>Step 2: Choose a Gift</h2>
           <div>
             <i>Most legends are born gifted in some way. Mozart was gifted in music, Achilles was gifted in combat, and Merlin was gifted in magic.
-              There are nine gifts available to choose from as a hero of Amnis, each one providing unique boons to your character.</i>
+            There are nine gifts available to choose from as a hero of Amnis, each one providing unique boons to your character.</i>
           </div>
-          <!-- TODO: add a dropdown here to hide / show this section of cards to make viewing the page a bit easier -->
-          <div class="giftCardGroup">
-            <button
-            v-for="(gift, giftCode) in giftCopy"
-            v-bind:key="giftCode"
-            v-on:click="giftButton(giftCode)"
-            class="btn noSelect giftCard"
-            v-bind:class="getGiftSelectedClass(giftCode)">
-              <h3 v-html="gift.title">
-              </h3>
-              <div class="horizontalLine"></div>
-              <div class="textMargin">
-                <i v-html="gift.flavor"></i>
-                <ul>
-                  <li v-for="benefit in gift.benefits" v-bind:key="benefit" v-html="benefit"></li>
-                </ul>
-              </div>
-            </button>
-          </div>
+          <CreatePageGiftSelection :gift="create.gift" @giftUpdated="giftUpdated" />
           <!--  --------------------- STEP 3 --------------------- -->
           <h2>Step 3: Create your backstory</h2>
           Do this somewhere else for now. Also make Tides, Grates, and Quests
@@ -97,6 +79,7 @@
 
 <script>
 import RefreshSVG from '../components/Common/RefreshSVG.vue'
+import CreatePageGiftSelection from '../components/CreatePage/CreatePageGiftSelection.vue'
 import { ResponsiveDirective } from 'vue-responsive-components'
 import { mapState } from 'vuex'
 
@@ -105,9 +88,10 @@ const NEW_CREATION_FLOW = 'new'
 const IMPORT_CREATION_FLOW = 'import'
 
 export default {
-  name: 'CharacterCreation',
+  name: 'Create',
   components: {
-    RefreshSVG
+    RefreshSVG,
+    CreatePageGiftSelection
   },
   directives: {
     responsive: ResponsiveDirective
@@ -224,114 +208,23 @@ export default {
       return 3 + this.calculateAttribute('agi')
     },
     getGiftName () {
-      const gift = this.giftCopy[this.create.gift]
-      if (gift && gift.shortTitle) {
-        return gift.shortTitle
+      const nameMap = {
+        per: 'Alertness',
+        tek: 'Craft',
+        agi: 'Alacrity',
+        dex: 'Finesse',
+        int: 'Mind',
+        spi: 'Magic',
+        str: 'Rage',
+        wis: 'Science',
+        cha: 'Charm',
+        none: 'None'
+      }
+      const name = nameMap[this.create.gift]
+      if (name) {
+        return name
       }
       return ''
-    },
-    giftCopy () {
-      return {
-        per: {
-          title: 'Alertness, The Gift of Perception',
-          shortTitle: 'Alertness',
-          flavor: 'Your senses are razor sharp. If a tree falls and no one is around to hear it, you do.',
-          benefits: [
-            'This gift greatly benefits hunters, spies, and inquisitors.',
-            this.getGiftedPathLinkSentence('Path of the Gifted Scout')
-          ]
-        },
-        tek: {
-          title: 'Craft, The Gift of Technology',
-          shortTitle: 'Craft',
-          flavor: 'You discover. You take apart and rebuild. You have a natural curiosity for how things work and a knack for making them do so.',
-          benefits: [
-            'This gift greatly benefits mechanics, craftsmen, and tinkers.',
-            this.getGiftedPathLinkSentence('Path of the Gifted Craftsman')
-          ]
-        },
-        agi: {
-          title: 'Alacrity, the Gift of Agility',
-          shortTitle: 'Agility',
-          flavor: `You can appear and disappear in the blink of an eye.
-          Every surface, be they walls or even ceilings, is yours to traverse, as easily as others would walk across the street.
-          You have almost as much maneuverability in midair as you do upon the ground, and you could barely lose a race even if you tried.`,
-          benefits: [
-            'This gift greatly benefits duelists, rogues, and gunslingers.',
-            this.getGiftedPathLinkSentence('Path of the Gifted Ninja')
-          ]
-        },
-        dex: {
-          title: 'Finesse, The Gift of Dexterity',
-          shortTitle: 'Finesse',
-          flavor: `Graceful as a cat, swift as the wind, you have mastered fine motor control.
-          For good or evil, you can hide, dodge, maneuver, and strike with blade or bullet when your enemy least expects with startling precision.`,
-          benefits: [
-            'This gift greatly benefits duelists, rogues, and gunslingers.',
-            this.getGiftedPathLinkSentence('Path of the Gifted Duelist')
-          ]
-        },
-        int: {
-          title: 'Mind, The Gift of Intelligence',
-          shortTitle: 'Mind',
-          flavor: `You are a lifelong learner. Some call you a scholar, others call you a know-it-all.
-          Either way, you have a photographic memory for textbooks and a natural talent for learning new disciplines.`,
-          benefits: [
-            'This gift greatly benefits polymaths, tacticians, and dilettantes.',
-            this.getGiftedPathLinkSentence('Path of the Gifted Loremaster')
-          ]
-        },
-        spi: {
-          title: 'Magic, The Gift of Spirit',
-          shortTitle: 'Magic',
-          flavor: `You are one of the few who possess an intuitive knack for the arcane.
-          In short, the spells you are able to cast and the strength with which you cast is immensely improved.`,
-          benefits: [
-            'This gift greatly benefits mages, priests, and arcane scholars.',
-            this.getGiftedPathLinkSentence('Path of the Gifted Magician')
-          ]
-        },
-        str: {
-          title: 'Rage, The Gift of Strength',
-          shortTitle: 'Rage',
-          flavor: 'Brutality is in your blood. The only skill you don\'t possess is weakness. Everything else you have already taken by force.',
-          benefits: [
-            'This gift greatly benefits berserkers, bruisers, and fighters.',
-            this.getGiftedPathLinkSentence('Path of the Gifted Fighter')
-          ]
-        },
-        wis: {
-          title: 'Science, The Gift of Wisdom',
-          shortTitle: 'Science',
-          flavor: 'You have an aptitude for insight. No matter what you study, you pursue it with rigor and find its purpose as another tool in your arsenal.',
-          benefits: [
-            'This gift greatly benefits alchemists, scholars, and improvisers.',
-            this.getGiftedPathLinkSentence('Path of the Gifted Researcher')
-          ]
-        },
-        cha: {
-          title: 'Charm, The Gift of Charisma',
-          shortTitle: 'Charm',
-          flavor: `You have an indomitable soul, granting courage and hope to those around you.
-          Your heroism is unmatched in and out of battle.
-          At the same time, people cannot help but be drawn to you, and believe every word that leaves your lips...even where doubt may be prudent.`,
-          benefits: [
-            'This gift greatly benefits leaders, diplomats, and bards.',
-            this.getGiftedPathLinkSentence('Path of the Gifted Heart')
-          ]
-        },
-        none: {
-          title: 'Normality, the Lack of Gift',
-          shortTitle: 'None',
-          flavor: `You are not a special snowflake, and that’s exactly what makes you powerful.
-          Nothing comes easy to you, but you put hard labor into everything you do.
-          You weren’t born gifted, but you’re determined to prove that you don’t need to be gifted to be heroic.`,
-          benefits: [
-            'This choice is for generalists and hardcore players.',
-            this.getGiftedPathLinkSentence('Path of the Unchosen One')
-          ]
-        }
-      }
     }
   },
   methods: {
@@ -360,13 +253,7 @@ export default {
         this.$store.commit('shiftRandomNames')
       }
     },
-    getGiftSelectedClass (gift) {
-      if (this.create.gift === gift) {
-        return 'selected'
-      }
-      return ''
-    },
-    giftButton (newGift) {
+    giftUpdated (newGift) {
       this.create.gift = newGift
       this.backupCreate()
     },
@@ -416,10 +303,6 @@ export default {
     },
     backupCreate () {
       localStorage.setItem('creation-create-wip', JSON.stringify(this.create))
-    },
-    getGiftedPathLinkSentence (name) {
-      const linkName = name.replace(' ', '_')
-      return `Having this gift partially unlocks the <a href="https://vennt.fandom.com/wiki/${linkName}" target="_blank" class="link">${name}</a>.`
     }
   }
 }
@@ -458,8 +341,7 @@ export default {
 
 /* PAGE STYLING */
 
-h1,
-h3 {
+h1 {
   text-align: center;
 }
 
@@ -474,51 +356,13 @@ h3 {
   align-items: center;
 }
 
-.randomNameButtonContents {
+.btnContents {
   display: flex;
   align-items: center;
 }
 
 .matchText {
   fill: white;
-}
-
-.giftCardGroup {
-  margin-top: 4px;
-  margin-right: -4px;
-  margin-left: -4px;
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.giftCard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: white;
-  border: 1px solid var(--gray-400);
-  border-radius: 10px;
-  margin: 4px;
-  width: calc(33% - 8px);
-}
-.giftCard:hover {
-  background-color: var(--gray-100);
-  border: 1px solid var(--yellow-300);
-}
-.giftCard.selected {
-  background-color: var(--gray-100);
-  border: 1px solid var(--red-600);
-}
-
-.horizontalLine {
-  height: 1px;
-  width: 100%;
-  background-color: var(--gray-400);
-}
-
-.textMargin {
-  margin: 16px;
-  text-align: left;
 }
 
 /* subNav and sideBar Styles */
@@ -561,21 +405,15 @@ h3 {
 }
 
 /* mobile styles */
-.main.bp1000 .giftCard {
-  width: calc(49% - 8px);
-}
 .main.bp600 .nameRow {
-    display: block;
-  }
+  display: block;
+}
 .main.bp600 .nameInput {
-    margin-right: 0px;
-    max-width: 100%;
-  }
+  margin-right: 0px;
+  max-width: 100%;
+}
 .main.bp600 .randomNameButton {
-    margin-top: 8px;
-    width: calc(100% - 20px);
-  }
-.main.bp600 .giftCard {
-    width: calc(100% - 8px);
-  }
+  margin-top: 8px;
+  width: calc(100% - 20px);
+}
 </style>
