@@ -31,14 +31,10 @@
       <div class="largePageWidth main" v-responsive="breakpoints">
         <h1>CHARACTER CREATION</h1>
         <div v-if="isNewCharacter">
-          <!--  --------------------- STEP 1 --------------------- -->
           <h2>Step 1: Choose a name</h2>
-          <div>
-            This follows the guide on the <a href="https://vennt.fandom.com/wiki/Character_Creation" target="_blank" class="link">character creation wiki page</a>.
-          </div>
-          <div>
-            Choose a name for your character. You can always come back to this step later. Or, press the button to generate a random name for now.
-          </div>
+          This follows the guide on the <a href="https://vennt.fandom.com/wiki/Character_Creation" target="_blank" class="link">character creation wiki page</a>.
+          <br>
+          Choose a name for your character. You can always come back to this step later. Or, press the button to generate a random name for now.
           <div class="alignRow nameRow">
             <input type="text" name="charName" placeholder="Bilbo Baggins" class="input nameInput" v-model="create.name">
             <button v-on:click="randomNameButton()" class="btn roundedButton randomNameButton" :disabled="randomNamesDisabled">
@@ -47,22 +43,66 @@
               </div>
             </button>
           </div>
-          <!--  --------------------- STEP 2 --------------------- -->
-          <h2>Step 2: Choose a Gift</h2>
+          <h2>Step 2: Create your backstory</h2>
+          For now, this process must be completed in a seperate document.
+          Follow <a href="https://vennt.fandom.com/wiki/Backstory" target="_blank" class="link">this wiki page</a> for help with coming up a character concept
+          and describing your backstory.
+          <h2>Step 3: Develop your Flux</h2>
+          TODO: integreate this better into the site.
+          <br>
+          Once you have developed your backstory, your <a href="https://vennt.fandom.com/wiki/Flux" target="_blank" class="link">Flux</a> represents who you are right now:
+          your personality, your ambitions, and so on.
+          <ol>
+            <li>Create 1-3 <a href="https://vennt.fandom.com/wiki/Tides" target="_blank" class="link">Tides</a></li>
+            <li>Create 1-3 <a href="https://vennt.fandom.com/wiki/Grates" target="_blank" class="link">Grates</a></li>
+            <li>Create 1-3 <a href="https://vennt.fandom.com/wiki/Quests" target="_blank" class="link">Quests</a></li>
+          </ol>
+          <h2>Step 4: Choose a Gift</h2>
           <div>
             <i>Most legends are born gifted in some way. Mozart was gifted in music, Achilles was gifted in combat, and Merlin was gifted in magic.
             There are nine gifts available to choose from as a hero of Amnis, each one providing unique boons to your character.</i>
           </div>
-          <CreatePageGiftSelection :gift="create.gift" @giftUpdated="giftUpdated" />
-          <!--  --------------------- STEP 3 --------------------- -->
-          <h2>Step 3: Create your backstory</h2>
-          Do this somewhere else for now. Also make Tides, Grates, and Quests
-          <!--  --------------------- STEP 4 --------------------- -->
-          <h2>Step 4: Attribute scores</h2>
-          <!--  --------------------- STEP 5 --------------------- -->
-          <h2>Step 5: Beginner's equipment</h2>
-          <!--  --------------------- STEP 6 --------------------- -->
-          <h2>Step 6: Abilities and XP</h2>
+          <GiftSelection :gift="create.gift" @giftUpdated="giftUpdated" />
+          <h2>Step 5: Attribute scores</h2>
+          In this step, you select your base attributes.
+          <br>
+          Select three attributes you used most as a child.
+          If this would cause any of your Attributes to go over 3, pick the second-most relevant Attribute, and increase that by one instead.
+          <AttributeSelection
+          :attributes="validAttributes"
+          :selected="create.childAttrs"
+          :maxChoices="3"
+          @selectedUpdated="childAttrsUpdated" />
+          Select three attributes you used most in the last six years.
+          If this would cause any of your Attributes to go over 3, pick the second-most relevant Attribute, and increase that by one instead.
+          <AttributeSelection
+          :attributes="validAttributes"
+          :selected="create.adultAttrs"
+          :maxChoices="3"
+          :disabledChoices="blockAdultAttrsChoices"
+          @selectedUpdated="adultAttrsUpdated" />
+          Select one attribute that is currently at 0.
+          If you have no Attributes at 0, skip this step.
+          You may pick any Attribute from amongst those at 0, but if your character is...
+          <ul>
+            <li>Inattentive... ...You might want to pick PER.</li>
+            <li>A luddite... ...You might want to pick TEK.</li>
+            <li>Clumsy... ...You might want to pick DEX.</li>
+            <li>Ignorant... ...You might want to pick INT.</li>
+            <li>Impatient... ...You might want to pick WIS.</li>
+            <li>Sluggish... ...You might want to pick AGI.</li>
+            <li>Apathetic... ...You might want to pick SPI.</li>
+            <li>Weak... ...You might want to pick STR.</li>
+            <li>Repulsive... ...You might want to pick CHA.</li>
+          </ul>
+          <AttributeSelection
+          :attributes="validAttributes"
+          :selected="create.badAttrs"
+          :maxChoices="1"
+          :disabledChoices="blockBadAttrsChoices"
+          @selectedUpdated="badAttrsUpdated" />
+          <h2>Step 6: Beginner's equipment</h2>
+          <h2>Step 7: Abilities and XP</h2>
         </div>
         <div v-else-if="isImportCharacter">
           Import character creation flow
@@ -79,7 +119,8 @@
 
 <script>
 import RefreshSVG from '../components/Common/RefreshSVG.vue'
-import CreatePageGiftSelection from '../components/CreatePage/CreatePageGiftSelection.vue'
+import AttributeSelection from '../components/CreatePage/AttributeSelection.vue'
+import GiftSelection from '../components/CreatePage/GiftSelection.vue'
 import { ResponsiveDirective } from 'vue-responsive-components'
 import { mapState } from 'vuex'
 
@@ -91,7 +132,8 @@ export default {
   name: 'Create',
   components: {
     RefreshSVG,
-    CreatePageGiftSelection
+    AttributeSelection,
+    GiftSelection
   },
   directives: {
     responsive: ResponsiveDirective
@@ -101,7 +143,7 @@ export default {
       showingStats: false,
       creationFlow: '',
       breakpoints: {
-        bp1000: el => el.width < 1000,
+        bp900: el => el.width < 900,
         bp600: el => el.width < 600
       },
       create: {
@@ -109,7 +151,7 @@ export default {
         gift: '',
         childAttrs: [],
         adultAttrs: [],
-        badAttr: '',
+        badAttrs: [],
         sideItem: '',
         outfit: '',
         experienced: false,
@@ -225,6 +267,28 @@ export default {
         return name
       }
       return ''
+    },
+    // TODO: Maybe block all choices until there have been 3 child attribute choices?
+    blockAdultAttrsChoices () {
+      // Block any attributes with a sum > 3
+      return this.validAttributes.filter(attr => this.create.gift === attr && this.create.childAttrs.includes(attr))
+    },
+    // TODO: Maybe block all choices until there have been 3 child attribute & 3 adult attribute choices?
+    blockBadAttrsChoices () {
+      // Block any attributes with a sum != 0
+      return this.validAttributes.filter(attr => {
+        let sum = 0
+        if (this.create.gift === attr) {
+          sum += 2
+        }
+        if (this.create.childAttrs.includes(attr)) {
+          sum += 1
+        }
+        if (this.create.adultAttrs.includes(attr)) {
+          sum += 1
+        }
+        return sum !== 0
+      })
     }
   },
   methods: {
@@ -257,6 +321,18 @@ export default {
       this.create.gift = newGift
       this.backupCreate()
     },
+    childAttrsUpdated (newList) {
+      this.create.childAttrs = newList
+      this.backupCreate()
+    },
+    adultAttrsUpdated (newList) {
+      this.create.adultAttrs = newList
+      this.backupCreate()
+    },
+    badAttrsUpdated (newList) {
+      this.create.badAttrs = newList
+      this.backupCreate()
+    },
     isValidAttribute (attr) {
       return this.validAttributes.includes(attr)
     },
@@ -276,7 +352,7 @@ export default {
       if (this.create.adultAttrs.includes(attr)) {
         sum += 1
       }
-      if (this.create.badAttr === attr) {
+      if (this.create.badAttrs.includes(attr)) {
         sum -= 1
       }
       // add attribute according to side item

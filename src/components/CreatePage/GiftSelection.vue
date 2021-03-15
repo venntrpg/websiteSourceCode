@@ -50,20 +50,25 @@ import UpArrowSVG from '../Common/UpArrowSVG.vue'
 import DownArrowSVG from '../Common/DownArrowSVG.vue'
 
 export default {
-  name: 'CreatePageGiftSelection',
-  props: ['gift'],
+  name: 'GiftSelection',
+  props: {
+    gift: String
+  },
   components: {
     UpArrowSVG,
     DownArrowSVG
   },
   data () {
     return {
-      showGiftList: true
+      showFullList: false
     }
   },
   computed: {
     dropDownDisabled () {
       return this.giftCopy[this.gift] === undefined
+    },
+    showGiftList () {
+      return this.showFullList || this.dropDownDisabled
     },
     giftCopy () {
       return {
@@ -174,7 +179,7 @@ export default {
       this.$emit('giftUpdated', gift)
     },
     toggleDropDown () {
-      this.showGiftList = !this.showGiftList
+      this.showFullList = !this.showFullList
     }
   }
 }
@@ -221,15 +226,14 @@ h3 {
   margin-right: -4px;
   margin-left: -4px;
   margin-top: 2px;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 33% [col-start]);
 }
 
 .giftCard {
   flex-direction: column;
   align-items: center;
   margin: 4px;
-  width: calc(33% - 8px);
   flex-grow: 1;
 }
 .giftCard:hover {
@@ -244,7 +248,7 @@ h3 {
 .singleCard {
   flex-direction: column;
   align-items: center;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .horizontalLine {
@@ -260,10 +264,10 @@ h3 {
 }
 
 /* mobile styles */
-.main.bp1000 .giftCard {
-  width: calc(49% - 8px);
+.main.bp900 .giftCardGroup {
+  grid-template-columns: repeat(2, 50% [col-start]);
 }
-.main.bp600 .giftCard {
-  width: calc(100% - 8px);
+.main.bp600 .giftCardGroup {
+  grid-template-columns: repeat(1, 100% [col-start]);
 }
 </style>
