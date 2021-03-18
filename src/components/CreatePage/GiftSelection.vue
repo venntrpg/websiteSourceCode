@@ -1,9 +1,9 @@
 <template>
   <div>
     <div v-if="showGiftList">
-      <button v-on:click="toggleDropDown()" :disabled="dropDownDisabled" class="btn dropDownBtn noSelect">
-        <div class="btnContents dropDownBtnContents">
-          Hide Unselected Gifts<UpArrowSVG class="dropDownBtnSVG" />
+      <button v-on:click="toggleDropDown()" :disabled="dropDownDisabled" class="btn basicBtn noSelect">
+        <div class="basicBtnContents">
+          Hide Unselected Gifts<UpArrowSVG class="basicBtnSVG" />
         </div>
       </button>
       <div class="giftCardGroup">
@@ -25,9 +25,9 @@
       </div>
     </div>
     <div v-else>
-      <button v-on:click="toggleDropDown()" class="btn dropDownBtn noSelect">
-        <div class="btnContents dropDownBtnContents">
-          Show All Gifts <DownArrowSVG class="dropDownBtnSVG" />
+      <button v-on:click="toggleDropDown()" class="btn basicBtn noSelect">
+        <div class="basicBtnContents">
+          Show All Gifts <DownArrowSVG class="basicBtnSVG" />
         </div>
       </button>
       <div class="card singleCard">
@@ -191,35 +191,10 @@ h3 {
   text-align: center;
 }
 
-.btnContents {
-  display: flex;
-  align-items: center;
-}
-
-.dropDownBtn {
+.basicBtn {
   width: 100%;
   margin-top: 4px;
   justify-content: flex-end;
-  background-color: transparent;
-  border-radius: 10px;
-}
-.dropDownBtn:disabled {
-  fill: var(--gray-500);
-  color: var(--gray-500);
-}
-.dropDownBtn:hover:not(:disabled) {
-  background-color: var(--gray-300);
-}
-.dropDownBtn:active:not(:disabled) {
-  background-color: var(--gray-400);
-}
-.dropDownBtnContents {
-  margin: 8px;
-  font-size: 14pt;
-}
-.dropDownBtnSVG {
-  width: 30px;
-  height: 30px;
 }
 
 .giftCardGroup {

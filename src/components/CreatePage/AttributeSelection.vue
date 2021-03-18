@@ -5,11 +5,11 @@
     v-bind:key="attr"
     v-on:click="selectionButton(attr)"
     :disabled="buttonDisabled(attr)"
-    class="btn noSelect attributeBtn">
-      <div class="btnContents">
-        <CheckedRadioButton v-if="isSelected(attr)" />
-        <UncheckedRadioButton v-else />
-        <div v-html="attr.toUpperCase()" class="attributeBtnContents"></div>
+    class="btn noSelect basicBtn">
+      <div class="basicBtnContents">
+        <CheckedRadioButton v-if="isSelected(attr)" class="basicBtnSVG" />
+        <UncheckedRadioButton v-else class="basicBtnSVG" />
+        <div v-html="attr.toUpperCase()" class="basicBtnContents"></div>
       </div>
     </button>
   </div>
@@ -66,32 +66,8 @@ export default {
   grid-template-columns: repeat(3, 33% [col-start]);
 }
 
-.attributeBtn {
-  background-color: transparent;
-  border-radius: 10px;
-}
-.attributeBtn:disabled {
-  fill: var(--gray-500);
-  color: var(--gray-500);
-}
-.attributeBtn:hover:not(:disabled) {
-  background-color: var(--gray-300);
-}
-.attributeBtn:active:not(:disabled) {
-  background-color: var(--gray-400);
-}
-.attributeBtnContents {
-  margin: 8px;
-  font-size: 14pt;
-}
-.attributeBtnSVG {
-  width: 30px;
-  height: 30px;
-}
-
-.btnContents {
+.basicBtnContents {
   margin-left: 8px;
-  display: flex;
-  align-items: center;
+  margin: 4px;
 }
 </style>

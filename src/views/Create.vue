@@ -26,7 +26,7 @@
         <div v-html="attr.toUpperCase()"></div>: <div v-html="calculateAttribute(attr)"></div>
       </div>
     </div>
-    <!--  --------------------- START OF NORMAL CHARACTER CREATION FLOW --------------------- -->
+    <!--  --------------------- START OF CHARACTER CREATION FLOW --------------------- -->
     <div class="page sideBarPage" v-bind:class="[getHiddenSidebarClass, getMobileSidebarClass]">
       <div class="largePageWidth main" v-responsive="breakpoints">
         <h1>CHARACTER CREATION</h1>
@@ -72,7 +72,9 @@
           :attributes="validAttributes"
           :selected="create.childAttrs"
           :maxChoices="3"
-          @selectedUpdated="childAttrsUpdated" />
+          :disabledChoices="blockChildAttrsChoices"
+          @selectedUpdated="childAttrsUpdated"
+          class="bottomMargin" />
           Select three attributes you used most in the last six years.
           If this would cause any of your Attributes to go over 3, pick the second-most relevant Attribute, and increase that by one instead.
           <AttributeSelection
@@ -80,7 +82,8 @@
           :selected="create.adultAttrs"
           :maxChoices="3"
           :disabledChoices="blockAdultAttrsChoices"
-          @selectedUpdated="adultAttrsUpdated" />
+          @selectedUpdated="adultAttrsUpdated"
+          class="bottomMargin" />
           Select one attribute that is currently at 0.
           If you have no Attributes at 0, skip this step.
           You may pick any Attribute from amongst those at 0, but if your character is...
@@ -102,8 +105,54 @@
           :disabledChoices="blockBadAttrsChoices"
           @selectedUpdated="badAttrsUpdated" />
           <h2>Step 6: Beginner's equipment</h2>
-          <h2>Step 7: Abilities and XP</h2>
+          This section helps you figure out what equipment you have on you.
+          <br>
+          1. What do you keep at your side?
+          <RadioButtonSelection
+          :options="getSideEquipmentOptions"
+          :selected="create.sideItem"
+          @selectedUpdated="sideItemUpdated"
+          class="bottomMargin" />
+          2. Describe your outfit.
+          <br>
+          This is your starting Item Container. If you buy another item container, it replaces this one.
+          <RadioButtonSelection
+          :options="getOutfitOptions"
+          :selected="create.outfit"
+          @selectedUpdated="outfitUpdated"
+          class="bottomMargin" />
+          3. What did you bring with you?
+          Note: Actually adding these items to your inventory hasn't been implemented yet here, you will need to add them manually on the Character page
+          <RadioButtonSelection
+          :options="getItemSetOptions"
+          :selected="create.itemSet"
+          @selectedUpdated="itemSetUpdated" />
+          <h2>Step 7: XP and Abilities</h2>
+          Are you new to adventuring?
+          <RadioButtonSelection
+          :options="getInexperiencedOptions"
+          :selected="getInexperiencedOption"
+          @selectedUpdated="experienceUpdated"
+          class="bottomMargin" />
+          For now, you need to go to the Character page to select abilities.
+          Hopefully functionality for adding abilities and initial items will be added here in the future!
+          <h2>Step 8: Finish the character</h2>
+          Click the "Create Character" button to officially create the character.
+          Click the "Clear Character" button to delete this character and start again.
+          <div class="bottomButtons">
+            <button v-on:click="createCharacterButton" class="btn roundedButton">
+              <div class="btnContents">
+                Create Character
+              </div>
+            </button>
+            <button class="btn basicBtn">
+              <div class="basicBtnContents">
+                Clear Character
+              </div>
+            </button>
+          </div>
         </div>
+        <!--  --------------------- START OF CHARACTER IMPORT FLOW --------------------- -->
         <div v-else-if="isImportCharacter">
           Import character creation flow
         </div>
@@ -121,6 +170,7 @@
 import RefreshSVG from '../components/Common/RefreshSVG.vue'
 import AttributeSelection from '../components/CreatePage/AttributeSelection.vue'
 import GiftSelection from '../components/CreatePage/GiftSelection.vue'
+import RadioButtonSelection from '../components/CreatePage/RadioButtonSelection.vue'
 import { ResponsiveDirective } from 'vue-responsive-components'
 import { mapState } from 'vuex'
 
@@ -133,7 +183,8 @@ export default {
   components: {
     RefreshSVG,
     AttributeSelection,
-    GiftSelection
+    GiftSelection,
+    RadioButtonSelection
   },
   directives: {
     responsive: ResponsiveDirective
@@ -154,8 +205,8 @@ export default {
         badAttrs: [],
         sideItem: '',
         outfit: '',
-        experienced: false,
-        itemSet: ''
+        itemSet: '',
+        inexperienced: true
       },
       // NOT USING ANY STATS BELOW HERE ANYMORE:
       character: {
@@ -234,7 +285,7 @@ export default {
     },
     // formulas come from https://vennt.fandom.com/wiki/Character_Creation
     calculateHP () {
-      const levelHP = this.create.experienced ? 2 : 1
+      const levelHP = this.create.inexperienced ? 1 : 2
       return 20 + levelHP + this.calculateAttribute('str') * 3
     },
     calculateMP () {
@@ -248,6 +299,24 @@ export default {
     },
     calculateSpeed () {
       return 3 + this.calculateAttribute('agi')
+    },
+    calculateXP () {
+      let sum = 0
+      sum += this.create.inexperienced ? 1000 : 2500
+      if (this.create.sideItem === 'read') {
+        sum += 75
+      }
+      return sum
+    },
+    calculateSP () {
+      let sum = 0
+      if (['useful', 'eat'].includes(this.create.sideItem)) {
+        sum += 30
+      }
+      if (this.create.outfit === 'fashionable') {
+        sum += 100
+      }
+      return sum
     },
     getGiftName () {
       const nameMap = {
@@ -268,27 +337,51 @@ export default {
       }
       return ''
     },
-    // TODO: Maybe block all choices until there have been 3 child attribute choices?
-    blockAdultAttrsChoices () {
-      // Block any attributes with a sum > 3
-      return this.validAttributes.filter(attr => this.create.gift === attr && this.create.childAttrs.includes(attr))
+    blockChildAttrsChoices () {
+      return this.validAttributes.filter(attr => (this.create.gift === attr && this.create.adultAttrs.includes(attr)) || this.create.badAttrs.includes(attr))
     },
-    // TODO: Maybe block all choices until there have been 3 child attribute & 3 adult attribute choices?
+    blockAdultAttrsChoices () {
+      return this.validAttributes.filter(attr => (this.create.gift === attr && this.create.childAttrs.includes(attr)) || this.create.badAttrs.includes(attr))
+    },
     blockBadAttrsChoices () {
-      // Block any attributes with a sum != 0
-      return this.validAttributes.filter(attr => {
-        let sum = 0
-        if (this.create.gift === attr) {
-          sum += 2
-        }
-        if (this.create.childAttrs.includes(attr)) {
-          sum += 1
-        }
-        if (this.create.adultAttrs.includes(attr)) {
-          sum += 1
-        }
-        return sum !== 0
-      })
+      return this.validAttributes.filter(attr => this.create.gift === attr || this.create.childAttrs.includes(attr) || this.create.adultAttrs.includes(attr))
+    },
+    getSideEquipmentOptions () {
+      return {
+        painful: '<b>Something painful:</b> Gain +1 Strength. Add a Brutal weapon to your inventory',
+        sharp: '<b>Something sharp:</b> Gain +1 Dexterity. Add a Blade weapon to your inventory',
+        quick: '<b>Something quick:</b> Gain +1 Perception. Add a Sidearm weapon to your inventory',
+        useful: '<b>Something useful:</b> Gain +1 Wisdom and 30 sp to spend on Equipment.',
+        eat: '<b>Something to eat:</b> Gain +1 Strength and 30 sp to spend on Consumables.',
+        read: '<b>Something to read:</b> Gain +1 Intelligence and 75 XP.'
+      }
+    },
+    getOutfitOptions () {
+      return {
+        fashionable: '<b>Fashionable:</b> Gain +1 Charisma and 100sp. You have a carrying capacity of 5 Bulk.',
+        functional: '<b>Functional:</b> Gain +1 Agility. You have a carrying capacity of 15 Bulk.'
+      }
+    },
+    getItemSetOptions () {
+      return {
+        chef: '<b>Chef:</b> 3 Rations, 3 Tasty Waters, 1 Frying Pan, 1 Cooking Kit',
+        dungeoneer: '<b>Dungeoneer:</b> 1 Flare Rocket, 1 Lockpick set, 1 Flint and Steel, 1 Rope, 1 bag of Sounding Stones, 1 Lux Ward, 1 Lantern',
+        merchant: '<b>Merchant:</b> 1 Elixir of Energy, 1 Rope, 1 Writing Kit, 1 Lantern, 3 Coffee or Alcohol',
+        medic: '<b>Medic:</b> 3 Bandages, 2 Healing Salves, 1 Godfire, 1 Sour Blessing, 1 Elixir of Life',
+        scientist: '<b>Scientist:</b> 1 Lux Ward, 1 Elixir of Focus, 1 Compass, 1 Writing Kit, 1 Bullseye Lantern',
+        Traveler: '<b>Traveler:</b> 1 Bedroll, 1 Lux Ward, 1 Spyglass, 6 Rations'
+      }
+    },
+    getInexperiencedOption () {
+      return this.create.inexperienced ? 'yes' : 'no'
+    },
+    getInexperiencedOptions () {
+      return {
+        yes: `<b>Yes:</b> Gain 1000 XP. When you complete a Novice Path for the first time, gain 300 XP.
+        When you complete a Journeyman Path for the first time, gain 700 XP.
+        When you complete an Adept Path for the first time, gain 1000 XP.`,
+        no: '<b>No:</b> Gain 2500 XP.'
+      }
     }
   },
   methods: {
@@ -331,6 +424,22 @@ export default {
     },
     badAttrsUpdated (newList) {
       this.create.badAttrs = newList
+      this.backupCreate()
+    },
+    sideItemUpdated (newItem) {
+      this.create.sideItem = newItem
+      this.backupCreate()
+    },
+    outfitUpdated (newOutfit) {
+      this.create.outfit = newOutfit
+      this.backupCreate()
+    },
+    itemSetUpdated (newItemSet) {
+      this.create.itemSet = newItemSet
+      this.backupCreate()
+    },
+    experienceUpdated (inexperienced) {
+      this.create.inexperienced = (inexperienced === 'yes')
       this.backupCreate()
     },
     isValidAttribute (attr) {
@@ -379,6 +488,35 @@ export default {
     },
     backupCreate () {
       localStorage.setItem('creation-create-wip', JSON.stringify(this.create))
+    },
+    createCharacterButton () {
+      const character = {
+        name: this.create.name,
+        agi: this.calculateAttribute('agi'),
+        cha: this.calculateAttribute('cha'),
+        dex: this.calculateAttribute('dex'),
+        int: this.calculateAttribute('int'),
+        per: this.calculateAttribute('per'),
+        spi: this.calculateAttribute('spi'),
+        str: this.calculateAttribute('str'),
+        tek: this.calculateAttribute('tek'),
+        wis: this.calculateAttribute('wis'),
+        hp: this.calculateHP,
+        maxHp: this.calculateHP,
+        mp: this.calculateMP,
+        maxMp: this.calculateMP,
+        vim: this.calculateVim,
+        maxVim: this.calculateVim,
+        armour: 0,
+        hero: 3,
+        init: this.calculateInit,
+        speed: this.calculateSpeed,
+        xp: this.calculateXP,
+        sp: this.calculateSP
+      }
+      // for now, we are just logging this. In the future, this will get hooked back up to the api
+      console.log(character)
+      // need to send this, then once confirmed, send weapon if they selected one, then once cofirmed, we should redirect to the character page
     }
   }
 }
@@ -439,6 +577,17 @@ h1 {
 
 .matchText {
   fill: white;
+}
+
+.bottomMargin {
+  margin-bottom: 20px;
+}
+
+.bottomButtons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  margin-bottom: 150px;
 }
 
 /* subNav and sideBar Styles */

@@ -63,6 +63,8 @@ const createCharacter = (auth, character) => {
           WIS: character.wis,
           HP: character.hp,
           MAX_HP: character.maxHp,
+          MP: character.mp,
+          MAX_MP: character.maxMp,
           VIM: character.vim,
           MAX_VIM: character.maxVim,
           ARMOUR: character.armour,

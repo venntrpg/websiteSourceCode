@@ -152,6 +152,32 @@ h1 {
   background-color: var(--red-700);
 }
 
+.basicBtn {
+  background-color: transparent;
+  border-radius: 10px;
+}
+.basicBtn:disabled {
+  fill: var(--gray-500);
+  color: var(--gray-500);
+}
+.basicBtn:hover:not(:disabled) {
+  background-color: var(--gray-300);
+}
+.basicBtn:active:not(:disabled) {
+  background-color: var(--gray-400);
+}
+.basicBtnContents {
+  display: flex;
+  align-items: center;
+  margin: 8px;
+  font-size: 14pt;
+}
+.basicBtnSVG {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
 .input {
   resize: vertical;
   font-family: 'Raleway', sans-serif;
