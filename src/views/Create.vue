@@ -10,21 +10,7 @@
       <div class="displayName">
         <h2 v-html="create.name"></h2>
       </div>
-      <div class="alignRow">
-        Gift: <div v-html="getGiftName"></div>
-      </div>
-      <div class="alignRow">
-        HP: <div v-html="calculateHP"></div> / <div v-html="calculateHP"></div>
-      </div>
-      <div class="alignRow">
-        MP: <div v-html="calculateMP"></div> / <div v-html="calculateMP"></div>
-      </div>
-      <div class="alignRow">
-        Vim: <div v-html="calculateVim"></div> / <div v-html="calculateVim"></div>
-      </div>
-      <div v-for="attr in validAttributes" v-bind:key="attr" class="alignRow">
-        <div v-html="attr.toUpperCase()"></div>: <div v-html="calculateAttribute(attr)"></div>
-      </div>
+      <CombatStats :character="createCharacter" />
     </div>
     <!--  --------------------- START OF CHARACTER CREATION FLOW --------------------- -->
     <div class="page sideBarPage" v-bind:class="[getHiddenSidebarClass, getMobileSidebarClass]">
@@ -140,14 +126,19 @@
           Click the "Create Character" button to officially create the character.
           Click the "Clear Character" button to delete this character and start again.
           <div class="bottomButtons">
-            <button v-on:click="createCharacterButton" class="btn roundedButton">
+            <button v-on:click="createCharacterButton()" class="btn roundedButton">
               <div class="btnContents">
                 Create Character
               </div>
             </button>
-            <button class="btn basicBtn">
+            <button v-if="clearCreateShowing" v-on:click="clearCreateButton()" class="btn basicBtn">
               <div class="basicBtnContents">
                 Clear Character
+              </div>
+            </button>
+            <button v-else v-on:click="clearCreateCharacter()" class="btn basicBtn">
+              <div class="basicBtnContents">
+                Are you sure?
               </div>
             </button>
           </div>
@@ -169,6 +160,7 @@
 <script>
 import RefreshSVG from '../components/Common/RefreshSVG.vue'
 import AttributeSelection from '../components/CreatePage/AttributeSelection.vue'
+import CombatStats from '../components/CreatePage/CombatStats.vue'
 import GiftSelection from '../components/CreatePage/GiftSelection.vue'
 import RadioButtonSelection from '../components/CreatePage/RadioButtonSelection.vue'
 import { ResponsiveDirective } from 'vue-responsive-components'
@@ -183,6 +175,7 @@ export default {
   components: {
     RefreshSVG,
     AttributeSelection,
+    CombatStats,
     GiftSelection,
     RadioButtonSelection
   },
@@ -193,10 +186,12 @@ export default {
     return {
       showingStats: false,
       creationFlow: '',
+      clearCreateShowing: true,
       breakpoints: {
         bp900: el => el.width < 900,
         bp600: el => el.width < 600
       },
+      // Stats used for CREATE flow
       create: {
         name: '',
         gift: '',
@@ -208,7 +203,7 @@ export default {
         itemSet: '',
         inexperienced: true
       },
-      // NOT USING ANY STATS BELOW HERE ANYMORE:
+      // Stats used for IMPORT flow
       character: {
         name: '',
         gift: '',
@@ -317,6 +312,32 @@ export default {
         sum += 100
       }
       return sum
+    },
+    createCharacter () {
+      return {
+        name: this.create.name,
+        agi: this.calculateAttribute('agi'),
+        cha: this.calculateAttribute('cha'),
+        dex: this.calculateAttribute('dex'),
+        int: this.calculateAttribute('int'),
+        per: this.calculateAttribute('per'),
+        spi: this.calculateAttribute('spi'),
+        str: this.calculateAttribute('str'),
+        tek: this.calculateAttribute('tek'),
+        wis: this.calculateAttribute('wis'),
+        hp: this.calculateHP,
+        maxHp: this.calculateHP,
+        mp: this.calculateMP,
+        maxMp: this.calculateMP,
+        vim: this.calculateVim,
+        maxVim: this.calculateVim,
+        armour: 0,
+        hero: 3,
+        init: this.calculateInit,
+        speed: this.calculateSpeed,
+        xp: this.calculateXP,
+        sp: this.calculateSP
+      }
     },
     getGiftName () {
       const nameMap = {
@@ -490,33 +511,55 @@ export default {
       localStorage.setItem('creation-create-wip', JSON.stringify(this.create))
     },
     createCharacterButton () {
-      const character = {
-        name: this.create.name,
-        agi: this.calculateAttribute('agi'),
-        cha: this.calculateAttribute('cha'),
-        dex: this.calculateAttribute('dex'),
-        int: this.calculateAttribute('int'),
-        per: this.calculateAttribute('per'),
-        spi: this.calculateAttribute('spi'),
-        str: this.calculateAttribute('str'),
-        tek: this.calculateAttribute('tek'),
-        wis: this.calculateAttribute('wis'),
-        hp: this.calculateHP,
-        maxHp: this.calculateHP,
-        mp: this.calculateMP,
-        maxMp: this.calculateMP,
-        vim: this.calculateVim,
-        maxVim: this.calculateVim,
-        armour: 0,
-        hero: 3,
-        init: this.calculateInit,
-        speed: this.calculateSpeed,
-        xp: this.calculateXP,
-        sp: this.calculateSP
-      }
       // for now, we are just logging this. In the future, this will get hooked back up to the api
-      console.log(character)
+      console.log(this.createCharacter)
       // need to send this, then once confirmed, send weapon if they selected one, then once cofirmed, we should redirect to the character page
+    },
+    clearCreateButton () {
+      this.clearCreateShowing = false
+    },
+    clearCreateCharacter () {
+      localStorage.removeItem('creation-create-wip')
+      localStorage.removeItem('creation-flow')
+      this.clearCreateShowing = true
+      this.creationFlow = ''
+      // reset local data
+      this.create = {
+        name: '',
+        gift: '',
+        childAttrs: [],
+        adultAttrs: [],
+        badAttrs: [],
+        sideItem: '',
+        outfit: '',
+        itemSet: '',
+        inexperienced: true
+      }
+      this.character = {
+        name: '',
+        gift: '',
+        agi: 0,
+        cha: 0,
+        dex: 0,
+        int: 0,
+        per: 0,
+        spi: 0,
+        str: 0,
+        tek: 0,
+        wis: 0,
+        hp: 0,
+        maxHp: 0,
+        mp: 0,
+        maxMp: 0,
+        vim: 0,
+        maxVim: 0,
+        armour: 0,
+        hero: 0,
+        init: 0,
+        speed: 0,
+        xp: 0,
+        sp: 0
+      }
     }
   }
 }
@@ -533,7 +576,8 @@ export default {
   left: 0;
   overflow-x: hidden;
   width: 400px;
-  min-height: calc(100vh - 42px); /* 42px is the height of the nav bar */
+  height: calc(100vh - 42px); /* 42px is the height of the nav bar */
+  overflow-y: auto;
   -webkit-box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 28%);
   box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 28%);
 }
@@ -611,7 +655,7 @@ h1 {
   }
   .sideBar {
     top: 80px; /* 42px + 38px to account for the navs */
-    min-height: calc(100vh - 80px);
+    height: calc(100vh - 80px);
     width: 100%;
   }
   .sideBar:not(.showStats) {

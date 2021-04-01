@@ -210,6 +210,7 @@ h3 {
   align-items: center;
   margin: 4px;
   flex-grow: 1;
+  border: 1px solid white;
 }
 .giftCard:hover {
   background-color: var(--gray-100);
