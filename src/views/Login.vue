@@ -71,6 +71,9 @@ export default {
 .wide {
   width: 100%;
 }
+.btn.wide {
+  width: calc(100% - 20px);
+}
 
 .errorMessage {
   font-size: 10pt;

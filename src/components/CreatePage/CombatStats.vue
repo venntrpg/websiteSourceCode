@@ -1,16 +1,53 @@
 <template>
   <div class="panel">
     <h2>Combat Stats</h2>
-    <div class="card combatStats">
-      <div class="stat">
-        HP: {{ character.hp }}<div class="slash">/</div>{{ character.maxHp }}
+    <div class="combatStats">
+      <div>
+        <div class="card stat hp">
+          HP:
+          <div class="statNumbers">
+            <div class="number">{{ character.hp }}</div>
+            <div class="slash">/</div>
+            <div class="number">{{ character.maxHp }}</div>
+          </div>
+          <HelpSVG class="help hpHelp" />
+          <div class="toolTip hpToolTip">
+          Your maximum Health (HP) is 20 + Level + 3 times Strength.
+          <a href="https://vennt.fandom.com/wiki/Health" target="_blank" class="toolTipLink">Wiki entry</a>
+        </div>
+        </div>
       </div>
-      <div class="stat">
-        MP: {{ character.mp }}<div class="slash">/</div>{{ character.maxMp }}
+      <div>
+        <div class="card stat mp">
+          MP:
+          <div class="statNumbers">
+            <div class="number">{{ character.mp }}</div>
+            <div class="slash">/</div>
+            <div class="number">{{ character.maxMp }}</div>
+          </div>
+          <HelpSVG class="help mpHelp" />
+          <div class="toolTip mpToolTip">
+            Your maximum Mana (MP) is 6 + 3 times Wisdom.
+            <a href="https://vennt.fandom.com/wiki/Mana" target="_blank" class="toolTipLink">Wiki entry</a>
+          </div>
+        </div>
       </div>
-      <div class="stat">
-        VIM: {{ character.vim }}<div class="slash">/</div>{{ character.maxVim }}
+      <div>
+        <div class="card stat vim">
+          Vim:
+          <div class="statNumbers">
+            <div class="number">{{ character.vim }}</div>
+            <div class="slash">/</div>
+            <div class="number">{{ character.maxVim }}</div>
+          </div>
+          <HelpSVG class="help vimHelp" />
+          <div class="toolTip vimToolTip">
+            Your maximum Vim is equal to your maximum HP.
+            <a href="https://vennt.fandom.com/wiki/Vim" target="_blank" class="toolTipLink">Wiki entry</a>
+          </div>
+        </div>
       </div>
+      <!-- TODO: Add optional hero point section here (for character creation flow) -->
     </div>
     <h2>Attributes</h2>
     <div
@@ -24,24 +61,27 @@
         class="btn noSelect basicBtn attrButton"
         v-bind:class="attrButtonClass(attr)">
           <div class="basicBtnContents attrButtonContents">
-            {{ attr.toUpperCase() }}: {{ character[attr] }}
+            {{ attr.toUpperCase() }}:
+            <div class="number leftMargin">{{ character[attr] }}</div>
           </div>
         </button>
       </div>
       <div
       v-for="attr in attrRow"
       v-bind:key="attr">
-        <div v-if="showDiceForAttr(attr)" class="card">
+        <div v-if="showDiceForAttr(attr)" class="card diceDropDown">
           <div class="margin">
             <div class="alignRow">
-              <div class="attrFullName">{{ getAttrFullName(attr) }}</div>
+              <div class="attrFullName">
+                <a v-bind:href="getAttrLink(attr)" target="_blank" class="link stealth">{{ getAttrFullName(attr) }}</a>
+              </div>
               <button v-on:click="attrRollButton(attr)" class="btn noSelect basicBtn">
-                <div class="basicBtnContents"><DiceSVG class="basicBtnSVG" /> Roll Dice</div>
+                <div class="basicBtnContents"><DiceSVG class="basicBtnSVG diceSVG" /> Roll Dice</div>
               </button>
             </div>
             <!-- Procedurally render dice rolls so if they are in a more complicated format than 3d6 + constant we can handle it -->
             <div v-if="showDice(attr)" class="diceSection">
-              <div class="diceRow">
+              <div class="diceRow diceSum">
                 <div
                 v-for="(diceElement, i) in getDiceRolls(attr)"
                 v-bind:key="i"
@@ -51,22 +91,28 @@
                     v-for="(die, j) in diceElement.rolls"
                     v-bind:key="j"
                     class="diceRow">
-                      <div v-if="j !== 0" class="math">+</div>
-                      <div class="dice">{{ die.value }}</div>
+                      <div v-if="j !== 0" class="diceElement math">
+                        <div class="shiftDown">+</div>
+                      </div>
+                      <div class="diceElement dice">
+                        <div class="shiftDown">{{ die.value }}</div>
+                      </div>
                     </div>
                   </div>
-                  <div v-else-if="renderMath(diceElement)" class="math">{{ diceElement }}</div>
-                  <div v-else-if="renderConstant(diceElement)" class="constantContainer">
-                    <div class="constant">{{ diceElement }}</div>
-                    <div class="constantBorder"></div>
+                  <div v-else-if="renderMath(diceElement)" class="diceElement math">
+                    <div class="shiftDown">{{ diceElement }}</div>
+                  </div>
+                  <div v-else-if="renderConstant(diceElement)" class="diceElement constantContainer">
+                    <div class="diceElement constant">{{ diceElement }}</div>
                   </div>
                 </div>
                 <div class="diceRow">
-                  <div class="math">=</div>
-                  <div class="total">{{ getDiceTotal(attr) }}</div>
+                  <div class="diceElement math shiftDown">=</div>
+                  <div class="total shiftDown">{{ getDiceTotal(attr) }}</div>
                 </div>
               </div>
-              <div>average value: {{ getDiceAverage(attr) }}</div>
+              <div>Dice Rolled: {{ getDiceNotation(attr) }}</div>
+              <div>Average Roll: {{ getDiceAverage(attr) }}</div>
             </div>
           </div>
         </div>
@@ -85,10 +131,12 @@ TODO:
 - Make dice larger, should probably find a way to describe the syntax for the roll that is being run too
 - Add other stats, like gift (if set), speed, etc
 - maybe update other stat numbers to roboto because its a bit easier to work with
+- add tooltips or something so people can see how we are calculating all of the different stats
 */
 
 import { DiceRoll } from 'rpg-dice-roller'
 import DiceSVG from '../Common/DiceSVG.vue'
+import HelpSVG from '../Common/HelpSVG.vue'
 
 export default {
   name: 'combatStats',
@@ -96,7 +144,8 @@ export default {
     character: Object
   },
   components: {
-    DiceSVG
+    DiceSVG,
+    HelpSVG
   },
   data () {
     return {
@@ -136,15 +185,6 @@ export default {
     },
     attributeRows () {
       return [['per', 'tek', 'agi'], ['dex', 'int', 'spi'], ['str', 'wis', 'cha']]
-    },
-    topAttributes () {
-      return ['per', 'tek', 'agi']
-    },
-    middleAttributes () {
-      return ['dex', 'int', 'spi']
-    },
-    bottomAttributes () {
-      return ['str', 'wis', 'cha']
     }
   },
   methods: {
@@ -166,6 +206,9 @@ export default {
       }
       return ''
     },
+    getAttrLink (attr) {
+      return `https://vennt.fandom.com/wiki/${this.getAttrFullName(attr)}_(${attr.toUpperCase()})`
+    },
     showDiceForAttr (attr) {
       return this.selectedAttr === attr
     },
@@ -174,6 +217,10 @@ export default {
         this.selectedAttr = ''
       } else {
         this.selectedAttr = attr
+      }
+      // TODO: Might want to just roll evertime this is openned to remove confusion
+      if (this.latestRoll[attr] === null) {
+        // this.attrRollButton(attr)
       }
     },
     attrButtonClass (attr) {
@@ -190,11 +237,9 @@ export default {
       return this.latestRoll[attr] !== null
     },
     getDiceRolls (attr) {
-      console.log(this.latestRoll[attr].rolls)
       return this.latestRoll[attr].rolls
     },
     renderDie (diceElement) {
-      console.log(diceElement)
       return typeof diceElement === 'object' && diceElement.length > 0 && typeof diceElement.value === 'number'
     },
     renderMath (diceElement) {
@@ -206,6 +251,9 @@ export default {
     getDiceTotal (attr) {
       return this.latestRoll[attr].total
     },
+    getDiceNotation (attr) {
+      return this.latestRoll[attr].notation
+    },
     getDiceAverage (attr) {
       return this.latestRoll[attr].averageTotal
     }
@@ -216,23 +264,71 @@ export default {
 <style scoped>
 
 .panel {
-  margin-left: 8px;
-  margin-right: 8px;
+  margin-left: 16px;
+  margin-right: 16px;
 }
 
 .combatStats {
-  justify-content: space-evenly;
+  display: grid;
+  grid-template-columns: repeat(2, 50% [col-start]);
+  margin-right: -4px;
+  margin-left: -4px;
 }
 .stat {
   font-size: 16pt;
   display: flex;
   align-items: center;
-  margin-top: 4px;
-  margin-bottom: 4px;
+  justify-content: space-between;
+  margin: 4px;
+  padding: 10px 8px 10px 8px;
+}
+.statNumbers {
+  display: flex;
+  align-items: center;
+  /* Absolute so numbers are in space place for every combat stat */
+  position: absolute;
+  margin-left: 45px;
 }
 .slash {
   font-size: 25pt;
   font-weight: 300;
+}
+
+.help {
+  fill: var(--gray-700);
+}
+
+.toolTip {
+  display: none;
+  position: absolute;
+  margin-top: 100px;
+  margin-left: -8px;
+  max-width: 220px;
+  background-color: var(--gray-900);
+  color: white;
+  font-size: 13pt;
+  border-radius: 5px;
+  padding: 8px;
+  z-index: 2;
+}
+
+.hpToolTip:hover,
+.hpHelp:hover + .hpToolTip,
+.mpToolTip:hover,
+.mpHelp:hover + .mpToolTip,
+.vimToolTip:hover,
+.vimHelp:hover + .vimToolTip {
+  display: block;
+}
+
+.toolTipLink {
+  color: white;
+}
+.toolTipLink:hover {
+  color: var(--red-300);
+}
+.toolTipLink:active {
+  color: var(--red-500);
 }
 
 .attrsRow {
@@ -248,7 +344,7 @@ export default {
   border-radius: 5px;
 }
 .attrButton.selected {
-  margin-bottom: 0px;
+  margin-bottom: -4px;
   border-radius: 5px 5px 0px 0px;
 }
 .attrButtonContents {
@@ -256,7 +352,7 @@ export default {
 }
 
 .margin {
-  margin: 4px;
+  margin: 8px;
   width: 100%;
 }
 
@@ -276,64 +372,76 @@ export default {
   margin-right: 8px;
 }
 
+.diceSVG {
+  fill: var(--red-600)
+}
+
+.diceDropDown {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  min-height: 160px;
+}
+
 .diceSection {
   margin-top: 8px;
 }
 
+.diceSum {
+  margin-bottom: 8px;
+}
+
 .diceRow {
   display: flex;
+  flex-wrap: wrap;
+}
+
+.leftMargin {
+  position: absolute;
+  margin-left: 56px;
+}
+
+.number {
+  font-family: 'roboto', monospace;
+  font-weight: 400;
+}
+
+.diceElement {
+  font-family: 'roboto', monospace;
+  font-weight: 500;
+  font-size: 22pt;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  border-radius: 5px;
 }
 
 .dice {
   background-color: var(--red-600);
-  font-family: 'roboto mono', monospace;
-  font-weight: 500;
-  font-size: 16pt;
-  width: 30px;
-  height: 30px;
-  text-align: center;
   color: white;
-  border-radius: 5px;
 }
 
 .math {
-  font-family: 'roboto mono', monospace;
   font-weight: 400;
-  font-size: 16pt;
-  width: 25px;
-  height: 30px;
-  text-align: center;
+  width: 30px;
 }
 
 /* Pile constant and border on top of each other, so the border doesn't affect the height for the number */
 .constantContainer {
   position: relative;
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
+  border: 3px solid var(--yellow-300);
 }
 .constant {
-  font-family: 'roboto mono', monospace;
-  font-weight: 500;
-  font-size: 16pt;
-  width: 30px;
-  height: 30px;
-  text-align: center;
-  border-radius: 5px;
   position: absolute;
-}
-.constantBorder {
-  width: 24px;
-  height: 24px;
-  border-radius: 5px;
-  border: 3px solid var(--yellow-300);
-  position: absolute;
+  margin-left: -3px; /* margin left instead of top because of 3px border in container */
 }
 
 .total {
-  font-family: 'roboto mono', monospace;
+  font-family: 'roboto', monospace;
   font-weight: 500;
-  font-size: 16pt;
-  height: 30px;
+  font-size: 22pt;
+  height: 40px;
   text-align: center;
   border-radius: 5px;
 }
@@ -342,8 +450,23 @@ export default {
   height: 100px;
 }
 
+.shiftDown {
+  margin-top: 3px;
+}
+
 /* Mobile Styles */
-@media screen and (max-width: 350px) {
+@media screen and (max-width: 376px) {
+  .help {
+    display: none;
+  }
+
+  .hp:hover .hpToolTip,
+  .mp:hover .mpToolTip,
+  .vim:hover .vimToolTip {
+    display: block;
+  }
+}
+@media screen and (max-width: 366px) {
   .panel {
     margin-left: 0px;
     margin-right: 0px;

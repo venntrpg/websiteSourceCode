@@ -34,7 +34,7 @@
           Follow <a href="https://vennt.fandom.com/wiki/Backstory" target="_blank" class="link">this wiki page</a> for help with coming up a character concept
           and describing your backstory.
           <h2>Step 3: Develop your Flux</h2>
-          TODO: integreate this better into the site.
+          TODO: intergrate this into the site better.
           <br>
           Once you have developed your backstory, your <a href="https://vennt.fandom.com/wiki/Flux" target="_blank" class="link">Flux</a> represents who you are right now:
           your personality, your ambitions, and so on.

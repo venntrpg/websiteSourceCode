@@ -33,7 +33,7 @@ export default {
 /* 300 is light, 400 is standard, 700 is bold */
 /* Might want to pull in `family=Red+Rose:wght@500` as backup for Copperplate */
 /* Roboto Mono is for dice etc */
-@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Roboto+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Roboto:wght@300;400;500&display=swap');
 
 /* STYLES */
 
@@ -89,6 +89,12 @@ h1 {
 }
 .link:active {
   color: var(--red-700);
+}
+.link.stealth {
+  text-decoration: none;
+}
+.link.stealth:hover {
+  text-decoration: underline;
 }
 
 .page {
