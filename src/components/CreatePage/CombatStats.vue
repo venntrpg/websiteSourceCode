@@ -2,49 +2,58 @@
   <div class="panel">
     <h2>Combat Stats</h2>
     <div class="combatStats">
-      <div>
-        <div class="card stat hp">
-          HP:
-          <div class="statNumbers">
-            <div class="number">{{ character.hp }}</div>
-            <div class="slash">/</div>
-            <div class="number">{{ character.maxHp }}</div>
-          </div>
-          <HelpSVG class="help hpHelp" />
-          <div class="toolTip hpToolTip">
+      <div class="card stat hp">
+        HP:
+        <div class="statNumbers">
+          <div class="number">{{ character.hp }}</div>
+          <div class="slash">/</div>
+          <div class="number">{{ character.maxHp }}</div>
+        </div>
+        <HelpSVG class="help hpHelp" />
+        <div class="toolTip hpToolTip">
           Your maximum Health (HP) is 20 + Level + 3 times Strength.
           <a href="https://vennt.fandom.com/wiki/Health" target="_blank" class="toolTipLink">Wiki entry</a>
         </div>
+      </div>
+      <div class="card stat mp">
+        MP:
+        <div class="statNumbers">
+          <div class="number">{{ character.mp }}</div>
+          <div class="slash">/</div>
+          <div class="number">{{ character.maxMp }}</div>
+        </div>
+        <HelpSVG class="help mpHelp" />
+        <div class="toolTip mpToolTip">
+          Your maximum Mana (MP) is 6 + 3 times Wisdom.
+          <a href="https://vennt.fandom.com/wiki/Mana" target="_blank" class="toolTipLink">Wiki entry</a>
         </div>
       </div>
-      <div>
-        <div class="card stat mp">
-          MP:
-          <div class="statNumbers">
-            <div class="number">{{ character.mp }}</div>
-            <div class="slash">/</div>
-            <div class="number">{{ character.maxMp }}</div>
-          </div>
-          <HelpSVG class="help mpHelp" />
-          <div class="toolTip mpToolTip">
-            Your maximum Mana (MP) is 6 + 3 times Wisdom.
-            <a href="https://vennt.fandom.com/wiki/Mana" target="_blank" class="toolTipLink">Wiki entry</a>
-          </div>
+      <div class="card stat vim">
+        Vim:
+        <div class="statNumbers">
+          <div class="number">{{ character.vim }}</div>
+          <div class="slash">/</div>
+          <div class="number">{{ character.maxVim }}</div>
+        </div>
+        <HelpSVG class="help vimHelp" />
+        <div class="toolTip vimToolTip">
+          Your maximum Vim is equal to your maximum HP.
+          <a href="https://vennt.fandom.com/wiki/Vim" target="_blank" class="toolTipLink">Wiki entry</a>
         </div>
       </div>
-      <div>
-        <div class="card stat vim">
-          Vim:
-          <div class="statNumbers">
-            <div class="number">{{ character.vim }}</div>
+      <div class="card stat hero">
+        Hero:
+        <div class="statNumbers">
+          <div class="number">{{ character.hero }}</div>
+          <div v-if="character.maxHero" class="flex">
             <div class="slash">/</div>
-            <div class="number">{{ character.maxVim }}</div>
+            <div class="number">{{ character.maxHero }}</div>
           </div>
-          <HelpSVG class="help vimHelp" />
-          <div class="toolTip vimToolTip">
-            Your maximum Vim is equal to your maximum HP.
-            <a href="https://vennt.fandom.com/wiki/Vim" target="_blank" class="toolTipLink">Wiki entry</a>
-          </div>
+        </div>
+        <HelpSVG class="help heroHelp" />
+        <div class="toolTip heroToolTip">
+          Hero Points are reserves of luck that can be spent to create moments of shining excellence.
+          <a href="https://vennt.fandom.com/wiki/Hero_Points" target="_blank" class="toolTipLink">Wiki entry</a>
         </div>
       </div>
       <!-- TODO: Add optional hero point section here (for character creation flow) -->
@@ -74,6 +83,7 @@
             <div class="alignRow">
               <div class="attrFullName">
                 <a v-bind:href="getAttrLink(attr)" target="_blank" class="link stealth">{{ getAttrFullName(attr) }}</a>
+                (<span class="number">{{ character[attr] }}</span>)
               </div>
               <button v-on:click="attrRollButton(attr)" class="btn noSelect basicBtn">
                 <div class="basicBtnContents"><DiceSVG class="basicBtnSVG diceSVG" /> Roll Dice</div>
@@ -119,6 +129,42 @@
       </div>
     </div>
     <div class="tall"></div>
+    <div v-if="character.gift" class="card stat singleStat">
+      Gift: {{ getGiftName }}
+    </div>
+    <div class="card stat singleStat">Initiative:
+      <div class="number leftMarginWide">{{ character.init }}</div>
+      <HelpSVG class="help" />
+      <div class="toolTip wide">
+        Your Initiative is your Agility + Dexterity.
+        <a href="https://vennt.fandom.com/wiki/Initiative" target="_blank" class="toolTipLink">Wiki entry</a>
+      </div>
+    </div>
+    <div class="card stat singleStat">Speed:
+      <div class="number leftMarginWide">{{ character.speed }}</div>
+      <HelpSVG class="help" />
+      <div class="toolTip wide">
+        Your Speed is 3 + Agility minus any Burden from your Armor.
+        <a href="https://vennt.fandom.com/wiki/Movement" target="_blank" class="toolTipLink">Wiki entry</a>
+      </div>
+    </div>
+    <div class="card stat singleStat">Armor:
+      <div class="number leftMarginWide">{{ character.armor }}</div>
+      <HelpSVG class="help" />
+      <div class="toolTip wide">
+        Your Armor serves as damage reduction from blows dealt to you.
+        <a href="https://vennt.fandom.com/wiki/Armor" target="_blank" class="toolTipLink">Wiki entry</a>
+      </div>
+    </div>
+    <div class="card stat singleStat">XP:
+      <div class="number leftMarginWide">{{ character.xp }}</div>
+      <HelpSVG class="help" />
+      <div class="toolTip wide">
+        Experience Points, the resource gained by player characters during play and spent on Abilities.
+        Your character's level is your xp / 1000.
+        <a href="https://vennt.fandom.com/wiki/XP" target="_blank" class="toolTipLink">Wiki entry</a>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -177,7 +223,7 @@ export default {
         cha: 'Charm',
         none: 'None'
       }
-      const name = nameMap[this.create.gift]
+      const name = nameMap[this.character.gift]
       if (name) {
         return name
       }
@@ -287,11 +333,16 @@ export default {
   align-items: center;
   /* Absolute so numbers are in space place for every combat stat */
   position: absolute;
-  margin-left: 45px;
+  margin-left: 55px;
 }
 .slash {
   font-size: 25pt;
   font-weight: 300;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
 }
 
 .help {
@@ -312,12 +363,13 @@ export default {
   z-index: 2;
 }
 
-.hpToolTip:hover,
-.hpHelp:hover + .hpToolTip,
-.mpToolTip:hover,
-.mpHelp:hover + .mpToolTip,
-.vimToolTip:hover,
-.vimHelp:hover + .vimToolTip {
+.toolTip.wide {
+  max-width: 360px;
+}
+
+/* Tool tip functionality */
+.toolTip:hover,
+.help:hover + .toolTip {
   display: block;
 }
 
@@ -399,6 +451,10 @@ export default {
   position: absolute;
   margin-left: 56px;
 }
+.leftMarginWide {
+  position: absolute;
+  margin-left: 90px;
+}
 
 .number {
   font-family: 'roboto', monospace;
@@ -447,22 +503,30 @@ export default {
 }
 
 .tall {
-  height: 100px;
+  height: 64px;
 }
 
 .shiftDown {
   margin-top: 3px;
 }
 
+.singleStat {
+  margin: 0px 0px 8px 0px;
+}
+
 /* Mobile Styles */
 @media screen and (max-width: 376px) {
-  .help {
+  .hpHelp,
+  .mpHelp,
+  .vimHelp,
+  .heroHelp {
     display: none;
   }
 
   .hp:hover .hpToolTip,
   .mp:hover .mpToolTip,
-  .vim:hover .vimToolTip {
+  .vim:hover .vimToolTip,
+  .hero:hover .heroToolTip {
     display: block;
   }
 }
