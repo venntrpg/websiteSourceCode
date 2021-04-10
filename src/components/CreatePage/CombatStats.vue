@@ -1,5 +1,8 @@
 <template>
   <div class="panel">
+    <div class="displayName">
+      <h2>{{ character.name }}</h2>
+    </div>
     <h2>Combat Stats</h2>
     <div class="combatStats">
       <div class="card stat hp">
@@ -165,6 +168,7 @@
         <a href="https://vennt.fandom.com/wiki/XP" target="_blank" class="toolTipLink">Wiki entry</a>
       </div>
     </div>
+    <div class="tall"></div>
   </div>
 </template>
 
@@ -174,10 +178,7 @@
 TODO:
 - Make sidepanel background slightly darker so white buttons are more visible
 - Add animation (maybe) to opening and closing dice roll panels
-- Make dice larger, should probably find a way to describe the syntax for the roll that is being run too
-- Add other stats, like gift (if set), speed, etc
-- maybe update other stat numbers to roboto because its a bit easier to work with
-- add tooltips or something so people can see how we are calculating all of the different stats
+- Add more dice rolling options in drop down or something - should be able to try rolling with hero point etc.
 */
 
 import { DiceRoll } from 'rpg-dice-roller'
@@ -312,6 +313,11 @@ export default {
 .panel {
   margin-left: 16px;
   margin-right: 16px;
+}
+
+.displayName {
+  text-align: center;
+  border-bottom: 2px solid var(--gray-400);
 }
 
 .combatStats {

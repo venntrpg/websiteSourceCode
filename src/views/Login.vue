@@ -68,13 +68,6 @@ export default {
   margin-top: 2px;
 }
 
-.wide {
-  width: 100%;
-}
-.btn.wide {
-  width: calc(100% - 20px);
-}
-
 .errorMessage {
   font-size: 10pt;
   color: var(--red-700);

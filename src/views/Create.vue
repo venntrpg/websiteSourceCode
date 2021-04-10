@@ -1,22 +1,19 @@
 <template>
   <div>
     <!--  --------------------- SUB NAV --------------------- -->
-    <div class="subNav">
+    <div class="subNav" v-bind:class="getSelectScreenClass">
       <button v-on:click="createNavButton()" v-bind:class="getMobileSidebarClass" class="btn navButton subNavButton noSelect createNavButton">CREATE CHARACTER</button>
       <button v-on:click="statsNavButton()" v-bind:class="getMobileSidebarClass" class="btn navButton subNavButton noSelect statsNavButton">SHOW STATS</button>
     </div>
     <!--  --------------------- SIDE BAR --------------------- -->
-    <div class="sideBar" v-bind:class="[getHiddenSidebarClass, getMobileSidebarClass]">
-      <div class="displayName">
-        <h2 v-html="create.name"></h2>
-      </div>
+    <div class="sideBar" v-bind:class="[getHiddenSidebarClass, getMobileSidebarClass, getSelectScreenClass]">
       <CombatStats :character="createCharacter" />
     </div>
     <!--  --------------------- START OF CHARACTER CREATION FLOW --------------------- -->
-    <div class="page sideBarPage" v-bind:class="[getHiddenSidebarClass, getMobileSidebarClass]">
+    <div class="page sideBarPage" v-bind:class="[getHiddenSidebarClass, getMobileSidebarClass, getSelectScreenClass]">
       <div class="largePageWidth main" v-responsive="breakpoints">
-        <h1>CHARACTER CREATION</h1>
         <div v-if="isNewCharacter">
+          <h1>CREATE NEW CHARACTER</h1>
           <h2>Step 1: Choose a name</h2>
           This follows the guide on the <a href="https://vennt.fandom.com/wiki/Character_Creation" target="_blank" class="link">character creation wiki page</a>.
           <br>
@@ -145,12 +142,56 @@
         </div>
         <!--  --------------------- START OF CHARACTER IMPORT FLOW --------------------- -->
         <div v-else-if="isImportCharacter">
-          Import character creation flow
+          <h1>IMPORT CHARACTER</h1>
+          <h2>Copy in your Character Stats</h2>
+          Character name:
+          <input type="text" name="name" placeholder="Bilbo Baggins" class="input smallTopMargin" v-model="character.name" v-on:blur="backupImport">
+          Attributes:
+          <div class="attributeInputContainer">
+            <div v-for="attr in validAttributes" v-bind:key="attr" class="attributeInput">
+              <div class="attributeName">{{attr.toUpperCase()}}:</div>
+              <input type="number" placeholder="0" class="input" v-model="character[attr]" v-on:blur="backupImport">
+            </div>
+          </div>
+          Max HP: <input type="number" placeholder="0" class="input" v-model="character.maxHp" v-on:blur="backupImport">
+          Max MP: <input type="number" placeholder="0" class="input" v-model="character.maxMp" v-on:blur="backupImport">
+          Max Vim: <input type="number" placeholder="0" class="input" v-model="character.maxVim" v-on:blur="backupImport">
+          Current Hero Points: <input type="number" placeholder="0" class="input" v-model="character.hero" v-on:blur="backupImport">
+          Max Hero Points: <input type="number" placeholder="0" class="input" v-model="character.maxHero" v-on:blur="backupImport">
+          Initiative: <input type="number" placeholder="0" class="input" v-model="character.init" v-on:blur="backupImport">
+          Speed: <input type="number" placeholder="0" class="input" v-model="character.speed" v-on:blur="backupImport">
+          Armor: <input type="number" placeholder="0" class="input" v-model="character.armor" v-on:blur="backupImport">
+          Total XP: <input type="number" placeholder="0" class="input" v-model="character.xp" v-on:blur="backupImport">
+          SP: <input type="number" placeholder="0" class="input" v-model="character.sp" v-on:blur="backupImport">
+          <h2>Import your Character</h2>
+          Click the "Create Character" button to officially create the character.
+          Click the "Clear Character" button to delete this character and start again.
+          <div class="bottomButtons">
+            <button v-on:click="createCharacterButton()" class="btn roundedButton">
+              <div class="btnContents">
+                Create Character
+              </div>
+            </button>
+            <button v-if="clearCreateShowing" v-on:click="clearCreateButton()" class="btn basicBtn">
+              <div class="basicBtnContents">
+                Clear Character
+              </div>
+            </button>
+            <button v-else v-on:click="clearCreateCharacter()" class="btn basicBtn">
+              <div class="basicBtnContents">
+                Are you sure?
+              </div>
+            </button>
+          </div>
         </div>
         <!--  --------------------- CHARACTER NOT STARTED --------------------- -->
-        <div v-else>
-          <button v-on:click="newCharacterButton()" class="btn roundedButton wide noSelect">Make a new character!</button>
-          <button v-on:click="importCharacterButton()" class="btn roundedButton wide noSelect">Import an old character!</button>
+        <div v-else class="selectFlowContainer">
+          <div class="selectFlow">
+            <h1>CHARACTER CREATION</h1>
+            You can create a totally new character or import a character which you have already created.
+            <button v-on:click="newCharacterButton()" class="btn roundedButton wide noSelect topMargin">Make a new character!</button>
+            <button v-on:click="importCharacterButton()" class="btn roundedButton wide noSelect topMargin">Import an old character!</button>
+          </div>
         </div>
       </div>
     </div>
@@ -158,6 +199,7 @@
 </template>
 
 <script>
+
 import RefreshSVG from '../components/Common/RefreshSVG.vue'
 import AttributeSelection from '../components/CreatePage/AttributeSelection.vue'
 import CombatStats from '../components/CreatePage/CombatStats.vue'
@@ -246,8 +288,20 @@ export default {
           // TODO: Might want to do this row by row to ensure we don't get values imported incorrectly
           this.create = char
         } catch (e) {
-        // stored json was malformed, so we delete it and restart fresh
+          // stored json was malformed, so we delete it and restart fresh
           localStorage.removeItem('creation-create-wip')
+        }
+      }
+    } else if (this.creationFlow === IMPORT_CREATION_FLOW) {
+      const rawChar = localStorage.getItem('creation-import-wip')
+      if (rawChar) {
+        try {
+          const char = JSON.parse(rawChar)
+          // TODO: Might want to do this row by row to ensure we don't get values imported incorrectly
+          this.character = char
+        } catch (e) {
+          // stored json was malformed, so we delete it and restart fresh
+          localStorage.removeItem('creation-import-wip')
         }
       }
     }
@@ -265,16 +319,13 @@ export default {
       return this.creationFlow === IMPORT_CREATION_FLOW
     },
     getHiddenSidebarClass () {
-      if (this.create.name === '') {
-        return 'hidden'
-      }
-      return ''
+      return !(this.create.name !== '' || this.character.name) ? 'hidden' : ''
     },
     getMobileSidebarClass () {
-      if (this.showingStats) {
-        return 'showStats'
-      }
-      return ''
+      return this.showingStats ? 'showStats' : ''
+    },
+    getSelectScreenClass () {
+      return (!this.isNewCharacter && !this.isImportCharacter) ? 'selectFlowPage' : ''
     },
     validAttributes () {
       return ['per', 'tek', 'agi', 'dex', 'int', 'spi', 'str', 'wis', 'cha']
@@ -315,31 +366,60 @@ export default {
       return sum
     },
     createCharacter () {
-      return {
-        name: this.create.name,
-        gift: this.create.gift,
-        agi: this.calculateAttribute('agi'),
-        cha: this.calculateAttribute('cha'),
-        dex: this.calculateAttribute('dex'),
-        int: this.calculateAttribute('int'),
-        per: this.calculateAttribute('per'),
-        spi: this.calculateAttribute('spi'),
-        str: this.calculateAttribute('str'),
-        tek: this.calculateAttribute('tek'),
-        wis: this.calculateAttribute('wis'),
-        hp: this.calculateHP,
-        maxHp: this.calculateHP,
-        mp: this.calculateMP,
-        maxMp: this.calculateMP,
-        vim: this.calculateVim,
-        maxVim: this.calculateVim,
-        hero: 3,
-        maxHero: 9,
-        armor: 0,
-        init: this.calculateInit,
-        speed: this.calculateSpeed,
-        xp: this.calculateXP,
-        sp: this.calculateSP
+      if (this.isNewCharacter) {
+        return {
+          name: this.create.name,
+          gift: this.create.gift,
+          agi: this.calculateAttribute('agi'),
+          cha: this.calculateAttribute('cha'),
+          dex: this.calculateAttribute('dex'),
+          int: this.calculateAttribute('int'),
+          per: this.calculateAttribute('per'),
+          spi: this.calculateAttribute('spi'),
+          str: this.calculateAttribute('str'),
+          tek: this.calculateAttribute('tek'),
+          wis: this.calculateAttribute('wis'),
+          hp: this.calculateHP,
+          maxHp: this.calculateHP,
+          mp: this.calculateMP,
+          maxMp: this.calculateMP,
+          vim: this.calculateVim,
+          maxVim: this.calculateVim,
+          hero: 3,
+          maxHero: 9,
+          armor: 0,
+          init: this.calculateInit,
+          speed: this.calculateSpeed,
+          xp: this.calculateXP,
+          sp: this.calculateSP
+        }
+      } else {
+        return {
+          name: this.character.name,
+          agi: this.parseNumber(this.character.agi),
+          cha: this.parseNumber(this.character.cha),
+          dex: this.parseNumber(this.character.dex),
+          int: this.parseNumber(this.character.int),
+          per: this.parseNumber(this.character.per),
+          spi: this.parseNumber(this.character.spi),
+          str: this.parseNumber(this.character.str),
+          tek: this.parseNumber(this.character.tek),
+          wis: this.parseNumber(this.character.wis),
+          // automatically set some stats to max value
+          hp: this.parseNumber(this.character.maxHp),
+          maxHp: this.parseNumber(this.character.maxHp),
+          mp: this.parseNumber(this.character.maxMp),
+          maxMp: this.parseNumber(this.character.maxMp),
+          vim: this.parseNumber(this.character.maxVim),
+          maxVim: this.parseNumber(this.character.maxVim),
+          hero: this.parseNumber(this.character.hero),
+          maxHero: this.parseNumber(this.character.maxHero),
+          armor: this.parseNumber(this.character.armor),
+          init: this.parseNumber(this.character.init),
+          speed: this.parseNumber(this.character.speed),
+          xp: this.parseNumber(this.character.xp),
+          sp: this.parseNumber(this.character.sp)
+        }
       }
     },
     getGiftName () {
@@ -513,7 +593,18 @@ export default {
     backupCreate () {
       localStorage.setItem('creation-create-wip', JSON.stringify(this.create))
     },
+    backupImport () {
+      localStorage.setItem('creation-import-wip', JSON.stringify(this.character))
+    },
+    parseNumber (num) {
+      const result = parseInt(num)
+      return !isNaN(result) ? result : 0
+    },
     createCharacterButton () {
+      if (this.createCharacter.name === '') {
+        // should probably print an error message on the page or something ¯\_(ツ)_/¯
+        return
+      }
       // for now, we are just logging this. In the future, this will get hooked back up to the api
       console.log(this.createCharacter)
       // need to send this, then once confirmed, send weapon if they selected one, then once cofirmed, we should redirect to the character page
@@ -523,6 +614,7 @@ export default {
     },
     clearCreateCharacter () {
       localStorage.removeItem('creation-create-wip')
+      localStorage.removeItem('creation-import-wip')
       localStorage.removeItem('creation-flow')
       this.clearCreateShowing = true
       this.creationFlow = ''
@@ -603,6 +695,21 @@ export default {
 
 /* PAGE STYLING */
 
+.selectFlowContainer {
+  display: flex;
+  justify-content: center;
+}
+.selectFlow {
+  width: 320px;
+}
+
+.topMargin {
+  margin-top: 12px;
+}
+.smallTopMargin {
+  margin-top: 2px;
+}
+
 h1 {
   text-align: center;
 }
@@ -638,6 +745,23 @@ h1 {
   margin-bottom: 150px;
 }
 
+.attributeInputContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 33% [col-start]);
+  margin-right: -8px;
+  margin-left: -8px;
+}
+.attributeInput {
+  font-size: 16pt;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px;
+}
+.attributeName {
+  width: 72px;
+}
+
 /* subNav and sideBar Styles */
 .subNav {
   display: none;
@@ -651,10 +775,10 @@ h1 {
 }
 
 @media screen and (max-width: 800px) {
-  .subNav {
+  .subNav:not(.selectFlowPage) {
     display: flex;
   }
-  .page {
+  .page:not(.selectFlowPage) {
     margin-top: 80px; /* 42px + 38px to account for the navs */
   }
   .sideBar {
@@ -665,14 +789,14 @@ h1 {
   .sideBar:not(.showStats) {
     display: none;
   }
-  .sideBar.showStats {
+  .sideBar.showStats:not(.selectFlowPage) {
     display: block;
   }
   .sideBarPage:not(.showStats) {
     display: flex;
     margin-left: 0px;
   }
-  .sideBarPage.showStats {
+  .sideBarPage.showStats:not(.selectFlowPage) {
     display: none;
   }
 }

@@ -136,6 +136,9 @@ h1 {
 .btn:disabled {
   cursor: default;
 }
+.btn.wide {
+  width: calc(100% - 20px);
+}
 
 .roundedButton {
   background-color: var(--red-500);
@@ -211,6 +214,9 @@ h1 {
 }
 .input:focus {
   border: solid 1px var(--yellow-600);
+}
+.input.wide {
+  width: 100%;
 }
 
 .card {
