@@ -277,7 +277,7 @@ export default {
   beforeMount () {
     if (!this.isLoggedIn) {
       // if not logged in, redirect to Home
-      // this.$router.push({ name: 'Home' })
+      this.$router.push({ name: 'Home' })
     }
     this.creationFlow = localStorage.getItem('creation-flow')
     if (this.creationFlow === NEW_CREATION_FLOW) {
@@ -605,9 +605,14 @@ export default {
         // should probably print an error message on the page or something ¯\_(ツ)_/¯
         return
       }
-      // for now, we are just logging this. In the future, this will get hooked back up to the api
       console.log(this.createCharacter)
       // need to send this, then once confirmed, send weapon if they selected one, then once cofirmed, we should redirect to the character page
+      this.$store.dispatch('createCharacter', this.createCharacter)
+
+      // TODO: Wait to see if this api returns confirmed
+      const id = this.clearCreateCharacter()
+      console.log(id)
+      this.$router.push({ name: 'Character', params: { id } })
     },
     clearCreateButton () {
       this.clearCreateShowing = false
@@ -662,38 +667,6 @@ export default {
 </script>
 
 <style scoped lang="postcss">
-
-/* SIDEBAR STYLING */
-
-.sideBar {
-  position: fixed;
-  z-index: 1;
-  top: 42px; /* 42px is the height of the nav bar */
-  left: 0;
-  overflow-x: hidden;
-  width: 400px;
-  height: calc(100vh - 42px); /* 42px is the height of the nav bar */
-  overflow-y: auto;
-  -webkit-box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 28%);
-  box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 28%);
-}
-.sideBar.hidden {
-  display: none;
-}
-
-.sideBarPage {
-  margin-left: 400px;
-}
-.sideBarPage.hidden {
-  margin-left: 0px;
-}
-
-.displayName {
-  text-align: center;
-  border-bottom: 2px solid var(--gray-400);
-}
-
-/* PAGE STYLING */
 
 .selectFlowContainer {
   display: flex;
@@ -779,11 +752,11 @@ h1 {
     display: flex;
   }
   .page:not(.selectFlowPage) {
-    margin-top: 80px; /* 42px + 38px to account for the navs */
+    margin-top: var(--total-nav-height);
   }
   .sideBar {
-    top: 80px; /* 42px + 38px to account for the navs */
-    height: calc(100vh - 80px);
+    top: var(--total-nav-height);
+    height: var(--sub-nav-page-height);
     width: 100%;
   }
   .sideBar:not(.showStats) {

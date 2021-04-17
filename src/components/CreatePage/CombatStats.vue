@@ -3,7 +3,10 @@
     <div class="displayName">
       <h2>{{ character.name }}</h2>
     </div>
-    <h2>Combat Stats</h2>
+    <div class="flex">
+      <div v-bind:style="{ 'background-color': charColor }" class="bullet"></div>
+      <h2>Combat Stats</h2>
+    </div>
     <div class="combatStats">
       <div class="card stat hp">
         HP:
@@ -59,9 +62,11 @@
           <a href="https://vennt.fandom.com/wiki/Hero_Points" target="_blank" class="toolTipLink">Wiki entry</a>
         </div>
       </div>
-      <!-- TODO: Add optional hero point section here (for character creation flow) -->
     </div>
-    <h2>Attributes</h2>
+    <div class="flex">
+      <div v-bind:style="{ 'background-color': charColor }" class="bullet"></div>
+      <h2>Attributes</h2>
+    </div>
     <div
     v-for="(attrRow, index) in attributeRows"
     v-bind:key="index">
@@ -176,6 +181,9 @@
 
 /*
 TODO:
+
+- SPLIT THIS UP INTO SMALLER COMPONENTS
+
 - Make sidepanel background slightly darker so white buttons are more visible
 - Add animation (maybe) to opening and closing dice roll panels
 - Add more dice rolling options in drop down or something - should be able to try rolling with hero point etc.
@@ -232,9 +240,31 @@ export default {
     },
     attributeRows () {
       return [['per', 'tek', 'agi'], ['dex', 'int', 'spi'], ['str', 'wis', 'cha']]
+    },
+    charColor () {
+      const red = this.character.str + this.character.agi + this.character.cha
+      const green = this.character.tek + this.character.int + this.character.dex
+      const blue = this.character.wis + this.character.spi + this.character.per
+      const sum = red + green + blue
+      return '#' + this.hexColorComponent(red, sum) + this.hexColorComponent(green, sum) + this.hexColorComponent(blue, sum)
     }
   },
   methods: {
+    hexColorComponent (component, sum) {
+      if (sum <= 0) {
+        sum = 1
+      }
+      if (component < 0) {
+        component = 0
+      }
+      const numStr = Math.floor((component / sum) * 256).toString(16)
+      if (numStr.length === 1) {
+        return '0' + numStr
+      } else if (numStr.length > 2) {
+        return 'ff'
+      }
+      return numStr
+    },
     getAttrFullName (attr) {
       const nameMap = {
         per: 'Perception',

@@ -71,8 +71,15 @@ export default {
   --gray-200: #f7f7f7;
   --gray-100: #fbfbfb;
 
+  /* HEIGHTS / WIDTHS */
+  --nav-height: 42px;
+  --sub-nav-height: 38px;
+  --total-nav-height: calc(var(--nav-height) + var(--sub-nav-height));
+  --page-height: calc(100vh - var(--nav-height));
+  --sub-nav-page-height: calc(100vh - var(--total-nav-height));
+
   /* Background Styles*/
-  min-height: calc(100vh - 42px); /* 42px comes from nav */
+  min-height: var(--page-height);
   background-color: var(--gray-200);
 }
 
@@ -98,7 +105,7 @@ h1 {
 }
 
 .page {
-  margin-top: 42px; /* 42px to account for the nav */
+  margin-top: var(--nav-height);
   display: flex;
   justify-content: center;
 }
@@ -176,6 +183,9 @@ h1 {
 .basicBtn:active:not(:disabled) {
   background-color: var(--gray-400);
 }
+.basicBtn.link {
+  color: black;
+}
 .basicBtnContents {
   display: flex;
   align-items: center;
@@ -225,6 +235,14 @@ h1 {
   border-radius: 5px;
 }
 
+.bullet {
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background-color: var(--red-600);
+  margin-right: 8px;
+}
+
 /* Nav Styles - useful for subnav styles */
 
 .navButton {
@@ -247,10 +265,10 @@ h1 {
 
 .subNav {
   position: fixed;
-  top: 42px;
+  top: var(--nav-height);
   left: 0;
   width: 100%;
-  height: 38px;
+  height: var(--sub-nav-height);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -266,6 +284,39 @@ h1 {
 }
 .subNavButton:active {
   background-color: var(--purple-900);
+}
+
+/* Left Sidebar Styles */
+
+.sideBar {
+  position: fixed;
+  z-index: 1;
+  top: var(--nav-height);
+  left: 0;
+  overflow-x: hidden;
+  width: 400px;
+  height: var(--page-height);
+  overflow-y: auto;
+  -webkit-box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 28%);
+  box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 28%);
+}
+.sideBar.hidden {
+  display: none;
+}
+
+.sideBarPage {
+  margin-left: 400px;
+}
+.sideBarPage.hidden {
+  margin-left: 0px;
+}
+
+.subNavPage .sideBar {
+  top: var(--total-nav-height);
+  height: var(--sub-nav-page-height);
+}
+.subNavPage .page {
+  margin-top: var(--total-nav-height);
 }
 
 /* This isn't working - stuck with blue highlights for now I guess */

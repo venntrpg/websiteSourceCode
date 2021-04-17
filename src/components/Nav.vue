@@ -44,7 +44,7 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 42px;
+  height: var(--nav-height);
   display: flex;
   justify-content: space-between;
   background-color: var(--purple-500);

@@ -5,7 +5,57 @@ import router from '@/router/index'
 
 Vue.use(Vuex)
 
-// TDOD add helper function for logging out the user if they've timed out.
+// ------------------------- HELPER FUNCTIONS ------------------------- //
+
+function checkResponse (response) {
+  if (!response || response.success !== true) {
+    if (response.info && response.info.includes('Authentication invalid')) {
+      // user has been logged out
+      state.isLoggedIn = false
+      localStorage.removeItem('auth')
+      if (this.$route.name !== 'Home') {
+        router.push({ name: 'Home' })
+      }
+    } else {
+      // something went wrong
+      console.log(response)
+    }
+    return false
+  }
+  return true
+}
+
+function convertApiCharacter (character) {
+  return {
+    name: character.name,
+    id: character.id,
+    agi: parseInt(character.AGI),
+    cha: parseInt(character.CHA),
+    dex: parseInt(character.DEX),
+    int: parseInt(character.INT),
+    per: parseInt(character.PER),
+    spi: parseInt(character.SPI),
+    str: parseInt(character.STR),
+    tek: parseInt(character.TEK),
+    wis: parseInt(character.WIS),
+    hp: parseInt(character.HP),
+    maxHp: parseInt(character.MAX_HP),
+    mp: parseInt(character.MP),
+    maxMp: parseInt(character.MAX_MP),
+    vim: parseInt(character.VIM),
+    maxVim: parseInt(character.MAX_VIM),
+    hero: parseInt(character.HERO),
+    init: parseInt(character.INIT),
+    speed: parseInt(character.SPEED),
+    xp: parseInt(character.XP),
+    sp: parseInt(character.SP),
+    armor: parseInt(character.ARMOR),
+    items: character.items,
+    abilities: character.abilities
+  }
+}
+
+// ------------------------- STATE ------------------------- //
 
 const state = {
   isLoggedIn: false, // This variable is set in App.vue on loading the website
@@ -13,6 +63,8 @@ const state = {
   signupErrorMsg: '',
   loginErrorMsg: '',
   characters: {},
+  campaigns: [],
+  character: {},
   randomNames: [],
   randomNamesDisabled: true
 }
@@ -38,8 +90,14 @@ const mutations = {
   clearCharactersList (state) {
     state.characters.clear()
   },
-  addToCharactersList (state, character) {
-    state.characters.set(character.id, character)
+  setCharactersList (state, characters) {
+    state.characters = characters
+  },
+  setCampaigns (state, campgains) {
+    state.campaigns = campgains
+  },
+  setCharacter (state, character) {
+    state.character = character
   },
   appendRandomNames (state, randomNames) {
     state.randomNamesDisabled = false
@@ -98,12 +156,8 @@ const actions = {
 
   logout: ({ commit }) => {
     console.log('logging out!')
-    const auth = localStorage.getItem('auth')
-    if (auth === null) {
-      return
-    }
     // could clear auth here before doing api call
-    return api.logout(auth).then(response => {
+    return api.logout().then(response => {
       if (response && response.success !== undefined) {
         if (response.success === true) {
           // Clear local storage - future api calls will fail
@@ -118,31 +172,48 @@ const actions = {
 
   // ------------------------- CHARACTER APIS ------------------------- //
 
-  createCharacter: ({ commit }, { character }) => {
-    const auth = localStorage.getItem('auth')
-    if (auth === null) {
-      return
-    }
-    return api.login(auth, character).then(response => {
-      if (response && response.success && response.success === true) {
-        console.log(response)
-        // add the new id to our current character data, and append it to the character list.
-        character.set('id', response.id)
-        commit('addToCharactersList', character)
+  createCharacter: ({ commit }, character) => {
+    return api.createCharacter(character).then(response => {
+      if (checkResponse(response)) {
+        return response.id
       }
     })
   },
 
   listCharacters: ({ commit }) => {
-    const auth = localStorage.getItem('auth')
-    if (auth === null) {
-      return
-    }
-    return api.listCharacters(auth).then(response => {
-      if (response && response.success && response.success === true) {
+    return api.listCharacters().then(response => {
+      if (checkResponse(response) && response.value) {
+        const characters = response.value
+        for (const char in characters) {
+          characters[char] = convertApiCharacter(characters[char])
+        }
+        commit('setCharactersList', characters)
+      }
+    })
+  },
+
+  getCharacter: ({ commit }, id) => {
+    return api.getCharacter(id).then(response => {
+      if (checkResponse(response) && response.value) {
+        commit('setCharacter', convertApiCharacter(response.value))
+      }
+    })
+  },
+
+  lookupAbility: ({ commit }, name) => {
+    return api.lookupAbility(name).then(response => {
+      if (checkResponse(response)) {
         console.log(response)
-        // It would be pretty neat if we called getCharacter automatically for every id we get here automatically. idk
-        // Maybe we just need a new api that doesn't require that we ask for this info twice
+      }
+    })
+  },
+
+  // ------------------------- CAMPAIGN APIS ------------------------- //
+
+  listCampaigns: ({ commit }) => {
+    return api.listCampaigns().then(response => {
+      if (checkResponse(response) && response.value) {
+        commit('setCampaigns', response.value)
       }
     })
   },
