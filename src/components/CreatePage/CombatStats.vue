@@ -4,7 +4,7 @@
       <h2>{{ character.name }}</h2>
     </div>
     <div class="flex">
-      <div v-bind:style="{ 'background-color': charColor }" class="bullet"></div>
+      <Bullet :character="character" />
       <h2>Combat Stats</h2>
     </div>
     <div class="combatStats">
@@ -64,7 +64,7 @@
       </div>
     </div>
     <div class="flex">
-      <div v-bind:style="{ 'background-color': charColor }" class="bullet"></div>
+      <Bullet :character="character" />
       <h2>Attributes</h2>
     </div>
     <div
@@ -190,8 +190,9 @@ TODO:
 */
 
 import { DiceRoll } from 'rpg-dice-roller'
-import DiceSVG from '../Common/DiceSVG.vue'
-import HelpSVG from '../Common/HelpSVG.vue'
+import DiceSVG from '../Common/SVGs/DiceSVG.vue'
+import HelpSVG from '../Common/SVGs/HelpSVG.vue'
+import Bullet from '../Common/Bullet.vue'
 
 export default {
   name: 'combatStats',
@@ -200,7 +201,8 @@ export default {
   },
   components: {
     DiceSVG,
-    HelpSVG
+    HelpSVG,
+    Bullet
   },
   data () {
     return {
@@ -240,31 +242,9 @@ export default {
     },
     attributeRows () {
       return [['per', 'tek', 'agi'], ['dex', 'int', 'spi'], ['str', 'wis', 'cha']]
-    },
-    charColor () {
-      const red = this.character.str + this.character.agi + this.character.cha
-      const green = this.character.tek + this.character.int + this.character.dex
-      const blue = this.character.wis + this.character.spi + this.character.per
-      const sum = red + green + blue
-      return '#' + this.hexColorComponent(red, sum) + this.hexColorComponent(green, sum) + this.hexColorComponent(blue, sum)
     }
   },
   methods: {
-    hexColorComponent (component, sum) {
-      if (sum <= 0) {
-        sum = 1
-      }
-      if (component < 0) {
-        component = 0
-      }
-      const numStr = Math.floor((component / sum) * 256).toString(16)
-      if (numStr.length === 1) {
-        return '0' + numStr
-      } else if (numStr.length > 2) {
-        return 'ff'
-      }
-      return numStr
-    },
     getAttrFullName (attr) {
       const nameMap = {
         per: 'Perception',
@@ -353,15 +333,14 @@ export default {
 .combatStats {
   display: grid;
   grid-template-columns: repeat(2, 50% [col-start]);
-  margin-right: -4px;
-  margin-left: -4px;
+  grid-gap: 8px;
+  margin-right: 8px;
 }
 .stat {
   font-size: 16pt;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 4px;
   padding: 10px 8px 10px 8px;
 }
 .statNumbers {

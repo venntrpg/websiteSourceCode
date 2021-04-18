@@ -170,6 +170,21 @@ const lookupAbility = name => {
     })
 }
 
+// https://github.com/joshmiller17/vennt-server#add-ability
+const addAbility = (id, name) => {
+  return backendApi
+    .get('add_ability', {
+      params: {
+        auth_token: getAuth(),
+        id: id,
+        name: name
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
 // ------------------------- OTHER / RANDOM APIS ------------------------- //
 
 const getRandomNames = () => {
@@ -208,5 +223,6 @@ export default {
   listCampaigns,
   listCampaignInvites,
   lookupAbility,
+  addAbility,
   getRandomNames
 }

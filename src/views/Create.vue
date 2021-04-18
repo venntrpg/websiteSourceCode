@@ -200,7 +200,7 @@
 
 <script>
 
-import RefreshSVG from '../components/Common/RefreshSVG.vue'
+import RefreshSVG from '../components/Common/SVGs/RefreshSVG.vue'
 import AttributeSelection from '../components/CreatePage/AttributeSelection.vue'
 import CombatStats from '../components/CreatePage/CombatStats.vue'
 import GiftSelection from '../components/CreatePage/GiftSelection.vue'
@@ -607,10 +607,10 @@ export default {
       }
       console.log(this.createCharacter)
       // need to send this, then once confirmed, send weapon if they selected one, then once cofirmed, we should redirect to the character page
-      this.$store.dispatch('createCharacter', this.createCharacter)
+      const id = this.$store.dispatch('createCharacter', this.createCharacter)
 
       // TODO: Wait to see if this api returns confirmed
-      const id = this.clearCreateCharacter()
+      this.clearCreateCharacter()
       console.log(id)
       this.$router.push({ name: 'Character', params: { id } })
     },
@@ -721,15 +721,14 @@ h1 {
 .attributeInputContainer {
   display: grid;
   grid-template-columns: repeat(3, 33% [col-start]);
-  margin-right: -8px;
-  margin-left: -8px;
+  grid-gap: 8px;
+  margin-right: 8px;
 }
 .attributeInput {
   font-size: 16pt;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 8px;
 }
 .attributeName {
   width: 72px;

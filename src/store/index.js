@@ -208,6 +208,14 @@ const actions = {
     })
   },
 
+  addAbility: ({ commit }, { id, name }) => {
+    return api.addAbility(id, name).then(response => {
+      if (checkResponse(response)) {
+        console.log(response)
+      }
+    })
+  },
+
   // ------------------------- CAMPAIGN APIS ------------------------- //
 
   listCampaigns: ({ commit }) => {

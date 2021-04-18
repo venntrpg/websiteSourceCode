@@ -16,8 +16,8 @@
 
 <script>
 
-import CheckedRadioButton from '../Common/CheckedRadioButton.vue'
-import UncheckedRadioButton from '../Common/UncheckedRadioButton.vue'
+import CheckedRadioButton from '../Common/SVGs/CheckedRadioButtonSVG.vue'
+import UncheckedRadioButton from '../Common/SVGs/UncheckedRadioButtonSVG.vue'
 
 export default {
   name: 'RadioButtonSelection',

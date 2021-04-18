@@ -235,14 +235,6 @@ h1 {
   border-radius: 5px;
 }
 
-.bullet {
-  width: 20px;
-  height: 20px;
-  border-radius: 10px;
-  background-color: var(--red-600);
-  margin-right: 8px;
-}
-
 /* Nav Styles - useful for subnav styles */
 
 .navButton {
