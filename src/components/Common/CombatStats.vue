@@ -10,12 +10,8 @@
     <div class="combatStats">
       <div class="card stat hp">
         HP:
-        <div class="statNumbers">
-          <div class="number">{{ character.hp }}</div>
-          <div class="slash">/</div>
-          <div class="number">{{ character.maxHp }}</div>
-        </div>
-        <HelpSVG class="help hpHelp" />
+        <Fraction :top="character.hp" :bottom="character.maxHp" class="statNumbers" />
+        <HelpSVG v-if="showToolTips" class="help hpHelp" />
         <div class="toolTip hpToolTip">
           Your maximum Health (HP) is 20 + Level + 3 times Strength.
           <a href="https://vennt.fandom.com/wiki/Health" target="_blank" class="toolTipLink">Wiki entry</a>
@@ -23,12 +19,8 @@
       </div>
       <div class="card stat mp">
         MP:
-        <div class="statNumbers">
-          <div class="number">{{ character.mp }}</div>
-          <div class="slash">/</div>
-          <div class="number">{{ character.maxMp }}</div>
-        </div>
-        <HelpSVG class="help mpHelp" />
+        <Fraction :top="character.mp" :bottom="character.maxMp" class="statNumbers" />
+        <HelpSVG v-if="showToolTips" class="help mpHelp" />
         <div class="toolTip mpToolTip">
           Your maximum Mana (MP) is 6 + 3 times Wisdom.
           <a href="https://vennt.fandom.com/wiki/Mana" target="_blank" class="toolTipLink">Wiki entry</a>
@@ -36,12 +28,8 @@
       </div>
       <div class="card stat vim">
         Vim:
-        <div class="statNumbers">
-          <div class="number">{{ character.vim }}</div>
-          <div class="slash">/</div>
-          <div class="number">{{ character.maxVim }}</div>
-        </div>
-        <HelpSVG class="help vimHelp" />
+        <Fraction :top="character.vim" :bottom="character.maxVim" class="statNumbers" />
+        <HelpSVG v-if="showToolTips" class="help vimHelp" />
         <div class="toolTip vimToolTip">
           Your maximum Vim is equal to your maximum HP.
           <a href="https://vennt.fandom.com/wiki/Vim" target="_blank" class="toolTipLink">Wiki entry</a>
@@ -49,14 +37,8 @@
       </div>
       <div class="card stat hero">
         Hero:
-        <div class="statNumbers">
-          <div class="number">{{ character.hero }}</div>
-          <div v-if="character.maxHero" class="flex">
-            <div class="slash">/</div>
-            <div class="number">{{ character.maxHero }}</div>
-          </div>
-        </div>
-        <HelpSVG class="help heroHelp" />
+        <Fraction :top="character.hero" :bottom="character.maxHero" class="statNumbers" />
+        <HelpSVG v-if="showToolTips" class="help heroHelp" />
         <div class="toolTip heroToolTip">
           Hero Points are reserves of luck that can be spent to create moments of shining excellence.
           <a href="https://vennt.fandom.com/wiki/Hero_Points" target="_blank" class="toolTipLink">Wiki entry</a>
@@ -84,9 +66,9 @@
         </button>
       </div>
       <div
-      v-for="attr in attrRow"
-      v-bind:key="attr">
-        <div v-if="showDiceForAttr(attr)" class="card diceDropDown">
+      v-for="(attr, j) in attrRow"
+      v-bind:key="j">
+        <div v-if="showDropDown(attr)" class="card diceDropDown" v-bind:class="getDropDownClass(j, 3)">
           <div class="margin">
             <div class="alignRow">
               <div class="attrFullName">
@@ -94,41 +76,14 @@
                 (<span class="number">{{ character[attr] }}</span>)
               </div>
               <button v-on:click="attrRollButton(attr)" class="btn noSelect basicBtn">
-                <div class="basicBtnContents"><DiceSVG class="basicBtnSVG diceSVG" /> Roll Dice</div>
+                <div class="basicBtnContents">
+                  <DiceSVG class="basicBtnSVG diceSVG" />
+                  Roll Dice
+                </div>
               </button>
             </div>
-            <!-- Procedurally render dice rolls so if they are in a more complicated format than 3d6 + constant we can handle it -->
             <div v-if="showDice(attr)" class="diceSection">
-              <div class="diceRow diceSum">
-                <div
-                v-for="(diceElement, i) in getDiceRolls(attr)"
-                v-bind:key="i"
-                class="diceRow">
-                  <div v-if="renderDie(diceElement)" class="diceRow">
-                    <div
-                    v-for="(die, j) in diceElement.rolls"
-                    v-bind:key="j"
-                    class="diceRow">
-                      <div v-if="j !== 0" class="diceElement math">
-                        <div class="shiftDown">+</div>
-                      </div>
-                      <div class="diceElement dice">
-                        <div class="shiftDown">{{ die.value }}</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div v-else-if="renderMath(diceElement)" class="diceElement math">
-                    <div class="shiftDown">{{ diceElement }}</div>
-                  </div>
-                  <div v-else-if="renderConstant(diceElement)" class="diceElement constantContainer">
-                    <div class="diceElement constant">{{ diceElement }}</div>
-                  </div>
-                </div>
-                <div class="diceRow">
-                  <div class="diceElement math shiftDown">=</div>
-                  <div class="total shiftDown">{{ getDiceTotal(attr) }}</div>
-                </div>
-              </div>
+              <DiceRender :roll="getDice(attr)" />
               <div>Dice Rolled: {{ getDiceNotation(attr) }}</div>
               <div>Average Roll: {{ getDiceAverage(attr) }}</div>
             </div>
@@ -190,19 +145,30 @@ TODO:
 */
 
 import { DiceRoll } from 'rpg-dice-roller'
-import DiceSVG from '../Common/SVGs/DiceSVG.vue'
-import HelpSVG from '../Common/SVGs/HelpSVG.vue'
-import Bullet from '../Common/Bullet.vue'
+import DiceSVG from './SVGs/DiceSVG.vue'
+import HelpSVG from './SVGs/HelpSVG.vue'
+import Bullet from './Bullet.vue'
+import DiceRender from './CombatStatsComponents/DiceRender.vue'
+import Fraction from './CombatStatsComponents/Fraction.vue'
 
 export default {
   name: 'combatStats',
   props: {
-    character: Object
+    character: {
+      type: Object,
+      required: true
+    },
+    showToolTips: {
+      type: Boolean,
+      default: false
+    }
   },
   components: {
     DiceSVG,
     HelpSVG,
-    Bullet
+    Bullet,
+    DiceRender,
+    Fraction
   },
   data () {
     return {
@@ -242,6 +208,10 @@ export default {
     },
     attributeRows () {
       return [['per', 'tek', 'agi'], ['dex', 'int', 'spi'], ['str', 'wis', 'cha']]
+    },
+    showUpdateDropdown () {
+      // return this.character.id !== undefined
+      return true
     }
   },
   methods: {
@@ -266,18 +236,23 @@ export default {
     getAttrLink (attr) {
       return `https://vennt.fandom.com/wiki/${this.getAttrFullName(attr)}_(${attr.toUpperCase()})`
     },
-    showDiceForAttr (attr) {
+    showDropDown (attr) {
       return this.selectedAttr === attr
+    },
+    getDropDownClass (index, length) {
+      if (index === 0) {
+        return 'left'
+      }
+      if (index === length - 1) {
+        return 'right'
+      }
+      return ''
     },
     attrButton (attr) {
       if (this.selectedAttr === attr) {
         this.selectedAttr = ''
       } else {
         this.selectedAttr = attr
-      }
-      // TODO: Might want to just roll evertime this is openned to remove confusion
-      if (this.latestRoll[attr] === null) {
-        // this.attrRollButton(attr)
       }
     },
     attrButtonClass (attr) {
@@ -293,20 +268,8 @@ export default {
     showDice (attr) {
       return this.latestRoll[attr] !== null
     },
-    getDiceRolls (attr) {
-      return this.latestRoll[attr].rolls
-    },
-    renderDie (diceElement) {
-      return typeof diceElement === 'object' && diceElement.length > 0 && typeof diceElement.value === 'number'
-    },
-    renderMath (diceElement) {
-      return typeof diceElement === 'string'
-    },
-    renderConstant (diceElement) {
-      return typeof diceElement === 'number'
-    },
-    getDiceTotal (attr) {
-      return this.latestRoll[attr].total
+    getDice (attr) {
+      return this.latestRoll[attr]
     },
     getDiceNotation (attr) {
       return this.latestRoll[attr].notation
@@ -349,10 +312,6 @@ export default {
   /* Absolute so numbers are in space place for every combat stat */
   position: absolute;
   margin-left: 55px;
-}
-.slash {
-  font-size: 25pt;
-  font-weight: 300;
 }
 
 .flex {
@@ -448,18 +407,15 @@ export default {
   margin-bottom: 4px;
   min-height: 160px;
 }
+.diceDropDown.left {
+  border-top-left-radius: 0px;
+}
+.diceDropDown.right {
+  border-top-right-radius: 0px;
+}
 
 .diceSection {
   margin-top: 8px;
-}
-
-.diceSum {
-  margin-bottom: 8px;
-}
-
-.diceRow {
-  display: flex;
-  flex-wrap: wrap;
 }
 
 .leftMargin {
@@ -471,58 +427,8 @@ export default {
   margin-left: 90px;
 }
 
-.number {
-  font-family: 'roboto', monospace;
-  font-weight: 400;
-}
-
-.diceElement {
-  font-family: 'roboto', monospace;
-  font-weight: 500;
-  font-size: 22pt;
-  width: 40px;
-  height: 40px;
-  text-align: center;
-  border-radius: 5px;
-}
-
-.dice {
-  background-color: var(--red-600);
-  color: white;
-}
-
-.math {
-  font-weight: 400;
-  width: 30px;
-}
-
-/* Pile constant and border on top of each other, so the border doesn't affect the height for the number */
-.constantContainer {
-  position: relative;
-  width: 34px;
-  height: 34px;
-  border: 3px solid var(--yellow-300);
-}
-.constant {
-  position: absolute;
-  margin-left: -3px; /* margin left instead of top because of 3px border in container */
-}
-
-.total {
-  font-family: 'roboto', monospace;
-  font-weight: 500;
-  font-size: 22pt;
-  height: 40px;
-  text-align: center;
-  border-radius: 5px;
-}
-
 .tall {
   height: 64px;
-}
-
-.shiftDown {
-  margin-top: 3px;
 }
 
 .singleStat {

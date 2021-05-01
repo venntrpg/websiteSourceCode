@@ -17,7 +17,7 @@
       <div class="largePageWidth main" v-responsive="breakpoints">
         <Inventory v-if="inventoryPage" :character="character" />
         <CombatStats v-else-if="statsPage" :character="character" />
-        <Abilities v-else :character="character" />
+        <Abilities v-else />
       </div>
     </div>
   </div>
@@ -30,7 +30,7 @@ import { ResponsiveDirective } from 'vue-responsive-components'
 import isUUID from 'is-uuid'
 import Abilities from '../components/CharacterPage/Abilities.vue'
 import Inventory from '../components/CharacterPage/Inventory.vue'
-import CombatStats from '../components/CreatePage/CombatStats.vue'
+import CombatStats from '../components/Common/CombatStats.vue'
 
 const SECTION_STATS = 'stats'
 const SECTION_ABILITIES = 'abilities'

@@ -197,6 +197,9 @@ h1 {
   height: 30px;
   flex-shrink: 0;
 }
+.basicBtnSVG.selected {
+  fill: var(--red-500);
+}
 
 .input {
   resize: vertical;
@@ -235,6 +238,11 @@ h1 {
   border-radius: 5px;
 }
 
+.number {
+  font-family: 'roboto', monospace;
+  font-weight: 400;
+}
+
 /* Nav Styles - useful for subnav styles */
 
 .navButton {
@@ -242,7 +250,6 @@ h1 {
   padding-left: 10px;
   padding-right: 10px;
   padding-top: 2px;
-  padding-bottom: 2px;
   background-color: var(--purple-500);
   color: white;
   font-weight: 500;

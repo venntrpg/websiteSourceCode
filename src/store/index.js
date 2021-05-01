@@ -65,8 +65,11 @@ const state = {
   characters: {},
   campaigns: [],
   character: {},
+  searchAbility: '',
+  searchAbilitySuggestions: [],
   randomNames: [],
-  randomNamesDisabled: true
+  randomNamesDisabled: true,
+  pendingApis: {} // Used to prevent spamming apis
 }
 
 const getters = {
@@ -99,6 +102,12 @@ const mutations = {
   setCharacter (state, character) {
     state.character = character
   },
+  setSearchAbility (state, ability) {
+    state.searchAbility = ability
+  },
+  setSearchAbilitySuggestions (state, suggestions) {
+    state.searchAbilitySuggestions = suggestions
+  },
   appendRandomNames (state, randomNames) {
     state.randomNamesDisabled = false
     state.randomNames = state.randomNames.concat(randomNames)
@@ -108,6 +117,12 @@ const mutations = {
   },
   randomNamesIsDisabled (state) {
     state.randomNamesDisabled = true
+  },
+  addDisabledToPendingApis (state, name) {
+    state.pendingApis[name] = false
+  },
+  addApiToPendingApis (state, { name, timeout }) {
+    state.pendingApis[name] = Date.now() + timeout
   }
 }
 
@@ -200,11 +215,24 @@ const actions = {
     })
   },
 
-  lookupAbility: ({ commit }, name) => {
+  lookupAbility: ({ commit, state }, name) => {
+    // currently the only api I am specifically making sure we don't hit too hard
+    const timeout = state.pendingApis.lookupAbility
+    if (timeout !== undefined && (timeout === false || timeout > Date.now())) {
+      return false
+    }
+    commit('addDisabledToPendingApis', 'lookupAbility')
     return api.lookupAbility(name).then(response => {
-      if (checkResponse(response)) {
-        console.log(response)
+      if (checkResponse(response) && response.value) {
+        commit('setSearchAbility', response.value)
+        commit('setSearchAbilitySuggestions', [])
+      } else {
+        if (response.info && response.info.includes('More than one match') && response.matches) {
+          commit('setSearchAbilitySuggestions', response.matches)
+        }
+        commit('setSearchAbility', '')
       }
+      commit('addApiToPendingApis', { name: 'lookupAbility', timeout: 1000 })
     })
   },
 

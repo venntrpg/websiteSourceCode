@@ -202,9 +202,9 @@
 
 import RefreshSVG from '../components/Common/SVGs/RefreshSVG.vue'
 import AttributeSelection from '../components/CreatePage/AttributeSelection.vue'
-import CombatStats from '../components/CreatePage/CombatStats.vue'
+import CombatStats from '../components/Common/CombatStats.vue'
 import GiftSelection from '../components/CreatePage/GiftSelection.vue'
-import RadioButtonSelection from '../components/CreatePage/RadioButtonSelection.vue'
+import RadioButtonSelection from '../components/Common/RadioButtonSelection.vue'
 import { ResponsiveDirective } from 'vue-responsive-components'
 import { mapState } from 'vuex'
 
@@ -516,6 +516,9 @@ export default {
     },
     giftUpdated (newGift) {
       this.create.gift = newGift
+      this.create.childAttrs = this.create.childAttrs.filter(attr => attr !== newGift)
+      this.create.adultAttrs = this.create.adultAttrs.filter(attr => attr !== newGift)
+      this.create.badAttrs = this.create.badAttrs.filter(attr => attr !== newGift)
       this.backupCreate()
     },
     childAttrsUpdated (newList) {
@@ -607,12 +610,12 @@ export default {
       }
       console.log(this.createCharacter)
       // need to send this, then once confirmed, send weapon if they selected one, then once cofirmed, we should redirect to the character page
-      const id = this.$store.dispatch('createCharacter', this.createCharacter)
+      this.$store.dispatch('createCharacter', this.createCharacter).then(response => console.log(response))
 
       // TODO: Wait to see if this api returns confirmed
-      this.clearCreateCharacter()
-      console.log(id)
-      this.$router.push({ name: 'Character', params: { id } })
+      // this.clearCreateCharacter()
+      // console.log(id)
+      // this.$router.push({ name: 'Character', params: { id } })
     },
     clearCreateButton () {
       this.clearCreateShowing = false
