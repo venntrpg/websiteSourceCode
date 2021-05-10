@@ -66,11 +66,14 @@ export default {
     }
   },
   mounted () {
-    // TODO: If we already have this character in characterList, just use that one instead of re-grabbing it from the server
-    this.$store.dispatch('getCharacter', this.id)
+    if (this.characters !== {} && this.characters[this.id] !== undefined) {
+      this.$store.commit('setCharacter', this.characters[this.id])
+    } else {
+      this.$store.dispatch('getCharacter', this.id)
+    }
   },
   computed: {
-    ...mapState(['isLoggedIn', 'character']),
+    ...mapState(['isLoggedIn', 'characters', 'character']),
     stats () {
       return SECTION_STATS
     },
