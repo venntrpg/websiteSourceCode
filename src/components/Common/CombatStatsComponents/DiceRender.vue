@@ -7,7 +7,7 @@
     class="diceRow">
       <div v-if="renderDie(diceElement)" class="diceRow">
         <div
-        v-for="(die, j) in diceElement.rolls"
+        v-for="(die, j) in getDiceElementRolls(diceElement)"
         v-bind:key="j"
         class="diceRow">
           <div v-if="j !== 0" class="diceElement math">
@@ -40,6 +40,11 @@ export default {
     roll: Object
   },
   methods: {
+    getDiceElementRolls (diceElement) {
+      // ignore dropped dice for now
+      // TODO: Figure out a nice way to render it instead
+      return diceElement.rolls.filter(result => result.useInTotal)
+    },
     renderDie (diceElement) {
       return typeof diceElement === 'object' && diceElement.length > 0 && typeof diceElement.value === 'number'
     },

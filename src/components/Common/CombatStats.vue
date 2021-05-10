@@ -3,48 +3,76 @@
     <div class="displayName">
       <h2>{{ character.name }}</h2>
     </div>
+    <div class="seperator"></div>
+    <!-- COMBAT STATS -->
     <div class="flex">
       <Bullet :character="character" />
       <h2>Combat Stats</h2>
     </div>
-    <div class="combatStats">
-      <div class="card stat hp">
-        HP:
-        <Fraction :top="character.hp" :bottom="character.maxHp" class="statNumbers" />
-        <HelpSVG v-if="showToolTips" class="help hpHelp" />
-        <div class="toolTip hpToolTip">
-          Your maximum Health (HP) is 20 + Level + 3 times Strength.
-          <a href="https://vennt.fandom.com/wiki/Health" target="_blank" class="toolTipLink">Wiki entry</a>
+    <div>
+      <div
+      v-for="(attrRow, index) in combatStatsRows"
+      v-bind:key="index">
+        <div class="attrsRow">
+          <button
+          v-for="attr in attrRow"
+          v-bind:key="attr"
+          v-on:click="attrButton(attr)"
+          class="btn basicBtn attrButton noSelect"
+          v-bind:class="attrButtonClass(attr)">
+            <div class="basicBtnContents attrButtonContents">
+              {{ getAttrDisplayName(attr) }}:
+              <Fraction :top="character[attr]" :bottom="getAttrMaxValue(attr)" class="statNumbers" />
+            </div>
+          </button>
         </div>
-      </div>
-      <div class="card stat mp">
-        MP:
-        <Fraction :top="character.mp" :bottom="character.maxMp" class="statNumbers" />
-        <HelpSVG v-if="showToolTips" class="help mpHelp" />
-        <div class="toolTip mpToolTip">
-          Your maximum Mana (MP) is 6 + 3 times Wisdom.
-          <a href="https://vennt.fandom.com/wiki/Mana" target="_blank" class="toolTipLink">Wiki entry</a>
-        </div>
-      </div>
-      <div class="card stat vim">
-        Vim:
-        <Fraction :top="character.vim" :bottom="character.maxVim" class="statNumbers" />
-        <HelpSVG v-if="showToolTips" class="help vimHelp" />
-        <div class="toolTip vimToolTip">
-          Your maximum Vim is equal to your maximum HP.
-          <a href="https://vennt.fandom.com/wiki/Vim" target="_blank" class="toolTipLink">Wiki entry</a>
-        </div>
-      </div>
-      <div class="card stat hero">
-        Hero:
-        <Fraction :top="character.hero" :bottom="character.maxHero" class="statNumbers" />
-        <HelpSVG v-if="showToolTips" class="help heroHelp" />
-        <div class="toolTip heroToolTip">
-          Hero Points are reserves of luck that can be spent to create moments of shining excellence.
-          <a href="https://vennt.fandom.com/wiki/Hero_Points" target="_blank" class="toolTipLink">Wiki entry</a>
+        <div
+        v-for="(attr, j) in attrRow"
+        v-bind:key="j">
+          <div v-if="showDropDown(attr)" class="card diceDropDown" v-bind:class="getDropDownClass(j, 2)">
+            <div class="margin">
+              <div v-if="showUpdateDropdown">
+                <div class="attrHeaderMargin">
+                  Update Stat Values:
+                </div>
+                <button
+                v-if="getAttrMaxValue(attr) && character[attr] < getAttrMaxValue(attr)"
+                v-on:click="adjustAttrToFullButton(attr)"
+                class="btn roundedButton wide noSelect">
+                  Reset {{ getAttrDisplayName(attr) }} to Full
+                </button>
+                <div class="alignRow">
+                  <div class="incrementLabel">
+                    Current {{ getAttrDisplayName(attr) }}:
+                  </div>
+                  <input
+                  type="number"
+                  v-on:keyup.enter="adjustAttrFromField(attr)"
+                  v-model="attrFields[attr]"
+                  :placeholder="character[attr]"
+                  v-bind:class="inputFieldClass(attr)"
+                  class="input">
+                </div>
+                <div v-if="getAttrMaxValue(attr)" class="alignRow">
+                  <div class="incrementLabel">
+                    Maximum {{ getAttrDisplayName(attr) }}:
+                  </div>
+                  <input
+                  type="number"
+                  v-on:keyup.enter="adjustAttrFromField(getAttrMaxName(attr))"
+                  v-model="attrFields[getAttrMaxName(attr)]"
+                  :placeholder="getAttrMaxValue(attr)"
+                  v-bind:class="inputFieldClass(getAttrMaxName(attr))"
+                  class="input">
+                </div>
+              </div>
+              <div v-else v-html="getAttrHelpHTML(attr)"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    <!-- ATTRIBUTES -->
     <div class="flex">
       <Bullet :character="character" />
       <h2>Attributes</h2>
@@ -57,7 +85,7 @@
         v-for="attr in attrRow"
         v-bind:key="attr"
         v-on:click="attrButton(attr)"
-        class="btn noSelect basicBtn attrButton"
+        class="btn basicBtn attrButton noSelect"
         v-bind:class="attrButtonClass(attr)">
           <div class="basicBtnContents attrButtonContents">
             {{ attr.toUpperCase() }}:
@@ -71,61 +99,96 @@
         <div v-if="showDropDown(attr)" class="card diceDropDown" v-bind:class="getDropDownClass(j, 3)">
           <div class="margin">
             <div class="alignRow">
-              <div class="attrFullName">
+              <div class="attrHeader">
                 <a v-bind:href="getAttrLink(attr)" target="_blank" class="link stealth">{{ getAttrFullName(attr) }}</a>
                 (<span class="number">{{ character[attr] }}</span>)
               </div>
-              <button v-on:click="attrRollButton(attr)" class="btn noSelect basicBtn">
+              <button v-on:click="attrRollButton(attr)" class="btn basicBtn noSelect">
                 <div class="basicBtnContents">
-                  <DiceSVG class="basicBtnSVG diceSVG" />
+                  <DiceSVG class="basicBtnSVG selected space" />
                   Roll Dice
                 </div>
               </button>
             </div>
-            <div v-if="showDice(attr)" class="diceSection">
-              <DiceRender :roll="getDice(attr)" />
-              <div>Dice Rolled: {{ getDiceNotation(attr) }}</div>
-              <div>Average Roll: {{ getDiceAverage(attr) }}</div>
+            <div class="diceSection">
+              <div v-if="showDice(attr)">
+                <DiceRender :roll="getDice(attr)" />
+                <div>Dice Rolled: {{ getDiceNotation(attr) }}</div>
+                <div>Average Roll: {{ getDiceAverage(attr) }}</div>
+              </div>
+            </div>
+            <div v-if="showUpdateDropdown">
+              <div class="seperator topBottomMargin"></div>
+              <div class="attrHeaderMargin">
+                Special Conditions:
+              </div>
+              <button v-on:click="attrRollButtonHeroPoint(attr)" :disabled="character.hero <= 0" class="btn basicBtn wide noSelect">
+                <div class="basicBtnContents">
+                  <DiceSVG class="basicBtnSVG selected space" />
+                  Roll Dice using Hero Point
+                </div>
+              </button>
+              <!-- TODO: It would be neat if we could add abilities here too -->
+              <div class="seperator topBottomMargin"></div>
+              <div class="attrHeaderMargin">
+                Update Attribute Value:
+              </div>
+              <button v-on:click="propegateChangesButton()" class="btn basicBtn wide noSelect">
+                <div class="basicBtnContents">
+                  <CheckedCheckBoxSVG v-if="propegateChanges" class="basicBtnSVG space selected" />
+                  <UncheckedCheckBoxSVG v-else class="basicBtnSVG space" />
+                  Propegate Changes
+                </div>
+              </button>
+              <div class="alignRow">
+                <div class="incrementLabel">
+                  Update {{ attr.toUpperCase() }} value:
+                </div>
+                <button v-on:click="adjustAttrButton(attr, true)" class="btn roundedButton wide noSelect">+1</button>
+                <button v-on:click="adjustAttrButton(attr, false)" class="btn roundedButton wide noSelect">-1</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div class="tall"></div>
+    <!-- SINGLE LINE STATS -->
     <div v-if="character.gift" class="card stat singleStat">
       Gift: {{ getGiftName }}
     </div>
-    <div class="card stat singleStat">Initiative:
-      <div class="number leftMarginWide">{{ character.init }}</div>
-      <HelpSVG class="help" />
-      <div class="toolTip wide">
-        Your Initiative is your Agility + Dexterity.
-        <a href="https://vennt.fandom.com/wiki/Initiative" target="_blank" class="toolTipLink">Wiki entry</a>
-      </div>
-    </div>
-    <div class="card stat singleStat">Speed:
-      <div class="number leftMarginWide">{{ character.speed }}</div>
-      <HelpSVG class="help" />
-      <div class="toolTip wide">
-        Your Speed is 3 + Agility minus any Burden from your Armor.
-        <a href="https://vennt.fandom.com/wiki/Movement" target="_blank" class="toolTipLink">Wiki entry</a>
-      </div>
-    </div>
-    <div class="card stat singleStat">Armor:
-      <div class="number leftMarginWide">{{ character.armor }}</div>
-      <HelpSVG class="help" />
-      <div class="toolTip wide">
-        Your Armor serves as damage reduction from blows dealt to you.
-        <a href="https://vennt.fandom.com/wiki/Armor" target="_blank" class="toolTipLink">Wiki entry</a>
-      </div>
-    </div>
-    <div class="card stat singleStat">XP:
-      <div class="number leftMarginWide">{{ character.xp }}</div>
-      <HelpSVG class="help" />
-      <div class="toolTip wide">
-        Experience Points, the resource gained by player characters during play and spent on Abilities.
-        Your character's level is your xp / 1000.
-        <a href="https://vennt.fandom.com/wiki/XP" target="_blank" class="toolTipLink">Wiki entry</a>
+    <div v-for="attr in singleRowAttributes" v-bind:key="attr">
+      <button
+      v-on:click="attrButton(attr)"
+      class="btn basicBtn attrButton noSelect singleStat"
+      v-bind:class="attrButtonClass(attr)">
+        <div class="basicBtnContents attrButtonContents">
+          {{ getAttrDisplayName(attr) }}:
+          <div class="number leftMarginWide">{{ character[attr] }}</div>
+        </div>
+      </button>
+      <div v-if="showDropDown(attr)" class="card diceDropDown left right">
+        <div class="margin">
+          <div class="seperator bottomMargin"></div>
+          <div v-if="showUpdateDropdown">
+            <div class="attrHeaderMargin">
+              Update Stat Value:
+            </div>
+            <div class="alignRow">
+              <div class="incrementLabel">
+                Current {{ getAttrDisplayName(attr) }}:
+              </div>
+              <input
+              type="number"
+              v-on:keyup.enter="adjustAttrFromField(attr)"
+              v-model="attrFields[attr]"
+              :placeholder="character[attr]"
+              v-bind:class="inputFieldClass(attr)"
+              class="input">
+            </div>
+          </div>
+          <div v-else v-html="getAttrHelpHTML(attr)"></div>
+        </div>
       </div>
     </div>
     <div class="tall"></div>
@@ -142,11 +205,16 @@ TODO:
 - Make sidepanel background slightly darker so white buttons are more visible
 - Add animation (maybe) to opening and closing dice roll panels
 - Add more dice rolling options in drop down or something - should be able to try rolling with hero point etc.
+
+- Remove help tooltips and make them all dropdowns.
+- make drop downs either show tooltip info OR show ways to update your character's stats (like reset health to full, update current / max values etc.)
+
 */
 
 import { DiceRoll } from 'rpg-dice-roller'
 import DiceSVG from './SVGs/DiceSVG.vue'
-import HelpSVG from './SVGs/HelpSVG.vue'
+import CheckedCheckBoxSVG from './SVGs/CheckedCheckBoxSVG.vue'
+import UncheckedCheckBoxSVG from './SVGs/UncheckedCheckBoxSVG.vue'
 import Bullet from './Bullet.vue'
 import DiceRender from './CombatStatsComponents/DiceRender.vue'
 import Fraction from './CombatStatsComponents/Fraction.vue'
@@ -157,15 +225,12 @@ export default {
     character: {
       type: Object,
       required: true
-    },
-    showToolTips: {
-      type: Boolean,
-      default: false
     }
   },
   components: {
     DiceSVG,
-    HelpSVG,
+    CheckedCheckBoxSVG,
+    UncheckedCheckBoxSVG,
     Bullet,
     DiceRender,
     Fraction
@@ -173,6 +238,7 @@ export default {
   data () {
     return {
       selectedAttr: '',
+      // These need to get moved into seperate components instead of being up here
       latestRoll: {
         per: null,
         tek: null,
@@ -183,6 +249,22 @@ export default {
         str: null,
         wis: null,
         cha: null
+      },
+      propegateChanges: true,
+      attrFields: {
+        hp: this.character.hp,
+        maxHp: this.character.maxHp,
+        mp: this.character.mp,
+        maxMp: this.character.maxMp,
+        vim: this.character.vim,
+        maxVim: this.character.maxVim,
+        hero: this.character.hero,
+        maxHero: this.character.maxHero,
+        init: this.character.init,
+        speed: this.character.speed,
+        armor: this.character.armor,
+        xp: this.character.xp,
+        sp: this.character.sp
       }
     }
   },
@@ -206,36 +288,20 @@ export default {
       }
       return ''
     },
+    combatStatsRows () {
+      return [['hp', 'mp'], ['vim', 'hero']]
+    },
     attributeRows () {
       return [['per', 'tek', 'agi'], ['dex', 'int', 'spi'], ['str', 'wis', 'cha']]
     },
+    singleRowAttributes () {
+      return ['init', 'speed', 'armor', 'xp', 'sp']
+    },
     showUpdateDropdown () {
-      // return this.character.id !== undefined
-      return true
+      return this.character.id !== undefined
     }
   },
   methods: {
-    getAttrFullName (attr) {
-      const nameMap = {
-        per: 'Perception',
-        tek: 'Technology',
-        agi: 'Agility',
-        dex: 'Dexterity',
-        int: 'Intelligence',
-        spi: 'Spirit',
-        str: 'Strength',
-        wis: 'Wisdom',
-        cha: 'Charisma'
-      }
-      const name = nameMap[attr]
-      if (name) {
-        return name
-      }
-      return ''
-    },
-    getAttrLink (attr) {
-      return `https://vennt.fandom.com/wiki/${this.getAttrFullName(attr)}_(${attr.toUpperCase()})`
-    },
     showDropDown (attr) {
       return this.selectedAttr === attr
     },
@@ -261,6 +327,58 @@ export default {
       }
       return ''
     },
+    getAttrDisplayName (attr) {
+      if (attr === 'init') {
+        return 'Initiative'
+      }
+      if (attr.length <= 2) {
+        return attr.toUpperCase()
+      }
+      return attr.charAt(0).toUpperCase() + attr.slice(1)
+    },
+    getAttrMaxName (attr) {
+      return 'max' + attr.charAt(0).toUpperCase() + attr.slice(1)
+    },
+    getAttrMaxValue (attr) {
+      return this.character[this.getAttrMaxName(attr)]
+    },
+    getAttrHelpHTML (attr) {
+      const helpMap = {
+        hp: 'Your maximum Health (HP) is 20 + Level + 3 times Strength. <a href="https://vennt.fandom.com/wiki/Health" target="_blank" class="link">Wiki entry</a>',
+        mp: 'Your maximum Mana (MP) is 6 + 3 times Wisdom. <a href="https://vennt.fandom.com/wiki/Mana" target="_blank" class="link">Wiki entry</a>',
+        vim: 'Your maximum Vim is equal to your maximum HP. <a href="https://vennt.fandom.com/wiki/Vim" target="_blank" class="link">Wiki entry</a>',
+        hero: `Hero Points are reserves of luck that can be spent to create moments of shining excellence.
+        <a href="https://vennt.fandom.com/wiki/Hero_Points" target="_blank" class="link">Wiki entry</a>`,
+        init: 'Your Initiative is your Agility + Dexterity. <a href="https://vennt.fandom.com/wiki/Initiative" target="_blank" class="link">Wiki entry</a>',
+        speed: 'Your Speed is 3 + Agility minus any Burden from your Armor. <a href="https://vennt.fandom.com/wiki/Movement" target="_blank" class="link">Wiki entry</a>',
+        armor: 'Your Armor serves as damage reduction from blows dealt to you. <a href="https://vennt.fandom.com/wiki/Armor" target="_blank" class="link">Wiki entry</a>',
+        xp: `Experience Points, the resource gained by player characters during play and spent on Abilities. Your character's level is your xp / 1000.
+        <a href="https://vennt.fandom.com/wiki/XP" target="_blank" class="link">Wiki entry</a>`,
+        sp: 'Silver Pieces are Amnis\'s main. <a href="https://vennt.fandom.com/wiki/Money" target="_blank" class="link">Wiki entry</a>'
+      }
+      return helpMap[attr]
+    },
+    getAttrFullName (attr) {
+      const nameMap = {
+        per: 'Perception',
+        tek: 'Technology',
+        agi: 'Agility',
+        dex: 'Dexterity',
+        int: 'Intelligence',
+        spi: 'Spirit',
+        str: 'Strength',
+        wis: 'Wisdom',
+        cha: 'Charisma'
+      }
+      const name = nameMap[attr]
+      if (name) {
+        return name
+      }
+      return ''
+    },
+    getAttrLink (attr) {
+      return `https://vennt.fandom.com/wiki/${this.getAttrFullName(attr)}_(${attr.toUpperCase()})`
+    },
     attrRollButton (attr) {
       const rollStr = '3d6' + (this.character[attr] >= 0 ? '+' : '') + this.character[attr]
       this.latestRoll[attr] = new DiceRoll(rollStr)
@@ -276,6 +394,87 @@ export default {
     },
     getDiceAverage (attr) {
       return this.latestRoll[attr].averageTotal
+    },
+    propegateChangesButton () {
+      this.propegateChanges = !this.propegateChanges
+    },
+    adjustAttrToFullButton (attr) {
+      const maxVal = this.getAttrMaxValue(attr)
+      if (!maxVal || this.character[attr] >= maxVal) {
+        return
+      }
+      this.$store.dispatch('setAttribute', { id: this.character.id, attr: attr, val: maxVal })
+    },
+    validateField (attr) {
+      const val = this.attrFields[attr] !== undefined ? parseInt(this.attrFields[attr]) : 0
+      if (isNaN(val)) {
+        return false
+      }
+      if (attr !== 'init' && val < 0) {
+        return false
+      }
+      if (['hp', 'mp', 'vim', 'hero'].includes(attr)) {
+        if (this.getAttrMaxValue(attr) && val > this.getAttrMaxValue(attr)) {
+          return false
+        }
+      }
+      return val
+    },
+    inputFieldClass (attr) {
+      return this.validateField(attr) === false ? 'invalid' : ''
+    },
+    adjustAttrFromField (attr) {
+      const val = this.validateField(attr)
+      if (val !== false) {
+        this.$store.dispatch('setAttribute', { id: this.character.id, attr: attr, val: val })
+      }
+    },
+    attrRollButtonHeroPoint (attr) {
+      if (this.character.hero <= 0) {
+        return
+      }
+      // we drop the lowest roll with dl1 and then add 9
+      const rollStr = '3d6dl1' + (this.character[attr] >= 0 ? '+' : '') + this.character[attr] + '+9'
+      this.latestRoll[attr] = new DiceRoll(rollStr)
+      this.adjustAttrButton('hero', false)
+    },
+    adjustAttrButton (attr, increment) {
+      const adjustment = increment ? 1 : -1
+      const newVal = this.character[attr] + adjustment
+      this.$store.dispatch('setAttribute', { id: this.character.id, attr: attr, val: newVal })
+      if (this.propegateChanges) {
+        // HP & VIM
+        if (attr === 'str') {
+          const newHp = Math.max(this.character.maxHp + (adjustment * 3), 0)
+          const newVim = Math.max(this.character.maxVim + (adjustment * 3), 0)
+          this.$store.dispatch('setAttribute', { id: this.character.id, attr: 'maxHp', val: newHp })
+          this.$store.dispatch('setAttribute', { id: this.character.id, attr: 'maxVim', val: newVim })
+          if (this.character.hp > newHp) {
+            this.$store.dispatch('setAttribute', { id: this.character.id, attr: 'hp', val: newHp })
+          }
+          if (this.character.vim > newVim) {
+            this.$store.dispatch('setAttribute', { id: this.character.id, attr: 'vim', val: newVim })
+          }
+        }
+        // MP
+        if (attr === 'wis') {
+          const newMp = Math.max(this.character.maxMp + (adjustment * 3), 0)
+          this.$store.dispatch('setAttribute', { id: this.character.id, attr: 'maxMp', val: newMp })
+          if (this.character.mp > newMp) {
+            this.$store.dispatch('setAttribute', { id: this.character.id, attr: 'mp', val: newMp })
+          }
+        }
+        // SPEED
+        if (attr === 'agi') {
+          const newSpeed = Math.max(this.character.speed + adjustment, 0)
+          this.$store.dispatch('setAttribute', { id: this.character.id, attr: 'speed', val: newSpeed })
+        }
+        // INIT
+        if (attr === 'agi' || attr === 'dex') {
+          const newInit = Math.max(this.character.init + adjustment, 0)
+          this.$store.dispatch('setAttribute', { id: this.character.id, attr: 'init', val: newInit })
+        }
+      }
     }
   }
 }
@@ -290,15 +489,8 @@ export default {
 
 .displayName {
   text-align: center;
-  border-bottom: 2px solid var(--gray-400);
 }
 
-.combatStats {
-  display: grid;
-  grid-template-columns: repeat(2, 50% [col-start]);
-  grid-gap: 8px;
-  margin-right: 8px;
-}
 .stat {
   font-size: 16pt;
   display: flex;
@@ -389,23 +581,19 @@ export default {
   width: 100%;
 }
 
-.attrFullName {
+.attrHeader {
   font-size: 16pt;
   font-weight: 500;
 }
-
-.basicBtnSVG {
-  margin-right: 8px;
-}
-
-.diceSVG {
-  fill: var(--red-600)
+.attrHeaderMargin {
+  font-size: 16pt;
+  font-weight: 500;
+  margin-bottom: 8px;
 }
 
 .diceDropDown {
   margin-top: 4px;
   margin-bottom: 4px;
-  min-height: 160px;
 }
 .diceDropDown.left {
   border-top-left-radius: 0px;
@@ -416,6 +604,7 @@ export default {
 
 .diceSection {
   margin-top: 8px;
+  min-height: 90px;
 }
 
 .leftMargin {
@@ -433,6 +622,25 @@ export default {
 
 .singleStat {
   margin: 0px 0px 8px 0px;
+}
+
+.seperator.topBottomMargin {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+.seperator.bottomMargin {
+  margin-bottom: 16px;
+}
+
+.alignRow {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.incrementLabel {
+  font-size: 14pt;
+  min-width: 180px;
 }
 
 /* Mobile Styles */

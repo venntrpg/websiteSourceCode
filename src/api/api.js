@@ -9,12 +9,23 @@ function getAuth () {
   return auth
 }
 
+function convertAttribute (attr) {
+  switch (attr) {
+    case 'maxHp':
+      return 'MAX_HP'
+    case 'maxMp':
+      return 'MAX_MP'
+    case 'maxVim':
+      return 'MAX_VIM'
+    default:
+      return attr.toUpperCase()
+  }
+}
+
 // ------------------------- ACCOUNT APIS ------------------------- //
 
 // https://github.com/joshmiller17/vennt-server#create-an-account
 const signup = (username, password) => {
-  // For some reason, I need to build this JSON by hand ¯\_(ツ)_/¯
-  // const postBody = '{"register":"' + username + '","password":"' + password + '"}'
   const postBody = { register: username, password: password }
   return backendApi
     .post('/', JSON.stringify(postBody))
@@ -25,8 +36,6 @@ const signup = (username, password) => {
 
 // https://github.com/joshmiller17/vennt-server#login
 const login = (username, password) => {
-  // For some reason, I need to build this JSON by hand ¯\_(ツ)_/¯
-  // const postBody = '{"login":"' + username + '","password":"' + password + '"}'
   const postBody = { login: username, password: password }
   return backendApi
     .post('/', JSON.stringify(postBody))
@@ -105,6 +114,22 @@ const getCharacter = id => {
       params: {
         auth_token: getAuth(),
         id: id
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
+// https://github.com/joshmiller17/vennt-server#set-an-attribute
+const setAttribute = (id, attr, val) => {
+  return backendApi
+    .get('/set_attr', {
+      params: {
+        auth_token: getAuth(),
+        id: id,
+        attr: convertAttribute(attr),
+        value: val
       }
     })
     .then(response => {
@@ -219,6 +244,7 @@ export default {
   createCharacter,
   listCharacters,
   getCharacter,
+  setAttribute,
   createCampaign,
   listCampaigns,
   listCampaignInvites,

@@ -68,6 +68,7 @@ export default {
   --gray-500: #afafb0;
   --gray-400: #d1d1d1;
   --gray-300: #efefef;
+  --gray-250: #f4f4f4;
   --gray-200: #f7f7f7;
   --gray-100: #fbfbfb;
 
@@ -80,7 +81,7 @@ export default {
 
   /* Background Styles*/
   min-height: var(--page-height);
-  background-color: var(--gray-200);
+  background-color: var(--gray-250);
 }
 
 h1 {
@@ -186,6 +187,9 @@ h1 {
 .basicBtn.link {
   color: black;
 }
+.basicBtn.wide {
+  width: 100%;
+}
 .basicBtnContents {
   display: flex;
   align-items: center;
@@ -199,6 +203,12 @@ h1 {
 }
 .basicBtnSVG.selected {
   fill: var(--red-500);
+}
+.basicBtn:disabled .basicBtnSVG.selected  {
+  fill: var(--gray-500);
+}
+.basicBtnSVG.space {
+  margin-right: 8px;
 }
 
 .input {
@@ -228,6 +238,15 @@ h1 {
 .input:focus {
   border: solid 1px var(--yellow-600);
 }
+.input.invalid {
+  border: solid 1px var(--red-300);
+}
+.input.invalid:hover {
+  border: solid 1px var(--red-500);
+}
+.input.invalid:focus {
+  border: solid 1px var(--red-700);
+}
 .input.wide {
   width: 100%;
 }
@@ -241,6 +260,12 @@ h1 {
 .number {
   font-family: 'roboto', monospace;
   font-weight: 400;
+}
+
+.seperator {
+  height: 2px;
+  width: 100%;
+  background-color: var(--gray-400);
 }
 
 /* Nav Styles - useful for subnav styles */
@@ -318,7 +343,6 @@ h1 {
   margin-top: var(--total-nav-height);
 }
 
-/* This isn't working - stuck with blue highlights for now I guess */
 .noSelect:focus {
   outline:0;
 }

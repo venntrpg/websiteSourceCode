@@ -102,6 +102,9 @@ const mutations = {
   setCharacter (state, character) {
     state.character = character
   },
+  updateCharacterAttribute (state, { attr, val }) {
+    state.character[attr] = val
+  },
   setSearchAbility (state, ability) {
     state.searchAbility = ability
   },
@@ -211,6 +214,16 @@ const actions = {
     return api.getCharacter(id).then(response => {
       if (checkResponse(response) && response.value) {
         commit('setCharacter', convertApiCharacter(response.value))
+      }
+    })
+  },
+
+  setAttribute: ({ commit }, { id, attr, val }) => {
+    // upate value locally immediately so it looks seamless
+    commit('updateCharacterAttribute', { attr, val })
+    return api.setAttribute(id, attr, val).then(response => {
+      if (checkResponse(response)) {
+        console.log(response)
       }
     })
   },
