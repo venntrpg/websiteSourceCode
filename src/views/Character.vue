@@ -100,7 +100,7 @@ export default {
       return this.$route.params.section === SECTION_INVENTORY
     },
     showRightSideBar () {
-      return this.$route.params.detail === undefined ? 'rightHidden' : ''
+      return !(this.abilitiesPage || this.inventoryPage) || this.$route.params.detail === undefined ? 'rightHidden' : ''
     }
   }
 }

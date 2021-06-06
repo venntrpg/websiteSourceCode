@@ -267,11 +267,14 @@ const actions = {
     })
   },
 
-  removeItem: ({ dispatch }, { id, itemId }) => {
-    return api.addItem(id, itemId).then(response => {
-      if (checkResponse(response) && response.value) {
+  removeItem: ({ dispatch }, { id, itemId, redirectToInventory }) => {
+    return api.removeItem(id, itemId).then(response => {
+      if (checkResponse(response)) {
         // regrab character info with item removed
         dispatch('getCharacter', id)
+        if (redirectToInventory) {
+          router.push({ name: 'Character', params: { id, section: 'inventory' } })
+        }
       }
     })
   },

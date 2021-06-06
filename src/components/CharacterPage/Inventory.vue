@@ -24,7 +24,7 @@
           <div class="itemDesc">{{ item.desc }}</div>
         </div>
         <router-link
-          :to="{ name: 'Character', params: { id: character.id, section: 'inventory', detail: item.name }}"
+          :to="{ name: 'Character', params: { id: character.id, section: 'inventory', detail: item.id }}"
           class="btn basicBtn link">
           <div class="basicBtnContents">
             <RightArrowSVG class="basicBtnSVG" />
@@ -56,6 +56,8 @@
 </template>
 
 <script>
+
+// TODO: I would like to add a shop link so you can just buy common items without needing to insert all of the details individually
 
 import { mapState } from 'vuex'
 import RightArrowSVG from '../Common/SVGs/RightArrowSVG.vue'
