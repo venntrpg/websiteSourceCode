@@ -249,10 +249,29 @@ const actions = {
     })
   },
 
-  addAbility: ({ commit }, { id, name }) => {
+  addAbility: ({ dispatch }, { id, name }) => {
     return api.addAbility(id, name).then(response => {
       if (checkResponse(response)) {
-        console.log(response)
+        // regrab character info with new ability set
+        dispatch('getCharacter', id)
+      }
+    })
+  },
+
+  addItem: ({ dispatch }, { id, item, refreshCharacter }) => {
+    return api.addItem(id, item).then(response => {
+      if (checkResponse(response) && response.id && refreshCharacter) {
+        // regrab character info with new item when `refreshCharacter` is true
+        dispatch('getCharacter', id)
+      }
+    })
+  },
+
+  removeItem: ({ dispatch }, { id, itemId }) => {
+    return api.addItem(id, itemId).then(response => {
+      if (checkResponse(response) && response.value) {
+        // regrab character info with item removed
+        dispatch('getCharacter', id)
       }
     })
   },

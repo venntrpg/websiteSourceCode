@@ -137,6 +137,71 @@ const setAttribute = (id, attr, val) => {
     })
 }
 
+// ------------------------- ABILITY APIS ------------------------- //
+
+// https://github.com/joshmiller17/vennt-server#lookup-ability
+const lookupAbility = name => {
+  return backendApi
+    .get('lookup_ability', {
+      params: {
+        auth_token: getAuth(),
+        name: name
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
+// https://github.com/joshmiller17/vennt-server#add-ability
+const addAbility = (id, name) => {
+  return backendApi
+    .get('add_ability', {
+      params: {
+        auth_token: getAuth(),
+        id: id,
+        name: name
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
+// ------------------------- ITEM APIS ------------------------- //
+
+// https://github.com/joshmiller17/vennt-server#lookup-ability
+const addItem = (id, item) => {
+  return backendApi
+    .get('add_item', {
+      params: {
+        auth_token: getAuth(),
+        id: id,
+        name: item.name,
+        bulk: item.bulk,
+        desc: item.desc
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
+// https://github.com/joshmiller17/vennt-server#add-ability
+const removeItem = (id, itemId) => {
+  return backendApi
+    .get('remove_item', {
+      params: {
+        auth_token: getAuth(),
+        id: id,
+        id2: itemId
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
 // ------------------------- CAMPAIGN APIS ------------------------- //
 
 // https://github.com/joshmiller17/vennt-server#create-a-campaign
@@ -179,37 +244,6 @@ const listCampaignInvites = () => {
     })
 }
 
-// ------------------------- ABILITY APIS ------------------------- //
-
-// https://github.com/joshmiller17/vennt-server#lookup-ability
-const lookupAbility = name => {
-  return backendApi
-    .get('lookup_ability', {
-      params: {
-        auth_token: getAuth(),
-        name: name
-      }
-    })
-    .then(response => {
-      return response.data
-    })
-}
-
-// https://github.com/joshmiller17/vennt-server#add-ability
-const addAbility = (id, name) => {
-  return backendApi
-    .get('add_ability', {
-      params: {
-        auth_token: getAuth(),
-        id: id,
-        name: name
-      }
-    })
-    .then(response => {
-      return response.data
-    })
-}
-
 // ------------------------- OTHER / RANDOM APIS ------------------------- //
 
 const getRandomNames = () => {
@@ -245,10 +279,12 @@ export default {
   listCharacters,
   getCharacter,
   setAttribute,
+  lookupAbility,
+  addAbility,
+  addItem,
+  removeItem,
   createCampaign,
   listCampaigns,
   listCampaignInvites,
-  lookupAbility,
-  addAbility,
   getRandomNames
 }

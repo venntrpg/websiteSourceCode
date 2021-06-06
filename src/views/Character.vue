@@ -12,10 +12,13 @@
     <div class="sideBar">
       <CombatStats :character="character" />
     </div>
+    <div v-bind:class="showRightSideBar" class="sideBar right">
+      <RightSideBar />
+    </div>
     <!--  --------------------- PAGE SUB ROUTER --------------------- -->
-    <div class="page sideBarPage">
+    <div v-bind:class="showRightSideBar" class="page sideBarPage">
       <div class="largePageWidth main" v-responsive="breakpoints">
-        <Inventory v-if="inventoryPage" :character="character" />
+        <Inventory v-if="inventoryPage" />
         <CombatStats v-else-if="statsPage" :character="character" />
         <Abilities v-else />
       </div>
@@ -28,9 +31,10 @@
 import { mapState } from 'vuex'
 import { ResponsiveDirective } from 'vue-responsive-components'
 import isUUID from 'is-uuid'
+import CombatStats from '../components/Common/CombatStats.vue'
+import RightSideBar from '../components/CharacterPage/RightSideBar.vue'
 import Abilities from '../components/CharacterPage/Abilities.vue'
 import Inventory from '../components/CharacterPage/Inventory.vue'
-import CombatStats from '../components/Common/CombatStats.vue'
 
 const SECTION_STATS = 'stats'
 const SECTION_ABILITIES = 'abilities'
@@ -39,9 +43,10 @@ const SECTION_INVENTORY = 'inventory'
 export default {
   name: 'Character',
   components: {
+    CombatStats,
+    RightSideBar,
     Abilities,
-    Inventory,
-    CombatStats
+    Inventory
   },
   directives: {
     responsive: ResponsiveDirective
@@ -49,6 +54,7 @@ export default {
   data () {
     return {
       breakpoints: {
+        bp750: el => el.width < 750,
         bp500: el => el.width < 500
       },
       id: ''
@@ -60,7 +66,7 @@ export default {
       this.$router.push({ name: 'Home' })
     }
     this.id = this.$route.params.id
-    if (this.id.charAt(0) !== 'C' || !isUUID.v4(this.id.substring(1))) {
+    if (!this.id || this.id.charAt(0) !== 'C' || !isUUID.v4(this.id.substring(1))) {
       // id is not valid, redirect to Home
       this.$router.push({ name: 'Home' })
     }
@@ -92,6 +98,9 @@ export default {
     },
     inventoryPage () {
       return this.$route.params.section === SECTION_INVENTORY
+    },
+    showRightSideBar () {
+      return this.$route.params.detail === undefined ? 'rightHidden' : ''
     }
   }
 }
@@ -109,15 +118,29 @@ export default {
   display: none;
 }
 
+@media screen and (max-width: 1200px) {
+  .sideBarPage:not(.rightHidden) {
+    display: none;
+  }
+  .sideBar.right:not(.rightHidden) {
+    width: calc(100% - 400px);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+}
+
 @media screen and (max-width: 800px) {
   .statLink {
     display: block;
   }
-  .sideBar {
+  .sideBar:not(.right) {
     display: none;
   }
   .sideBarPage {
     margin-left: 0px;
+  }
+  .sideBar.right:not(.rightHidden) {
+    width: 100%;
   }
 }
 </style>

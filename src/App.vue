@@ -256,6 +256,12 @@ h1 {
   background-color: white;
   border-radius: 5px;
 }
+.card.border {
+  border: 1px solid var(--gray-400);
+}
+.card.column {
+  flex-direction: column;
+}
 
 .number {
   font-family: 'roboto', monospace;
@@ -266,6 +272,10 @@ h1 {
   height: 2px;
   width: 100%;
   background-color: var(--gray-400);
+}
+
+.seperator.thin {
+  height: 1px;
 }
 
 /* Nav Styles - useful for subnav styles */
@@ -314,7 +324,7 @@ h1 {
 
 .sideBar {
   position: fixed;
-  z-index: 1;
+  z-index: 2;
   top: var(--nav-height);
   left: 0;
   overflow-x: hidden;
@@ -324,12 +334,21 @@ h1 {
   -webkit-box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 28%);
   box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 28%);
 }
-.sideBar.hidden {
+.sideBar.right {
+  left: auto;
+  right: 0;
+  z-index: 1;
+}
+.sideBar.hidden,
+.sideBar.rightHidden {
   display: none;
 }
 
 .sideBarPage {
   margin-left: 400px;
+}
+.sideBarPage:not(.rightHidden) {
+  margin-right: 400px;
 }
 .sideBarPage.hidden {
   margin-left: 0px;

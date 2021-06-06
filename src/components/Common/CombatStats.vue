@@ -201,13 +201,7 @@
 TODO:
 
 - SPLIT THIS UP INTO SMALLER COMPONENTS
-
-- Make sidepanel background slightly darker so white buttons are more visible
 - Add animation (maybe) to opening and closing dice roll panels
-- Add more dice rolling options in drop down or something - should be able to try rolling with hero point etc.
-
-- Remove help tooltips and make them all dropdowns.
-- make drop downs either show tooltip info OR show ways to update your character's stats (like reset health to full, update current / max values etc.)
 
 */
 
