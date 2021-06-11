@@ -37,5 +37,7 @@ export default {
 </script>
 
 <style>
-
+.bottomMargin {
+  margin-bottom: 16px;
+}
 </style>

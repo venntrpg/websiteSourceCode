@@ -43,7 +43,7 @@
       <div class="label">
         Item bulk:
       </div>
-      <input placeholder="0" v-model="itemBulk" class="input">
+      <input type="number" placeholder="0" v-model="itemBulk" class="input">
     </div>
     <div class="contentRow">
       <div class="label">
@@ -123,11 +123,6 @@ export default {
 }
 .widen {
   width: 200px;
-}
-
-.alignRow {
-  display: flex;
-  align-items: center;
 }
 
 .header {

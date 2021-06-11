@@ -100,7 +100,7 @@ export default {
       return this.$route.params.section === SECTION_INVENTORY
     },
     showRightSideBar () {
-      return !(this.abilitiesPage || this.inventoryPage) || this.$route.params.detail === undefined ? 'rightHidden' : ''
+      return (this.abilitiesPage || this.inventoryPage) && this.$route.params.detail !== undefined ? 'rightVisible' : ''
     }
   }
 }
@@ -119,10 +119,10 @@ export default {
 }
 
 @media screen and (max-width: 1200px) {
-  .sideBarPage:not(.rightHidden) {
+  .sideBarPage.rightVisible {
     display: none;
   }
-  .sideBar.right:not(.rightHidden) {
+  .sideBar.right.rightVisible {
     width: calc(100% - 400px);
     -webkit-box-shadow: none;
     box-shadow: none;
@@ -139,7 +139,7 @@ export default {
   .sideBarPage {
     margin-left: 0px;
   }
-  .sideBar.right:not(.rightHidden) {
+  .sideBar.right.rightVisible {
     width: 100%;
   }
 }

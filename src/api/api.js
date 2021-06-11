@@ -244,6 +244,65 @@ const listCampaignInvites = () => {
     })
 }
 
+// https://github.com/joshmiller17/vennt-server#invite-someone-to-a-campaign
+const sendCampaignInvite = (campaignId, username) => {
+  return backendApi
+    .get('/send_campaign_invite', {
+      params: {
+        auth_token: getAuth(),
+        campaign_id: campaignId,
+        username: username
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
+// https://github.com/joshmiller17/vennt-server#accept-campaign-invite
+const acceptCampaignInvite = (campaignId) => {
+  return backendApi
+    .get('/accept_campaign_invite', {
+      params: {
+        auth_token: getAuth(),
+        campaign_id: campaignId
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
+// https://github.com/joshmiller17/vennt-server#decline-campaign-invite
+const declineCampaignInvite = (campaignId) => {
+  return backendApi
+    .get('/decline_campaign_invite', {
+      params: {
+        auth_token: getAuth(),
+        campaign_id: campaignId
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
+// https://github.com/joshmiller17/vennt-server#set-campaign-role
+const setCampaignRole = (campaignId, username, role) => {
+  return backendApi
+    .get('/set_role', {
+      params: {
+        auth_token: getAuth(),
+        campaign_id: campaignId,
+        username: username,
+        role: role
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
 // ------------------------- OTHER / RANDOM APIS ------------------------- //
 
 const getRandomNames = () => {
@@ -286,5 +345,9 @@ export default {
   createCampaign,
   listCampaigns,
   listCampaignInvites,
+  sendCampaignInvite,
+  acceptCampaignInvite,
+  declineCampaignInvite,
+  setCampaignRole,
   getRandomNames
 }

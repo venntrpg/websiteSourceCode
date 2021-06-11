@@ -697,8 +697,6 @@ h1 {
 
 .alignRow {
   margin-top: 5px;
-  display: flex;
-  align-items: center;
 }
 
 .btnContents {

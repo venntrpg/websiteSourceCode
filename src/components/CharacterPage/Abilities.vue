@@ -57,6 +57,7 @@
     <div v-if="showSearchResult">
       <div v-html="searchResultHtml"></div>
     </div>
+    <div class="tall"></div>
   </div>
 </template>
 
@@ -170,11 +171,6 @@ export default {
   overflow-y: auto;
 }
 
-.alignRow {
-  display: flex;
-  align-items: center;
-}
-
 .header {
   margin-right: 46px;
 }
@@ -200,10 +196,6 @@ export default {
 
 .headerFont {
   font-size: 15pt;
-}
-
-.tall {
-  height: 64px;
 }
 
 .main.bp750 .abilityName {

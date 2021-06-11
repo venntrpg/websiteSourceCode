@@ -568,13 +568,6 @@ export default {
   width: 100%;
 }
 
-.alignRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
 .attrHeader {
   font-size: 16pt;
   font-weight: 500;
@@ -610,10 +603,6 @@ export default {
   margin-left: 90px;
 }
 
-.tall {
-  height: 64px;
-}
-
 .singleStat {
   margin: 0px 0px 8px 0px;
 }
@@ -627,9 +616,9 @@ export default {
 }
 
 .alignRow {
+  justify-content: space-between;
+  width: 100%;
   margin-top: 5px;
-  display: flex;
-  align-items: center;
 }
 
 .incrementLabel {

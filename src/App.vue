@@ -159,6 +159,7 @@ h1 {
   font-size: 18pt;
   color: white;
   justify-content: center;
+  height: 29px;
 }
 .roundedButton:disabled {
   background-color: var(--red-300);
@@ -278,6 +279,15 @@ h1 {
   height: 1px;
 }
 
+.tall {
+  height: 64px;
+}
+
+.alignRow {
+  display: flex;
+  align-items: center;
+}
+
 /* Nav Styles - useful for subnav styles */
 
 .navButton {
@@ -340,14 +350,14 @@ h1 {
   z-index: 1;
 }
 .sideBar.hidden,
-.sideBar.rightHidden {
+.sideBar.right:not(.rightVisible) {
   display: none;
 }
 
 .sideBarPage {
   margin-left: 400px;
 }
-.sideBarPage:not(.rightHidden) {
+.sideBarPage.rightVisible {
   margin-right: 400px;
 }
 .sideBarPage.hidden {
