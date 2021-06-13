@@ -1,15 +1,62 @@
 <template>
-  <div>
-    <h1>Campaign</h1>
+  <div class="page">
+    <div class="largePageWidth">
+      <h1 class="center">{{ campaignName }}</h1>
+      <p>
+        You should be able to invite users to your campaign here, give users different roles (if campaign owner) or select which character you would like to use.
+        Doing that will take you to a new page like /campaign/:campaignId/:characterId or /campaign/:campaignId/gm if you are the GM.
+        In this screen, you can see your character's possible actions on the left panel and the current turn order / a log of what has happenned
+        so far in the battle on the main page.
+        It would also be really cool if we could get some fancy images in there to spice things up / make the page more appealing to look at
+        (the website is generally kind of boring to look at tbh).
+      </p>
+    </div>
   </div>
 </template>
 
 <script>
+
+import { mapState } from 'vuex'
+import isUUID from 'is-uuid'
+
 export default {
-  name: 'Campaign'
+  name: 'Campaign',
+  data () {
+    return {
+      campaignId: ''
+    }
+  },
+  beforeMount () {
+    if (!this.isLoggedIn) {
+      // if not logged in, redirect to Home
+      this.$router.push({ name: 'Home' })
+    }
+    this.campaignId = this.$route.params.campaignId
+    if (!this.campaignId || this.campaignId.charAt(0) !== 'G' || !isUUID.v4(this.campaignId.substring(1))) {
+      // campaignId is not valid, redirect to Home
+      this.$router.push({ name: 'Home' })
+    }
+  },
+  mounted () {
+    if (this.campaignName === '') {
+      this.$store.dispatch('listCampaigns')
+    }
+  },
+  computed: {
+    ...mapState(['isLoggedIn', 'campaigns']),
+    campaignName () {
+      const campaign = this.campaigns.find(campaign => campaign && campaign.id === this.campaignId && campaign.name)
+      if (campaign && campaign.name) {
+        return campaign.name
+      }
+      return ''
+    }
+  }
 }
 </script>
 
 <style>
-
+.center {
+  text-align: center;
+}
 </style>

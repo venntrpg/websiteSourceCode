@@ -24,7 +24,7 @@
       <router-link
       v-for="(campaign, index) in campaigns"
       v-bind:key="index"
-      :to="{ name: 'Campaign', params: { id: campaign.id }}"
+      :to="{ name: 'Campaign', params: { campaignId: campaign.id }}"
       class="btn basicBtn link">
         <div class="basicBtnContents">
           <Bullet />
