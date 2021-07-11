@@ -610,7 +610,7 @@ export default {
       }
       console.log(this.createCharacter)
       // need to send this, then once confirmed, send weapon if they selected one, then once cofirmed, we should redirect to the character page
-      this.$store.dispatch('createCharacter', this.createCharacter).then(response => console.log(response))
+      this.$store.dispatch('createCharacter', { character: this.createCharacter, redirectToCharacter: true })
 
       // TODO: Wait to see if this api returns confirmed
       // this.clearCreateCharacter()

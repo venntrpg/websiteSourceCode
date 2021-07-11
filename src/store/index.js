@@ -197,10 +197,11 @@ const actions = {
 
   // ------------------------- CHARACTER APIS ------------------------- //
 
-  createCharacter: ({ commit }, character) => {
+  createCharacter: ({ commit }, { character, redirectToCharacter }) => {
     return api.createCharacter(character).then(response => {
-      if (checkResponse(response)) {
-        return response.id
+      // TODO: Also commit items / weapons here!
+      if (checkResponse(response) && redirectToCharacter) {
+        router.push({ name: 'Character', params: { id: response.id } })
       }
     })
   },

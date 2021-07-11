@@ -35,10 +35,22 @@
                 <div class="attrHeaderMargin">
                   Update Stat Values:
                 </div>
+                <div v-if="adjustFields[attr] !== undefined" class="alignRow">
+                  <div class="incrementLabel">
+                    Adjust (+/-) {{ getAttrDisplayName(attr) }}:
+                  </div>
+                  <input
+                  type="number"
+                  v-on:keyup.enter="adjustAttrFromAdjustField(attr)"
+                  v-model="adjustFields[attr]"
+                  placeholder="0"
+                  v-bind:class="inputAdjustFieldClass(attr)"
+                  class="input">
+                </div>
                 <button
                 v-if="getAttrMaxValue(attr) && character[attr] < getAttrMaxValue(attr)"
                 v-on:click="adjustAttrToFullButton(attr)"
-                class="btn roundedButton wide noSelect">
+                class="btn roundedButton wide noSelect topMargin">
                   Reset {{ getAttrDisplayName(attr) }} to Full
                 </button>
                 <div class="alignRow">
@@ -174,6 +186,18 @@
             <div class="attrHeaderMargin">
               Update Stat Value:
             </div>
+            <div v-if="adjustFields[attr] !== undefined" class="alignRow">
+              <div class="incrementLabel">
+                Adjust (+/-) {{ getAttrDisplayName(attr) }}:
+              </div>
+              <input
+              type="number"
+              v-on:keyup.enter="adjustAttrFromAdjustField(attr)"
+              v-model="adjustFields[attr]"
+              placeholder="0"
+              v-bind:class="inputAdjustFieldClass(attr)"
+              class="input">
+            </div>
             <div class="alignRow">
               <div class="incrementLabel">
                 Current {{ getAttrDisplayName(attr) }}:
@@ -259,6 +283,13 @@ export default {
         armor: this.character.armor,
         xp: this.character.xp,
         sp: this.character.sp
+      },
+      adjustFields: {
+        hp: '',
+        mp: '',
+        vim: '',
+        xp: '',
+        sp: ''
       }
     }
   },
@@ -348,7 +379,7 @@ export default {
         armor: 'Your Armor serves as damage reduction from blows dealt to you. <a href="https://vennt.fandom.com/wiki/Armor" target="_blank" class="link">Wiki entry</a>',
         xp: `Experience Points, the resource gained by player characters during play and spent on Abilities. Your character's level is your xp / 1000.
         <a href="https://vennt.fandom.com/wiki/XP" target="_blank" class="link">Wiki entry</a>`,
-        sp: 'Silver Pieces are Amnis\'s main. <a href="https://vennt.fandom.com/wiki/Money" target="_blank" class="link">Wiki entry</a>'
+        sp: 'Silver Pieces are Amnis\'s main currency. <a href="https://vennt.fandom.com/wiki/Money" target="_blank" class="link">Wiki entry</a>'
       }
       return helpMap[attr]
     },
@@ -419,6 +450,34 @@ export default {
     },
     adjustAttrFromField (attr) {
       const val = this.validateField(attr)
+      if (val !== false) {
+        this.$store.dispatch('setAttribute', { id: this.character.id, attr: attr, val: val })
+      }
+    },
+    validateAdjustField (attr) {
+      const adjust = this.adjustFields[attr] !== undefined ? parseInt(this.adjustFields[attr]) : 0
+      if (isNaN(adjust)) {
+        return false
+      }
+      if (adjust === 0) {
+        return false
+      }
+      const val = this.character[attr] + adjust
+      if (attr !== 'init' && val < 0) {
+        return false
+      }
+      if (['hp', 'mp', 'vim', 'hero'].includes(attr)) {
+        if (this.getAttrMaxValue(attr) && val > this.getAttrMaxValue(attr)) {
+          return false
+        }
+      }
+      return val
+    },
+    inputAdjustFieldClass (attr) {
+      return this.validateAdjustField(attr) === false ? 'invalid' : ''
+    },
+    adjustAttrFromAdjustField (attr) {
+      const val = this.validateAdjustField(attr)
       if (val !== false) {
         this.$store.dispatch('setAttribute', { id: this.character.id, attr: attr, val: val })
       }
@@ -618,6 +677,10 @@ export default {
 .alignRow {
   justify-content: space-between;
   width: 100%;
+  margin-top: 5px;
+}
+
+.topMargin {
   margin-top: 5px;
 }
 
