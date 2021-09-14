@@ -30,7 +30,7 @@ const routes = [
       import(/* webpackChunkName: "login" */ '../views/Login.vue')
   },
   {
-    path: '/create',
+    path: '/create/:section?',
     name: 'Create',
     // route level code-splitting
     // this generates a separate chunk (create.[hash].js) for this route

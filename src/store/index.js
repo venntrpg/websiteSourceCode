@@ -13,7 +13,9 @@ function checkResponse (response) {
       // user has been logged out
       state.isLoggedIn = false
       localStorage.removeItem('auth')
-      if (this.$route.name !== 'Home') {
+      state.username = ''
+      localStorage.removeItem('username')
+      if (router.currentRoute.name !== 'Home') {
         router.push({ name: 'Home' })
       }
     } else {
@@ -45,11 +47,14 @@ function convertApiCharacter (character) {
     vim: parseInt(character.VIM),
     maxVim: parseInt(character.MAX_VIM),
     hero: parseInt(character.HERO),
+    maxHero: parseInt(character.MAX_HERO),
     init: parseInt(character.INIT),
     speed: parseInt(character.SPEED),
     xp: parseInt(character.XP),
     sp: parseInt(character.SP),
     armor: parseInt(character.ARMOR),
+    gift: character.gift,
+    isEnemy: character.is_enemy,
     items: character.items,
     abilities: character.abilities
   }
@@ -59,7 +64,7 @@ function convertApiCharacter (character) {
 
 const state = {
   isLoggedIn: false, // This variable is set in App.vue on loading the website
-  username: '',
+  username: '', // This variable is set in App.vue on loading the website
   signupErrorMsg: '',
   loginErrorMsg: '',
   characters: {},
@@ -68,6 +73,7 @@ const state = {
   character: {},
   searchAbility: '',
   searchAbilitySuggestions: [],
+  campaign: {},
   randomNames: [],
   randomNamesDisabled: true,
   pendingApis: {} // Used to prevent spamming apis
@@ -118,6 +124,9 @@ const mutations = {
   setSearchAbilitySuggestions (state, suggestions) {
     state.searchAbilitySuggestions = suggestions
   },
+  setCampaign (state, campaign) {
+    state.campaign = campaign
+  },
   appendRandomNames (state, randomNames) {
     state.randomNamesDisabled = false
     state.randomNames = state.randomNames.concat(randomNames)
@@ -151,9 +160,12 @@ const actions = {
           commit('setSignupErrorMsg', response.info)
         } else if (response.success === true && response.auth_token) {
           commit('setIsLoggedIn', true)
-          // commit('setUsername', username) // Maybe want to keep this in localstroage along with auth if we actually want to use this anywhere
           localStorage.setItem('auth', response.auth_token)
-          router.push({ name: 'Home' })
+          commit('setUsername', username)
+          localStorage.setItem('username', username)
+          if (router.currentRoute.name !== 'Home') {
+            router.push({ name: 'Home' })
+          }
         }
       }
     })
@@ -171,9 +183,12 @@ const actions = {
           commit('setLoginErrorMsg', response.info)
         } else if (response.success === true && response.auth_token) {
           commit('setIsLoggedIn', true)
-          // commit('setUsername', username)
           localStorage.setItem('auth', response.auth_token)
-          router.push({ name: 'Home' })
+          commit('setUsername', username)
+          localStorage.setItem('username', username)
+          if (router.currentRoute.name !== 'Home') {
+            router.push({ name: 'Home' })
+          }
         }
       }
     })
@@ -189,7 +204,12 @@ const actions = {
           // It may be a better idea to move this above the api call, so we can't make api calls immediately after logging out
           commit('setIsLoggedIn', false)
           localStorage.removeItem('auth')
+          commit('setUsername', '')
+          localStorage.removeItem('username')
           router.push({ name: 'Home' })
+          if (router.currentRoute.name !== 'Home') {
+            router.push({ name: 'Home' })
+          }
         }
       }
     })
@@ -289,12 +309,15 @@ const actions = {
 
   // ------------------------- CAMPAIGN APIS ------------------------- //
 
-  createCampaign: ({ commit }, name) => {
+  createCampaign: ({ commit }, { name, redirectToCampaign }) => {
     return api.createCampaign(name).then(response => {
       if (checkResponse(response) && response.campaign_id) {
         console.log(response)
         const campaign = { name: name, id: response.campaign_id }
         commit('appendToCampains', campaign)
+        if (redirectToCampaign) {
+          router.push({ name: 'Campaign', params: { campaignId: response.campaign_id } })
+        }
       }
     })
   },
@@ -303,6 +326,14 @@ const actions = {
     return api.listCampaigns().then(response => {
       if (checkResponse(response) && response.value) {
         commit('setCampaigns', response.value)
+      }
+    })
+  },
+
+  getCampaign: ({ commit }, campaginId) => {
+    return api.getCampaign(campaginId).then(response => {
+      if (checkResponse(response) && response.value) {
+        commit('setCampaign', response.value)
       }
     })
   },

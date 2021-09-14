@@ -58,9 +58,7 @@ export default {
     }
   },
   mounted () {
-    if (this.campaignName === '') {
-      this.$store.dispatch('listCampaigns')
-    }
+    this.$store.dispatch('getCampaign', this.campaignId)
     if (this.characterPage) {
       if (this.characters !== {} && this.characters[this.characterId] !== undefined) {
         this.$store.commit('setCharacter', this.characters[this.characterId])
@@ -70,7 +68,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isLoggedIn', 'campaigns', 'characters', 'character']),
+    ...mapState(['isLoggedIn', 'campaign', 'characters', 'character']),
     optionsPage () {
       return this.characterId === ''
     },
@@ -84,9 +82,8 @@ export default {
       return this.gmPage || this.characterPage ? '' : 'hidden'
     },
     campaignName () {
-      const campaign = this.campaigns.find(campaign => campaign && campaign.id === this.campaignId && campaign.name)
-      if (campaign && campaign.name) {
-        return campaign.name
+      if (this.campaign && this.campaign.name) {
+        return this.campaign.name
       }
       return ''
     }

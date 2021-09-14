@@ -66,6 +66,7 @@ const createCharacter = character => {
       params: {
         auth_token: getAuth(),
         name: character.name,
+        gift: character.gift,
         AGI: character.agi,
         CHA: character.cha,
         DEX: character.dex,
@@ -81,8 +82,9 @@ const createCharacter = character => {
         MAX_MP: character.maxMp,
         VIM: character.vim,
         MAX_VIM: character.maxVim,
-        ARMOUR: character.armour,
         HERO: character.hero,
+        MAX_HERO: character.maxHero,
+        ARMOUR: character.armour,
         INIT: character.init,
         SPEED: character.speed,
         XP: character.xp,
@@ -231,6 +233,19 @@ const listCampaigns = () => {
     })
 }
 
+const getCampaign = campaignId => {
+  return backendApi
+    .get('/get_campaign', {
+      params: {
+        auth_token: getAuth(),
+        campaign_id: campaignId
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
 // https://github.com/joshmiller17/vennt-server#view-active-campaign-invites
 const listCampaignInvites = () => {
   return backendApi
@@ -306,7 +321,7 @@ const setCampaignRole = (campaignId, username, role) => {
 // ------------------------- OTHER / RANDOM APIS ------------------------- //
 
 const getRandomNames = () => {
-  // We use a random number because the proxy will cache a response, so to circumvent that we use a random number
+  // The proxy will cache a response, so we use a random number
   const number = Math.floor(Math.random() * 45) + 5
   const url = `http://names.drycodes.com/${number}?nameOptions=boy_names,girl_names&separator=space`
   return anyApi
@@ -344,6 +359,7 @@ export default {
   removeItem,
   createCampaign,
   listCampaigns,
+  getCampaign,
   listCampaignInvites,
   sendCampaignInvite,
   acceptCampaignInvite,

@@ -66,7 +66,7 @@ export default {
       this.$router.push({ name: 'Home' })
     }
     this.id = this.$route.params.id
-    if (!this.id || this.id.charAt(0) !== 'C' || !isUUID.v4(this.id.substring(1))) {
+    if (!this.id || !['C', 'E'].includes(this.id.charAt(0)) || !isUUID.v4(this.id.substring(1))) {
       // id is not valid, redirect to Home
       this.$router.push({ name: 'Home' })
     }

@@ -33,7 +33,7 @@
       </router-link>
     </div>
     <div class="alignRow">
-      <input placeholder="New Campaign Name" v-model="campaignName" class="input campaignInput">
+      <input placeholder="New Campaign Name" v-model="campaignName" v-on:keyup.enter="newCampaignButton()" class="input campaignInput">
       <button v-on:click="newCampaignButton()" :disabled="newCampaignButtonDisabled" class="btn roundedButton campaignButton">Make New Campaign</button>
     </div>
   </div>
@@ -72,8 +72,8 @@ export default {
       return level <= 0 ? 1 : level
     },
     newCampaignButton () {
-      if (!this.newCampaignButtonDisabled()) {
-        this.$store.dispatch('createCampaign', this.campaignName)
+      if (!this.newCampaignButtonDisabled) {
+        this.$store.dispatch('createCampaign', { name: this.campaignName, redirectToCampaign: true })
       }
     }
   }

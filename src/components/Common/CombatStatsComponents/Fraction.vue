@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="number">{{ top }}</div>
-    <div v-if="bottom" class="flex">
+    <div v-if="Number.isInteger(bottom)" class="flex">
       <div class="slash">/</div>
       <div class="number">{{ bottom }}</div>
     </div>

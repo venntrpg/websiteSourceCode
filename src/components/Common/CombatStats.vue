@@ -311,7 +311,7 @@ export default {
       if (name) {
         return name
       }
-      return ''
+      return this.character.gift
     },
     combatStatsRows () {
       return [['hp', 'mp'], ['vim', 'hero']]

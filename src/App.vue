@@ -18,9 +18,13 @@ export default {
     if (localStorage.getItem('auth') !== null) {
       this.setIsLoggedIn(true)
     }
+    const username = localStorage.getItem('username')
+    if (username !== null) {
+      this.setUsername(username)
+    }
   },
   methods: {
-    ...mapMutations(['setIsLoggedIn'])
+    ...mapMutations(['setIsLoggedIn', 'setUsername'])
   }
 }
 </script>
