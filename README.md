@@ -36,16 +36,3 @@ yarn lint
 ### Customize configuration
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
-
-#### just thinking about campaign DB format
-
-campaigns:
-campaign_id, name
-
-campaign_combat:
-combat_id, campaign_id, character_id, turn_number, attack_damage, accuracy, damage_type, status, special_data
-
-(status: PENDING when initiated, COMPLETE after a full combat round OR accepted / blocked on user action)
-
-campaign_logs:
-campgain_id, character_id, log
