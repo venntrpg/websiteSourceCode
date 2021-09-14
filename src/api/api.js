@@ -9,12 +9,23 @@ function getAuth () {
   return auth
 }
 
+function convertAttribute (attr) {
+  switch (attr) {
+    case 'maxHp':
+      return 'MAX_HP'
+    case 'maxMp':
+      return 'MAX_MP'
+    case 'maxVim':
+      return 'MAX_VIM'
+    default:
+      return attr.toUpperCase()
+  }
+}
+
 // ------------------------- ACCOUNT APIS ------------------------- //
 
 // https://github.com/joshmiller17/vennt-server#create-an-account
 const signup = (username, password) => {
-  // For some reason, I need to build this JSON by hand ¯\_(ツ)_/¯
-  // const postBody = '{"register":"' + username + '","password":"' + password + '"}'
   const postBody = { register: username, password: password }
   return backendApi
     .post('/', JSON.stringify(postBody))
@@ -25,8 +36,6 @@ const signup = (username, password) => {
 
 // https://github.com/joshmiller17/vennt-server#login
 const login = (username, password) => {
-  // For some reason, I need to build this JSON by hand ¯\_(ツ)_/¯
-  // const postBody = '{"login":"' + username + '","password":"' + password + '"}'
   const postBody = { login: username, password: password }
   return backendApi
     .post('/', JSON.stringify(postBody))
@@ -57,6 +66,7 @@ const createCharacter = character => {
       params: {
         auth_token: getAuth(),
         name: character.name,
+        gift: character.gift,
         AGI: character.agi,
         CHA: character.cha,
         DEX: character.dex,
@@ -72,8 +82,9 @@ const createCharacter = character => {
         MAX_MP: character.maxMp,
         VIM: character.vim,
         MAX_VIM: character.maxVim,
-        ARMOUR: character.armour,
         HERO: character.hero,
+        MAX_HERO: character.maxHero,
+        ARMOUR: character.armour,
         INIT: character.init,
         SPEED: character.speed,
         XP: character.xp,
@@ -112,6 +123,87 @@ const getCharacter = id => {
     })
 }
 
+// https://github.com/joshmiller17/vennt-server#set-an-attribute
+const setAttribute = (id, attr, val) => {
+  return backendApi
+    .get('/set_attr', {
+      params: {
+        auth_token: getAuth(),
+        id: id,
+        attr: convertAttribute(attr),
+        value: val
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
+// ------------------------- ABILITY APIS ------------------------- //
+
+// https://github.com/joshmiller17/vennt-server#lookup-ability
+const lookupAbility = name => {
+  return backendApi
+    .get('lookup_ability', {
+      params: {
+        auth_token: getAuth(),
+        name: name
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
+// https://github.com/joshmiller17/vennt-server#add-ability
+const addAbility = (id, name) => {
+  return backendApi
+    .get('add_ability', {
+      params: {
+        auth_token: getAuth(),
+        id: id,
+        name: name
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
+// ------------------------- ITEM APIS ------------------------- //
+
+// https://github.com/joshmiller17/vennt-server#lookup-ability
+const addItem = (id, item) => {
+  return backendApi
+    .get('add_item', {
+      params: {
+        auth_token: getAuth(),
+        id: id,
+        name: item.name,
+        bulk: item.bulk,
+        desc: item.desc
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
+// https://github.com/joshmiller17/vennt-server#add-ability
+const removeItem = (id, itemId) => {
+  return backendApi
+    .get('remove_item', {
+      params: {
+        auth_token: getAuth(),
+        id: id,
+        id2: itemId
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
 // ------------------------- CAMPAIGN APIS ------------------------- //
 
 // https://github.com/joshmiller17/vennt-server#create-a-campaign
@@ -141,6 +233,19 @@ const listCampaigns = () => {
     })
 }
 
+const getCampaign = campaignId => {
+  return backendApi
+    .get('/get_campaign', {
+      params: {
+        auth_token: getAuth(),
+        campaign_id: campaignId
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
 // https://github.com/joshmiller17/vennt-server#view-active-campaign-invites
 const listCampaignInvites = () => {
   return backendApi
@@ -154,15 +259,58 @@ const listCampaignInvites = () => {
     })
 }
 
-// ------------------------- ABILITY APIS ------------------------- //
-
-// https://github.com/joshmiller17/vennt-server#lookup-ability
-const lookupAbility = name => {
+// https://github.com/joshmiller17/vennt-server#invite-someone-to-a-campaign
+const sendCampaignInvite = (campaignId, username) => {
   return backendApi
-    .get('lookup_ability', {
+    .get('/send_campaign_invite', {
       params: {
         auth_token: getAuth(),
-        name: name
+        campaign_id: campaignId,
+        username: username
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
+// https://github.com/joshmiller17/vennt-server#accept-campaign-invite
+const acceptCampaignInvite = (campaignId) => {
+  return backendApi
+    .get('/accept_campaign_invite', {
+      params: {
+        auth_token: getAuth(),
+        campaign_id: campaignId
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
+// https://github.com/joshmiller17/vennt-server#decline-campaign-invite
+const declineCampaignInvite = (campaignId) => {
+  return backendApi
+    .get('/decline_campaign_invite', {
+      params: {
+        auth_token: getAuth(),
+        campaign_id: campaignId
+      }
+    })
+    .then(response => {
+      return response.data
+    })
+}
+
+// https://github.com/joshmiller17/vennt-server#set-campaign-role
+const setCampaignRole = (campaignId, username, role) => {
+  return backendApi
+    .get('/set_role', {
+      params: {
+        auth_token: getAuth(),
+        campaign_id: campaignId,
+        username: username,
+        role: role
       }
     })
     .then(response => {
@@ -173,7 +321,7 @@ const lookupAbility = name => {
 // ------------------------- OTHER / RANDOM APIS ------------------------- //
 
 const getRandomNames = () => {
-  // We use a random number because the proxy will cache a response, so to circumvent that we use a random number
+  // The proxy will cache a response, so we use a random number
   const number = Math.floor(Math.random() * 45) + 5
   const url = `http://names.drycodes.com/${number}?nameOptions=boy_names,girl_names&separator=space`
   return anyApi
@@ -204,9 +352,18 @@ export default {
   createCharacter,
   listCharacters,
   getCharacter,
+  setAttribute,
+  lookupAbility,
+  addAbility,
+  addItem,
+  removeItem,
   createCampaign,
   listCampaigns,
+  getCampaign,
   listCampaignInvites,
-  lookupAbility,
+  sendCampaignInvite,
+  acceptCampaignInvite,
+  declineCampaignInvite,
+  setCampaignRole,
   getRandomNames
 }

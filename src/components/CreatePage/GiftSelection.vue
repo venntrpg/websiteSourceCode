@@ -46,8 +46,8 @@
 
 <script>
 
-import UpArrowSVG from '../Common/UpArrowSVG.vue'
-import DownArrowSVG from '../Common/DownArrowSVG.vue'
+import UpArrowSVG from '../Common/SVGs/UpArrowSVG.vue'
+import DownArrowSVG from '../Common/SVGs/DownArrowSVG.vue'
 
 export default {
   name: 'GiftSelection',
@@ -198,17 +198,16 @@ h3 {
 }
 
 .giftCardGroup {
-  margin-right: -4px;
-  margin-left: -4px;
+  margin-right: 8px;
   margin-top: 2px;
   display: grid;
   grid-template-columns: repeat(3, 33% [col-start]);
+  grid-gap: 8px;
 }
 
 .giftCard {
   flex-direction: column;
   align-items: center;
-  margin: 4px;
   flex-grow: 1;
   border: 1px solid white;
 }
@@ -244,6 +243,7 @@ h3 {
   grid-template-columns: repeat(2, 50% [col-start]);
 }
 .main.bp600 .giftCardGroup {
+  margin-right: 0px;
   grid-template-columns: repeat(1, 100% [col-start]);
 }
 </style>

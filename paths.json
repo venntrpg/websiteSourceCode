@@ -1,0 +1,134 @@
+{
+    "paths": [
+        {
+            "name": "Path of the Beginner",
+            "desc": "The Path of the Beginner trains you to be a balanced and independent adventurer.",
+            "abilities": [
+                {
+                    "name": "Roll",
+                    "flavor": "When you need to move and dodge at the same time, roll! All the heroes are doing it!",
+                    "desc": "This ability can’t be used if you are unable to move. Move 1 square and become Alert. When you activate this ability, you may choose to spend 2 Vim to also gain a +3 to your immediate Agility check. This ability is usable only once per turn.",
+                    "unlocks": ["Recruit"],
+                    "cost": 200,
+                    "expedited": ["Alacrity"],
+                    "limit": {
+                        "time": "turn",
+                        "count": 1
+                    },
+                    "actions": [
+                        {
+                            "activation": {
+                                "action": 1
+                            },
+                            "result": [
+                                {
+                                    "move": 1
+                                },
+                                {
+                                    "bonus": {
+                                        "immediate": {
+                                            "alert": 1
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "activation": {
+                                "action": 1,
+                                "vim": 2
+                            },
+                            "result": [
+                                {
+                                    "move": 1
+                                },
+                                {
+                                    "bonus": {
+                                        "immediate": {
+                                            "alert": 1
+                                        },
+                                        "check": {
+                                            "agi": 3
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "Dodge",
+                    "desc": "The ability is usable in response to an attack. Completely ignore it.",
+                    "unlocks": ["Recruit"],
+                    "cost": 200,
+                    "expedited": ["Alacrity"],
+                    "actions": [
+                        {
+                            "activation": {
+                                "reaction": 1,
+                                "vim": 3
+                            },
+                            "result": [
+                                {
+                                    "bonus": {
+                                        "immediate": {
+                                            "incomingAttack": "dodge"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "Block",
+                    "desc": "Until your next turn, whenever you would take any damage (after resolving Armor), instead lose that amount of Vim. If you run out of Vim, the remainder is resolved as it would usually be.",
+                    "unlocks": ["Defender"],
+                    "cost": 200,
+                    "expedited": ["Rage"],
+                    "actions": [
+                        {
+                            "activation": {
+                                "reaction": 1
+                            },
+                            "result": [
+                                {
+                                    "bonus": {
+                                        "turn": {
+                                            "incomingAttack": "block"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "Notice",
+                    "desc": "Choose an enemy Cog within sight. Until the end of the Encounter, you and your allies add 10 times your Perception to Accuracy against this target. Additionally, you identify INT of its abilities (min. 1), chosen by the GM.",
+                    "unlocks": ["Explorer"],
+                    "cost": 200,
+                    "expedited": ["Alertness", "Mind", "Science"],
+                    "actions": [
+                        {
+                            "activation": {
+                                "action": 1
+                            },
+                            "result": [
+                                {
+                                    "bonus": {
+                                        "encounter": {
+                                            "selectCog": {
+                                                "accuracy": "str * 10"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

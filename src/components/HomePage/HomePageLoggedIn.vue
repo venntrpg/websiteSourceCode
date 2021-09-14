@@ -8,67 +8,102 @@
       :to="{ name: 'Character', params: { id }}"
       class="btn basicBtn link">
         <div class="basicBtnContents">
-          <div v-bind:style="{ 'background-color': charColor(character) }" class="bullet"></div>
+          <Bullet :character="character" />
           {{ character.name }} - Level: {{ level(character.xp) }}
         </div>
       </router-link>
       <router-link to="/create" class="btn basicBtn link">
         <div class="basicBtnContents">
-          <div class="bullet"></div>
+          <Bullet />
           Create or Import a new character
         </div>
       </router-link>
     </div>
     <h3>Your Campaigns</h3>
-    <div>(table of campaigns. If you click on a campaign, it will maybe open a new page not sure lol)</div>
+    <div>
+      <router-link
+      v-for="(campaign, index) in campaigns"
+      v-bind:key="index"
+      :to="{ name: 'Campaign', params: { campaignId: campaign.id }}"
+      class="btn basicBtn link">
+        <div class="basicBtnContents">
+          <Bullet />
+          {{ campaign.name }}
+        </div>
+      </router-link>
+    </div>
+    <div class="alignRow">
+      <input placeholder="New Campaign Name" v-model="campaignName" v-on:keyup.enter="newCampaignButton()" class="input campaignInput">
+      <button v-on:click="newCampaignButton()" :disabled="newCampaignButtonDisabled" class="btn roundedButton campaignButton">Make New Campaign</button>
+    </div>
   </div>
 </template>
 
 <script>
 
 import { mapState } from 'vuex'
+import Bullet from '../Common/Bullet.vue'
 
 export default {
   name: 'HomePageLoggedIn',
+  components: {
+    Bullet
+  },
+  data () {
+    return {
+      campaignName: ''
+    }
+  },
   mounted () {
     this.$store.dispatch('listCharacters')
     this.$store.dispatch('listCampaigns')
-    // this.$store.dispatch('lookupAbility', 'Roll')
+    this.$store.dispatch('listCampaignInvites')
   },
   computed: {
-    ...mapState(['characters', 'campagins'])
+    ...mapState(['characters', 'campaigns', 'campaignInvites']),
+    newCampaignButtonDisabled () {
+      return this.campaignName === ''
+    }
   },
   methods: {
     level (xp) {
       const level = Math.floor(xp / 1000)
       // if xp < 1000, still return level 1
-      return level === 0 ? 1 : level
+      return level <= 0 ? 1 : level
     },
-    charColor (character) {
-      const red = character.str + character.agi + character.cha
-      const green = character.tek + character.int + character.dex
-      const blue = character.wis + character.spi + character.per
-      const sum = red + green + blue
-      return '#' + this.hexColorComponent(red, sum) + this.hexColorComponent(green, sum) + this.hexColorComponent(blue, sum)
-    },
-    hexColorComponent (component, sum) {
-      if (sum <= 0) {
-        sum = 1
+    newCampaignButton () {
+      if (!this.newCampaignButtonDisabled) {
+        this.$store.dispatch('createCampaign', { name: this.campaignName, redirectToCampaign: true })
       }
-      if (component < 0) {
-        component = 0
-      }
-      const numStr = Math.floor((component / sum) * 256).toString(16)
-      if (numStr.length === 1) {
-        return '0' + numStr
-      } else if (numStr.length > 2) {
-        return 'ff'
-      }
-      return numStr
     }
   }
 }
 </script>
 
 <style scoped>
+.alignRow {
+  margin-top: 8px;
+}
+.campaignInput {
+  max-width: 500px;
+}
+.campaignButton {
+  width: 300px;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+@media screen and (max-width: 600px) {
+  .alignRow {
+    flex-direction: column;
+  }
+  .campaignInput {
+    max-width: 100%;
+  }
+  .campaignButton {
+    margin-top: 8px;
+    margin-left: 0px;
+    width: calc(100% - 20px);
+  }
+}
 </style>

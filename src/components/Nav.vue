@@ -21,7 +21,7 @@
 
 <script>
 
-import MenuSVG from './Common/MenuSVG.vue'
+import MenuSVG from './Common/SVGs/MenuSVG.vue'
 import { mapActions, mapState } from 'vuex'
 
 export default {
