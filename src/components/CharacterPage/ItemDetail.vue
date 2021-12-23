@@ -5,7 +5,12 @@
       <div class="bottomMargin"><b>Description:</b> {{ item.desc }}</div>
       <div class="bottomMargin"><b>Bulk:</b> {{ item.bulk }}</div>
       <div class="bottomMargin" v-html="abilityAffectHtml"></div>
-      <button v-on:click="removeItemButton()" class="btn roundedButton wide bottomMargin">Remove / Use Item</button>
+      <button
+        v-on:click="removeItemButton()"
+        class="btn roundedButton wide bottomMargin"
+      >
+        Remove / Use Item
+      </button>
     </div>
     <div v-else-if="character !== undefined">
       Could not find this item ¯\_(ツ)_/¯
@@ -14,26 +19,31 @@
 </template>
 
 <script>
-
-import { mapState } from 'vuex'
+import { mapState } from "vuex";
 
 export default {
-  name: 'itemDetail',
+  name: "itemDetail",
   computed: {
-    ...mapState(['character']),
-    item () {
+    ...mapState(["character"]),
+    item() {
       if (this.character.items === undefined) {
-        return undefined
+        return undefined;
       }
-      return this.character.items.find(searchItem => searchItem.id === this.$route.params.detail)
-    }
+      return this.character.items.find(
+        (searchItem) => searchItem.id === this.$route.params.detail
+      );
+    },
   },
   methods: {
-    removeItemButton () {
-      this.$store.dispatch('removeItem', { id: this.character.id, itemId: this.item.id, redirectToInventory: true })
-    }
-  }
-}
+    removeItemButton() {
+      this.$store.dispatch("removeItem", {
+        id: this.character.id,
+        itemId: this.item.id,
+        redirectToInventory: true,
+      });
+    },
+  },
+};
 </script>
 
 <style>

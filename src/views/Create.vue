@@ -6,9 +6,22 @@
       <div class="mediumPageWidth selectFlowContainer">
         <div class="selectFlow">
           <h1>CHARACTER CREATION</h1>
-          <p>You can create a totally new character or import a character which you have already created.</p>
-          <router-link to="/create/new" class="btn roundedButton wide topMargin">Make a new character!</router-link>
-          <router-link to="/create/import" class="btn roundedButton wide topMargin">Import an old character!</router-link>
+          <p>
+            You can create a totally new character or import a character which
+            you have already created.
+          </p>
+          <router-link
+            to="/create/new"
+            class="btn roundedButton wide topMargin"
+          >
+            Make a new character!
+          </router-link>
+          <router-link
+            to="/create/import"
+            class="btn roundedButton wide topMargin"
+          >
+            Import an old character!
+          </router-link>
         </div>
       </div>
     </div>
@@ -16,37 +29,36 @@
 </template>
 
 <script>
-
-import { mapState } from 'vuex'
-import NewFlow from '../components/CreatePage/NewFlow.vue'
-import ImportFlow from '../components/CreatePage/ImportFlow.vue'
+import { mapState } from "vuex";
+import NewFlow from "../components/CreatePage/NewFlow.vue";
+import ImportFlow from "../components/CreatePage/ImportFlow.vue";
 
 // Constants
-const NEW_SECTION = 'new'
-const IMPORT_SECTION = 'import'
+const NEW_SECTION = "new";
+const IMPORT_SECTION = "import";
 
 export default {
-  name: 'Create',
+  name: "Create",
   components: {
     NewFlow,
-    ImportFlow
+    ImportFlow,
   },
-  beforeMount () {
+  beforeMount() {
     if (!this.isLoggedIn) {
       // if not logged in, redirect to Home
-      this.$router.push({ name: 'Home' })
+      this.$router.push({ name: "Home" });
     }
   },
   computed: {
-    ...mapState(['isLoggedIn']),
-    isNewSection () {
-      return this.$route.params.section === NEW_SECTION
+    ...mapState(["isLoggedIn"]),
+    isNewSection() {
+      return this.$route.params.section === NEW_SECTION;
     },
-    isImportSection () {
-      return this.$route.params.section === IMPORT_SECTION
-    }
-  }
-}
+    isImportSection() {
+      return this.$route.params.section === IMPORT_SECTION;
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -66,5 +78,4 @@ h1 {
 .topMargin {
   margin-top: 12px;
 }
-
 </style>

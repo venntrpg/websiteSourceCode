@@ -6,27 +6,27 @@
 </template>
 
 <script>
-import Nav from './components/Nav.vue'
-import { mapMutations } from 'vuex'
+import Nav from "./components/Nav.vue";
+import { mapMutations } from "vuex";
 
 export default {
   components: {
-    Nav
+    Nav,
   },
   // This sets the isLoggedIn parameter if we have already logged in but the page was refreshed
-  beforeMount () {
-    if (localStorage.getItem('auth') !== null) {
-      this.setIsLoggedIn(true)
+  beforeMount() {
+    if (localStorage.getItem("auth") !== null) {
+      this.setIsLoggedIn(true);
     }
-    const username = localStorage.getItem('username')
+    const username = localStorage.getItem("username");
     if (username !== null) {
-      this.setUsername(username)
+      this.setUsername(username);
     }
   },
   methods: {
-    ...mapMutations(['setIsLoggedIn', 'setUsername'])
-  }
-}
+    ...mapMutations(["setIsLoggedIn", "setUsername"]),
+  },
+};
 </script>
 
 <style>
@@ -37,12 +37,12 @@ export default {
 /* 300 is light, 400 is standard, 700 is bold */
 /* Might want to pull in `family=Red+Rose:wght@500` as backup for Copperplate */
 /* Roboto Mono is for dice etc */
-@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Roboto:wght@300;400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Roboto:wght@300;400;500&display=swap");
 
 /* STYLES */
 
 #app {
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
@@ -137,7 +137,7 @@ h1 {
 
 .btn {
   border-style: hidden;
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
   display: flex;
   cursor: pointer;
   text-decoration: none;
@@ -209,7 +209,7 @@ h1 {
 .basicBtnSVG.selected {
   fill: var(--red-500);
 }
-.basicBtn:disabled .basicBtnSVG.selected  {
+.basicBtn:disabled .basicBtnSVG.selected {
   fill: var(--gray-500);
 }
 .basicBtnSVG.space {
@@ -218,7 +218,7 @@ h1 {
 
 .input {
   resize: vertical;
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
   font-size: 15px;
   line-height: 16px;
   height: 40px;
@@ -269,7 +269,7 @@ h1 {
 }
 
 .number {
-  font-family: 'roboto', monospace;
+  font-family: "roboto", monospace;
   font-weight: 400;
 }
 
@@ -377,6 +377,6 @@ h1 {
 }
 
 .noSelect:focus {
-  outline:0;
+  outline: 0;
 }
 </style>

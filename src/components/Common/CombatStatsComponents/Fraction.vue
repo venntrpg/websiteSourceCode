@@ -10,16 +10,15 @@
 
 <script>
 export default {
-  name: 'fraction',
+  name: "fraction",
   props: {
     top: Number,
-    bottom: Number
-  }
-}
+    bottom: Number,
+  },
+};
 </script>
 
 <style>
-
 .slash {
   font-size: 25pt;
   font-weight: 300;
@@ -28,5 +27,4 @@ export default {
   display: flex;
   align-items: center;
 }
-
 </style>

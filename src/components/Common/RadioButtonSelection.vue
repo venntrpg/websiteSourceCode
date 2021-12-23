@@ -1,10 +1,11 @@
 <template>
   <div>
     <button
-    v-for="(option, optionCode) in options"
-    v-bind:key="optionCode"
-    v-on:click="selectionButton(optionCode)"
-    class="btn noSelect basicBtn">
+      v-for="(option, optionCode) in options"
+      v-bind:key="optionCode"
+      v-on:click="selectionButton(optionCode)"
+      class="btn noSelect basicBtn"
+    >
       <div class="basicBtnContents">
         <CheckedRadioButton v-if="isSelected(optionCode)" class="basicBtnSVG" />
         <UncheckedRadioButton v-else class="basicBtnSVG" />
@@ -15,35 +16,33 @@
 </template>
 
 <script>
-
-import CheckedRadioButton from './SVGs/CheckedRadioButtonSVG.vue'
-import UncheckedRadioButton from './SVGs/UncheckedRadioButtonSVG.vue'
+import CheckedRadioButton from "./SVGs/CheckedRadioButtonSVG.vue";
+import UncheckedRadioButton from "./SVGs/UncheckedRadioButtonSVG.vue";
 
 export default {
-  name: 'RadioButtonSelection',
+  name: "RadioButtonSelection",
   props: {
     options: Object,
-    selected: String
+    selected: String,
   },
   components: {
     CheckedRadioButton,
-    UncheckedRadioButton
+    UncheckedRadioButton,
   },
   methods: {
-    isSelected (option) {
-      return option === this.selected
+    isSelected(option) {
+      return option === this.selected;
     },
-    selectionButton (option) {
+    selectionButton(option) {
       if (!this.isSelected(option)) {
-        this.$emit('selectedUpdated', option)
+        this.$emit("selectedUpdated", option);
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
-
 .basicBtn {
   width: 100%;
 }

@@ -15,20 +15,20 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from "vuex";
 
 export default {
-  name: 'CampaignOptions',
+  name: "CampaignOptions",
   computed: {
-    ...mapState(['username', 'campaign']),
-    isGm () {
-      return this.campaign.members[this.username] === 'GM'
+    ...mapState(["username", "campaign"]),
+    isGm() {
+      return this.campaign.members[this.username] === "GM";
     },
-    isOwner () {
-      return this.campaign.owner === this.username
-    }
-  }
-}
+    isOwner() {
+      return this.campaign.owner === this.username;
+    },
+  },
+};
 </script>
 
 <style>

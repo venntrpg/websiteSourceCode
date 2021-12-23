@@ -3,10 +3,11 @@
     <h3>Your Characters</h3>
     <div>
       <router-link
-      v-for="(character, id) in characters"
-      v-bind:key="id"
-      :to="{ name: 'Character', params: { id }}"
-      class="btn basicBtn link">
+        v-for="(character, id) in characters"
+        v-bind:key="id"
+        :to="{ name: 'Character', params: { id } }"
+        class="btn basicBtn link"
+      >
         <div class="basicBtnContents">
           <Bullet :character="character" />
           {{ character.name }} - Level: {{ level(character.xp) }}
@@ -22,10 +23,11 @@
     <h3>Your Campaigns</h3>
     <div>
       <router-link
-      v-for="(campaign, index) in campaigns"
-      v-bind:key="index"
-      :to="{ name: 'Campaign', params: { campaignId: campaign.id }}"
-      class="btn basicBtn link">
+        v-for="(campaign, index) in campaigns"
+        v-bind:key="index"
+        :to="{ name: 'Campaign', params: { campaignId: campaign.id } }"
+        class="btn basicBtn link"
+      >
         <div class="basicBtnContents">
           <Bullet />
           {{ campaign.name }}
@@ -33,51 +35,64 @@
       </router-link>
     </div>
     <div class="alignRow">
-      <input placeholder="New Campaign Name" v-model="campaignName" v-on:keyup.enter="newCampaignButton()" class="input campaignInput">
-      <button v-on:click="newCampaignButton()" :disabled="newCampaignButtonDisabled" class="btn roundedButton campaignButton">Make New Campaign</button>
+      <input
+        placeholder="New Campaign Name"
+        v-model="campaignName"
+        v-on:keyup.enter="newCampaignButton()"
+        class="input campaignInput"
+      />
+      <button
+        v-on:click="newCampaignButton()"
+        :disabled="newCampaignButtonDisabled"
+        class="btn roundedButton campaignButton"
+      >
+        Make New Campaign
+      </button>
     </div>
   </div>
 </template>
 
 <script>
-
-import { mapState } from 'vuex'
-import Bullet from '../Common/Bullet.vue'
+import { mapState } from "vuex";
+import Bullet from "../Common/Bullet.vue";
 
 export default {
-  name: 'HomePageLoggedIn',
+  name: "HomePageLoggedIn",
   components: {
-    Bullet
+    Bullet,
   },
-  data () {
+  data() {
     return {
-      campaignName: ''
-    }
+      campaignName: "",
+    };
   },
-  mounted () {
-    this.$store.dispatch('listCharacters')
-    this.$store.dispatch('listCampaigns')
-    this.$store.dispatch('listCampaignInvites')
+  mounted() {
+    this.$store.dispatch("listCharacters");
+    this.$store.dispatch("listCampaigns");
+    this.$store.dispatch("listCampaignInvites");
   },
   computed: {
-    ...mapState(['characters', 'campaigns', 'campaignInvites']),
-    newCampaignButtonDisabled () {
-      return this.campaignName === ''
-    }
+    ...mapState(["characters", "campaigns", "campaignInvites"]),
+    newCampaignButtonDisabled() {
+      return this.campaignName === "";
+    },
   },
   methods: {
-    level (xp) {
-      const level = Math.floor(xp / 1000)
+    level(xp) {
+      const level = Math.floor(xp / 1000);
       // if xp < 1000, still return level 1
-      return level <= 0 ? 1 : level
+      return level <= 0 ? 1 : level;
     },
-    newCampaignButton () {
+    newCampaignButton() {
       if (!this.newCampaignButtonDisabled) {
-        this.$store.dispatch('createCampaign', { name: this.campaignName, redirectToCampaign: true })
+        this.$store.dispatch("createCampaign", {
+          name: this.campaignName,
+          redirectToCampaign: true,
+        });
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>

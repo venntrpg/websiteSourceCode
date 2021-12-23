@@ -1,15 +1,13 @@
 <template>
   <!-- Procedurally render dice rolls so if they are in a more complicated format than 3d6 + constant we can handle it -->
   <div class="diceRow diceSum">
-    <div
-    v-for="(diceElement, i) in roll.rolls"
-    v-bind:key="i"
-    class="diceRow">
+    <div v-for="(diceElement, i) in roll.rolls" v-bind:key="i" class="diceRow">
       <div v-if="renderDie(diceElement)" class="diceRow">
         <div
-        v-for="(die, j) in getDiceElementRolls(diceElement)"
-        v-bind:key="j"
-        class="diceRow">
+          v-for="(die, j) in getDiceElementRolls(diceElement)"
+          v-bind:key="j"
+          class="diceRow"
+        >
           <div v-if="j !== 0" class="diceElement math">
             <div class="shiftDown">+</div>
           </div>
@@ -21,7 +19,10 @@
       <div v-else-if="renderMath(diceElement)" class="diceElement math">
         <div class="shiftDown">{{ diceElement }}</div>
       </div>
-      <div v-else-if="renderConstant(diceElement)" class="diceElement constantContainer">
+      <div
+        v-else-if="renderConstant(diceElement)"
+        class="diceElement constantContainer"
+      >
         <div class="diceElement constant">{{ diceElement }}</div>
       </div>
     </div>
@@ -33,29 +34,32 @@
 </template>
 
 <script>
-
 export default {
-  name: 'diceRender',
+  name: "diceRender",
   props: {
-    roll: Object
+    roll: Object,
   },
   methods: {
-    getDiceElementRolls (diceElement) {
+    getDiceElementRolls(diceElement) {
       // ignore dropped dice for now
       // TODO: Figure out a nice way to render it instead
-      return diceElement.rolls.filter(result => result.useInTotal)
+      return diceElement.rolls.filter((result) => result.useInTotal);
     },
-    renderDie (diceElement) {
-      return typeof diceElement === 'object' && diceElement.length > 0 && typeof diceElement.value === 'number'
+    renderDie(diceElement) {
+      return (
+        typeof diceElement === "object" &&
+        diceElement.length > 0 &&
+        typeof diceElement.value === "number"
+      );
     },
-    renderMath (diceElement) {
-      return typeof diceElement === 'string'
+    renderMath(diceElement) {
+      return typeof diceElement === "string";
     },
-    renderConstant (diceElement) {
-      return typeof diceElement === 'number'
-    }
-  }
-}
+    renderConstant(diceElement) {
+      return typeof diceElement === "number";
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -69,7 +73,7 @@ export default {
 }
 
 .diceElement {
-  font-family: 'roboto', monospace;
+  font-family: "roboto", monospace;
   font-weight: 500;
   font-size: 22pt;
   width: 40px;
@@ -101,7 +105,7 @@ export default {
 }
 
 .total {
-  font-family: 'roboto', monospace;
+  font-family: "roboto", monospace;
   font-weight: 500;
   font-size: 22pt;
   height: 40px;

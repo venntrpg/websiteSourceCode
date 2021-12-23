@@ -4,8 +4,12 @@
       <router-link to="/" class="navButton homeLink">VENNT</router-link>
     </div>
     <div v-if="!isLoggedIn" class="right">
-      <router-link to="/login" class="login navButton rightItem notMobile">LOGIN</router-link>
-      <router-link to="/signup" class="signup navButton rightItem notMobile">SIGNUP</router-link>
+      <router-link to="/login" class="login navButton rightItem notMobile">
+        LOGIN
+      </router-link>
+      <router-link to="/signup" class="signup navButton rightItem notMobile">
+        SIGNUP
+      </router-link>
       <!-- TODO: Update this link to be a dropdown with more items (instead of just linking to the login page) -->
       <router-link to="/login" class="login navButton rightItem mobileOnly">
         <MenuSVG class="dropDownLink" />
@@ -13,29 +17,30 @@
     </div>
     <div v-else class="right">
       <div class="logout rightItem">
-        <button v-on:click="logout()" class="navButton btn noSelect">LOGOUT</button>
+        <button v-on:click="logout()" class="navButton btn noSelect">
+          LOGOUT
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
-import MenuSVG from './Common/SVGs/MenuSVG.vue'
-import { mapActions, mapState } from 'vuex'
+import MenuSVG from "./Common/SVGs/MenuSVG.vue";
+import { mapActions, mapState } from "vuex";
 
 export default {
-  name: 'Nav',
+  name: "Nav",
   components: {
-    MenuSVG
+    MenuSVG,
   },
   computed: {
-    ...mapState(['isLoggedIn'])
+    ...mapState(["isLoggedIn"]),
   },
   methods: {
-    ...mapActions(['logout'])
-  }
-}
+    ...mapActions(["logout"]),
+  },
+};
 </script>
 
 <style scoped>
@@ -56,7 +61,7 @@ export default {
   padding-right: 15px;
   padding-top: 0px;
   padding-bottom: 0px;
-  font-family: Copperplate, 'Raleway', sans-serif;
+  font-family: Copperplate, "Raleway", sans-serif;
   font-weight: 500;
   font-size: 30pt;
 }

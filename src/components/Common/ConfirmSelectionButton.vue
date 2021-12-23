@@ -6,31 +6,29 @@
       </div>
     </button>
     <button v-else v-on:click="secondClick()" class="btn basicBtn">
-      <div class="basicBtnContents">
-        Are you sure?
-      </div>
+      <div class="basicBtnContents">Are you sure?</div>
     </button>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'ConfirmSelectionButton',
+  name: "ConfirmSelectionButton",
   props: {
-    defaultText: String
+    defaultText: String,
   },
-  data () {
+  data() {
     return {
-      clickedOnce: true
-    }
+      clickedOnce: true,
+    };
   },
   methods: {
-    firstClick () {
-      this.clickedOnce = false
+    firstClick() {
+      this.clickedOnce = false;
     },
-    secondClick () {
-      this.$emit('secondClick')
-    }
-  }
-}
+    secondClick() {
+      this.$emit("secondClick");
+    },
+  },
+};
 </script>

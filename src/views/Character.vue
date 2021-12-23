@@ -3,9 +3,24 @@
     <!--  --------------------- SUB NAV --------------------- -->
     <div class="subNav scroll">
       <div class="subNavGroup">
-        <router-link :to="{ name: 'Character', params: { id, section: stats }}" class="btn navButton subNavButton statLink">STATS</router-link>
-        <router-link :to="{ name: 'Character', params: { id, section: abilities }}" class="btn navButton subNavButton">ABILITIES</router-link>
-        <router-link :to="{ name: 'Character', params: { id, section: inventory }}" class="btn navButton subNavButton">INVENTORY</router-link>
+        <router-link
+          :to="{ name: 'Character', params: { id, section: stats } }"
+          class="btn navButton subNavButton statLink"
+        >
+          STATS
+        </router-link>
+        <router-link
+          :to="{ name: 'Character', params: { id, section: abilities } }"
+          class="btn navButton subNavButton"
+        >
+          ABILITIES
+        </router-link>
+        <router-link
+          :to="{ name: 'Character', params: { id, section: inventory } }"
+          class="btn navButton subNavButton"
+        >
+          INVENTORY
+        </router-link>
       </div>
     </div>
     <!--  --------------------- SIDE BAR --------------------- -->
@@ -27,83 +42,89 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+import { ResponsiveDirective } from "vue-responsive-components";
+import isUUID from "is-uuid";
+import CombatStats from "../components/Common/CombatStats.vue";
+import RightSideBar from "../components/CharacterPage/RightSideBar.vue";
+import Abilities from "../components/CharacterPage/Abilities.vue";
+import Inventory from "../components/CharacterPage/Inventory.vue";
 
-import { mapState } from 'vuex'
-import { ResponsiveDirective } from 'vue-responsive-components'
-import isUUID from 'is-uuid'
-import CombatStats from '../components/Common/CombatStats.vue'
-import RightSideBar from '../components/CharacterPage/RightSideBar.vue'
-import Abilities from '../components/CharacterPage/Abilities.vue'
-import Inventory from '../components/CharacterPage/Inventory.vue'
-
-const SECTION_STATS = 'stats'
-const SECTION_ABILITIES = 'abilities'
-const SECTION_INVENTORY = 'inventory'
+const SECTION_STATS = "stats";
+const SECTION_ABILITIES = "abilities";
+const SECTION_INVENTORY = "inventory";
 
 export default {
-  name: 'Character',
+  name: "Character",
   components: {
     CombatStats,
     RightSideBar,
     Abilities,
-    Inventory
+    Inventory,
   },
   directives: {
-    responsive: ResponsiveDirective
+    responsive: ResponsiveDirective,
   },
-  data () {
+  data() {
     return {
       breakpoints: {
-        bp750: el => el.width < 750,
-        bp500: el => el.width < 500
+        bp750: (el) => el.width < 750,
+        bp500: (el) => el.width < 500,
       },
-      id: ''
-    }
+      id: "",
+    };
   },
-  beforeMount () {
+  beforeMount() {
     if (!this.isLoggedIn) {
       // if not logged in, redirect to Home
-      this.$router.push({ name: 'Home' })
+      this.$router.push({ name: "Home" });
     }
-    this.id = this.$route.params.id
-    if (!this.id || !['C', 'E'].includes(this.id.charAt(0)) || !isUUID.v4(this.id.substring(1))) {
+    this.id = this.$route.params.id;
+    if (
+      !this.id ||
+      !["C", "E"].includes(this.id.charAt(0)) ||
+      !isUUID.v4(this.id.substring(1))
+    ) {
       // id is not valid, redirect to Home
-      this.$router.push({ name: 'Home' })
+      this.$router.push({ name: "Home" });
     }
   },
-  mounted () {
+  mounted() {
     if (this.characters !== {} && this.characters[this.id] !== undefined) {
-      this.$store.commit('setCharacter', this.characters[this.id])
+      this.$store.commit("setCharacter", this.characters[this.id]);
     } else {
-      this.$store.dispatch('getCharacter', this.id)
+      this.$store.dispatch("getCharacter", this.id);
     }
   },
   computed: {
-    ...mapState(['isLoggedIn', 'characters', 'character']),
-    stats () {
-      return SECTION_STATS
+    ...mapState(["isLoggedIn", "characters", "character"]),
+    stats() {
+      return SECTION_STATS;
     },
-    abilities () {
-      return SECTION_ABILITIES
+    abilities() {
+      return SECTION_ABILITIES;
     },
-    inventory () {
-      return SECTION_INVENTORY
+    inventory() {
+      return SECTION_INVENTORY;
     },
-    statsPage () {
+    statsPage() {
       // really only makes sense for mobile
-      return this.$route.params.section === SECTION_STATS
+      return this.$route.params.section === SECTION_STATS;
     },
-    abilitiesPage () {
-      return this.$route.params.section === SECTION_ABILITIES
+    abilitiesPage() {
+      return this.$route.params.section === SECTION_ABILITIES;
     },
-    inventoryPage () {
-      return this.$route.params.section === SECTION_INVENTORY
+    inventoryPage() {
+      return this.$route.params.section === SECTION_INVENTORY;
     },
-    showRightSideBar () {
-      return (this.abilitiesPage || this.inventoryPage) && this.$route.params.detail !== undefined ? 'rightVisible' : ''
-    }
-  }
-}
+    showRightSideBar() {
+      return (this.abilitiesPage || this.inventoryPage) &&
+        this.$route.params.detail !== undefined
+        ? "rightVisible"
+        : "";
+    },
+  },
+};
 </script>
 
 <style scoped>

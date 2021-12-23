@@ -16,13 +16,6 @@
   </div>
 </template>
 
-<script>
-
-export default {
-  name: 'Style'
-}
-</script>
-
 <style scoped>
 .colorSquare {
   height: 30px;
