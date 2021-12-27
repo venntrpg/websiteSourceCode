@@ -36,3 +36,4 @@ Todo
 - [ ] use mustaches when possible {{ }} to replace v-text & v-html
 - [ ] make color references more generic so we can add a dark mode
 - [ ] make mobile nav button reveal a dropdown
+- [ ] pull main CSS out into seperate file
