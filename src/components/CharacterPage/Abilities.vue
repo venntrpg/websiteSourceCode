@@ -200,7 +200,7 @@ export default {
 .addAbilityButton {
   width: 200px;
   min-width: 120px;
-  margin-left: 16px;
+  margin-left: 8px;
 }
 
 .searchTitle {

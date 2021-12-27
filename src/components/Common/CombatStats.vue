@@ -1,6 +1,6 @@
 <template>
   <div class="panel">
-    <div class="displayName">
+    <div class="centeredText">
       <h2>{{ character.name }}</h2>
     </div>
     <div class="seperator"></div>
@@ -20,11 +20,10 @@
             v-bind:class="attrButtonClass(attr)"
           >
             <div class="basicBtnContents attrButtonContents">
-              {{ getAttrDisplayName(attr) }}:
+              <span class="fractionLabel">{{ getAttrDisplayName(attr) }}:</span>
               <Fraction
                 :top="character[attr]"
                 :bottom="getAttrMaxValue(attr)"
-                class="statNumbers"
               />
             </div>
           </button>
@@ -39,50 +38,50 @@
               <div v-if="showUpdateDropdown">
                 <div class="attrHeaderMargin">Update Stat Values:</div>
                 <div v-if="adjustFields[attr] !== undefined" class="alignRow">
-                  <div class="incrementLabel">
+                  <label v-bind:for="attr + '-adjust'" class="incrementLabel">
                     Adjust (+/-) {{ getAttrDisplayName(attr) }}:
-                  </div>
+                  </label>
                   <input
                     type="number"
                     v-on:keyup.enter="adjustAttrFromAdjustField(attr)"
                     v-model="adjustFields[attr]"
                     placeholder="0"
+                    v-bind:id="attr + '-adjust'"
                     v-bind:class="inputAdjustFieldClass(attr)"
                     class="input"
                   />
                 </div>
                 <button
-                  v-if="
-                    getAttrMaxValue(attr) &&
-                    character[attr] < getAttrMaxValue(attr)
-                  "
+                  v-if="showResetToFullButton(attr)"
                   v-on:click="adjustAttrToFullButton(attr)"
-                  class="btn roundedButton wide noSelect topMargin"
+                  class="btn roundedButton clear wide noSelect topMargin"
                 >
                   Reset {{ getAttrDisplayName(attr) }} to Full
                 </button>
                 <div class="alignRow">
-                  <div class="incrementLabel">
+                  <label v-bind:for="attr + '-current'" class="incrementLabel">
                     Current {{ getAttrDisplayName(attr) }}:
-                  </div>
+                  </label>
                   <input
                     type="number"
                     v-on:keyup.enter="adjustAttrFromField(attr)"
                     v-model="attrFields[attr]"
-                    :placeholder="character[attr]"
+                    v-bind:placeholder="character[attr]"
+                    v-bind:id="attr + '-current'"
                     v-bind:class="inputFieldClass(attr)"
                     class="input"
                   />
                 </div>
                 <div v-if="getAttrMaxValue(attr)" class="alignRow">
-                  <div class="incrementLabel">
+                  <label v-bind:for="attr + '-max'" class="incrementLabel">
                     Maximum {{ getAttrDisplayName(attr) }}:
-                  </div>
+                  </label>
                   <input
                     type="number"
                     v-on:keyup.enter="adjustAttrFromField(getAttrMaxName(attr))"
                     v-model="attrFields[getAttrMaxName(attr)]"
-                    :placeholder="getAttrMaxValue(attr)"
+                    v-bind:placeholder="getAttrMaxValue(attr)"
+                    v-bind:id="attr + '-max'"
                     v-bind:class="inputFieldClass(getAttrMaxName(attr))"
                     class="input"
                   />
@@ -109,8 +108,8 @@
           v-bind:class="attrButtonClass(attr)"
         >
           <div class="basicBtnContents attrButtonContents">
-            {{ attr.toUpperCase() }}:
-            <div class="number leftMargin">{{ character[attr] }}</div>
+            <span class="attrLabel">{{ attr.toUpperCase() }}:</span>
+            <div class="number">{{ character[attr] }}</div>
           </div>
         </button>
       </div>
@@ -214,7 +213,10 @@
         Gift: {{ character.gift }}
       </div>
     </button>
-    <div v-if="showDropDown('gift')" class="card diceDropDown left right">
+    <div
+      v-if="showDropDown('gift')"
+      class="card diceDropDown left right singleStat"
+    >
       <div class="margin">
         <div class="seperator bottomMargin"></div>
         <gift-description :gift="character.gift" :showTitle="false" />
@@ -227,37 +229,42 @@
         v-bind:class="attrButtonClass(attr)"
       >
         <div class="basicBtnContents attrButtonContents">
-          {{ getAttrDisplayName(attr) }}:
-          <div class="number leftMarginWide">{{ character[attr] }}</div>
+          <span class="attrLabelWide">{{ getAttrDisplayName(attr) }}:</span>
+          <div class="number">{{ character[attr] }}</div>
         </div>
       </button>
-      <div v-if="showDropDown(attr)" class="card diceDropDown left right">
+      <div
+        v-if="showDropDown(attr)"
+        class="card diceDropDown left right singleStat"
+      >
         <div class="margin">
           <div class="seperator bottomMargin"></div>
           <div v-if="showUpdateDropdown">
             <div class="attrHeaderMargin">Update Stat Value:</div>
             <div v-if="adjustFields[attr] !== undefined" class="alignRow">
-              <div class="incrementLabel">
+              <label v-bind:for="attr + '-adjust'" class="incrementLabel">
                 Adjust (+/-) {{ getAttrDisplayName(attr) }}:
-              </div>
+              </label>
               <input
                 type="number"
                 v-on:keyup.enter="adjustAttrFromAdjustField(attr)"
                 v-model="adjustFields[attr]"
                 placeholder="0"
+                v-bind:id="attr + '-adjust'"
                 v-bind:class="inputAdjustFieldClass(attr)"
                 class="input"
               />
             </div>
             <div class="alignRow">
-              <div class="incrementLabel">
+              <label v-bind:for="attr + '-current'" class="incrementLabel">
                 Current {{ getAttrDisplayName(attr) }}:
-              </div>
+              </label>
               <input
                 type="number"
                 v-on:keyup.enter="adjustAttrFromField(attr)"
                 v-model="attrFields[attr]"
-                :placeholder="character[attr]"
+                v-bind:placeholder="character[attr]"
+                v-bind:id="attr + '-current'"
                 v-bind:class="inputFieldClass(attr)"
                 class="input"
               />
@@ -408,6 +415,14 @@ export default {
     getAttrMaxValue(attr) {
       return this.character[this.getAttrMaxName(attr)];
     },
+    showResetToFullButton(attr) {
+      return (
+        attr !== "hero" &&
+        this.getAttrMaxValue(attr) &&
+        this.character[attr] < this.getAttrMaxValue(attr)
+      );
+    },
+    // TODO: Convert into component instead of keeping HTML in strings
     getAttrHelpHTML(attr) {
       const helpMap = {
         hp: 'Your maximum Health (HP) is 20 + Level + 3 times Strength. <a href="https://vennt.fandom.com/wiki/Health" target="_blank" class="link">Wiki entry</a>',
@@ -643,23 +658,13 @@ export default {
   margin-right: 16px;
 }
 
-.displayName {
-  text-align: center;
-}
-
+/* not used - investiage */
 .stat {
   font-size: 16pt;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 8px 10px 8px;
-}
-.statNumbers {
-  display: flex;
-  align-items: center;
-  /* Absolute so numbers are in space place for every combat stat */
-  position: absolute;
-  margin-left: 55px;
 }
 
 .flex {
@@ -708,14 +713,14 @@ export default {
 .attrsRow {
   display: flex;
   justify-content: space-between;
-  margin-left: -4px;
-  margin-right: -4px;
+  gap: 8px;
 }
 .attrButton {
   width: 100%;
   background-color: white;
-  margin: 4px;
   border-radius: 5px;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 .attrButton.selected {
   margin-bottom: -4px;
@@ -723,6 +728,7 @@ export default {
 }
 .attrButtonContents {
   font-size: 16pt;
+  text-align: left;
 }
 
 .margin {
@@ -756,17 +762,14 @@ export default {
   min-height: 90px;
 }
 
-.leftMargin {
-  position: absolute;
-  margin-left: 56px;
+.fractionLabel {
+  min-width: 64px;
 }
-.leftMarginWide {
-  position: absolute;
-  margin-left: 90px;
+.attrLabel {
+  min-width: 56px;
 }
-
-.singleStat {
-  margin: 0px 0px 8px 0px;
+.attrLabelWide {
+  min-width: 92px;
 }
 
 .seperator.topBottomMargin {
@@ -790,6 +793,11 @@ export default {
 .incrementLabel {
   font-size: 14pt;
   min-width: 180px;
+}
+
+.singleStat {
+  /* Prevents margin collaps */
+  margin-bottom: 8px;
 }
 
 /* Mobile Styles */

@@ -1,8 +1,8 @@
 <template>
   <div>
     <div v-if="showTitle">
-      <h3>{{ giftCopy[gift].title }}</h3>
-      <div class="horizontalLine"></div>
+      <h3 class="centeredText">{{ giftCopy[gift].title }}</h3>
+      <div class="seperator thin"></div>
     </div>
     <div class="textMargin">
       <i>{{ giftCopy[gift].flavor }}</i>
@@ -136,16 +136,6 @@ export default {
 </script>
 
 <style scoped>
-h3 {
-  text-align: center;
-}
-
-.horizontalLine {
-  height: 1px;
-  width: 100%;
-  background-color: var(--gray-400);
-}
-
 .textMargin {
   margin: 16px;
   text-align: left;

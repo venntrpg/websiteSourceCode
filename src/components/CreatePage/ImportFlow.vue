@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div class="mediumPageWidth">
-      <h1>IMPORT CHARACTER</h1>
+      <h1 class="centeredText">IMPORT CHARACTER</h1>
       <h2>Copy in details from your Character Stats</h2>
       Character name:
       <input
@@ -269,10 +269,6 @@ export default {
 </script>
 
 <style scoped>
-h1 {
-  text-align: center;
-}
-
 .inputMargin {
   margin-top: 2px;
   margin-bottom: 8px;

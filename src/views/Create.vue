@@ -5,7 +5,7 @@
     <div v-else class="page">
       <div class="mediumPageWidth selectFlowContainer">
         <div class="selectFlow">
-          <h1>CHARACTER CREATION</h1>
+          <h1 class="centeredText">CHARACTER CREATION</h1>
           <p>
             You can create a totally new character or import a character which
             you have already created.
@@ -69,10 +69,6 @@ export default {
 
 .selectFlow {
   width: 320px;
-}
-
-h1 {
-  text-align: center;
 }
 
 .topMargin {

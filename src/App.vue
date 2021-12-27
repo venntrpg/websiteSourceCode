@@ -88,27 +88,6 @@ export default {
   background-color: var(--gray-250);
 }
 
-h1 {
-  font-size: 40pt;
-  font-weight: 400;
-}
-
-.link {
-  color: black;
-}
-.link:hover {
-  color: var(--red-500);
-}
-.link:active {
-  color: var(--red-700);
-}
-.link.stealth {
-  text-decoration: none;
-}
-.link.stealth:hover {
-  text-decoration: underline;
-}
-
 .page {
   margin-top: var(--nav-height);
   display: flex;
@@ -133,6 +112,27 @@ h1 {
   margin-right: 20px;
 }
 
+h1 {
+  font-size: 40pt;
+  font-weight: 400;
+}
+
+.link {
+  color: black;
+}
+.link:hover {
+  color: var(--red-500);
+}
+.link:active {
+  color: var(--red-700);
+}
+.link.stealth {
+  text-decoration: none;
+}
+.link.stealth:hover {
+  text-decoration: underline;
+}
+
 /* General Styles */
 
 .btn {
@@ -149,11 +149,12 @@ h1 {
   cursor: default;
 }
 .btn.wide {
-  width: calc(100% - 20px);
+  width: 100%;
 }
 
 .roundedButton {
   background-color: var(--red-500);
+  border: solid 2px var(--red-500);
   border-radius: 20px;
   padding-top: 2px;
   padding-bottom: 2px;
@@ -167,12 +168,36 @@ h1 {
 }
 .roundedButton:disabled {
   background-color: var(--red-300);
+  border: solid 2px var(--red-300);
 }
 .roundedButton:hover:not(:disabled) {
   background-color: var(--red-600);
+  border: solid 2px var(--red-600);
 }
 .roundedButton:active:not(:disabled) {
   background-color: var(--red-700);
+  border: solid 2px var(--red-700);
+}
+.roundedButton.clear {
+  color: var(--red-500);
+  background-color: transparent;
+}
+.roundedButton.clear.disabled {
+  opacity: 0.65;
+  background-color: transparent;
+}
+.roundedButton.clear:hover:not(:disabled) {
+  background-color: var(--red-500);
+  border: solid 2px var(--red-500);
+  color: white;
+}
+.roundedButton.clear:active:not(:disabled) {
+  background-color: var(--red-700);
+  border: solid 2px var(--red-700);
+  color: white;
+}
+.roundedButton.wide {
+  width: calc(100% - 24px);
 }
 
 .basicBtn {
@@ -191,9 +216,6 @@ h1 {
 }
 .basicBtn.link {
   color: black;
-}
-.basicBtn.wide {
-  width: 100%;
 }
 .basicBtnContents {
   display: flex;
@@ -216,6 +238,10 @@ h1 {
   margin-right: 8px;
 }
 
+.noSelect:focus {
+  outline: 0;
+}
+
 .input {
   resize: vertical;
   font-family: "Raleway", sans-serif;
@@ -229,12 +255,8 @@ h1 {
   background-color: white;
   border: 1px solid var(--gray-400);
   outline: none;
-  -webkit-box-shadow: none;
   box-shadow: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
-  -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 .input:hover {
@@ -290,6 +312,10 @@ h1 {
 .alignRow {
   display: flex;
   align-items: center;
+}
+
+.centeredText {
+  text-align: center;
 }
 
 /* Nav Styles - useful for subnav styles */
@@ -374,9 +400,5 @@ h1 {
 }
 .subNavPage .page {
   margin-top: var(--total-nav-height);
-}
-
-.noSelect:focus {
-  outline: 0;
 }
 </style>

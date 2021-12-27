@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="center">{{ campaign.name }}</h1>
+    <h1 class="centeredText">{{ campaign.name }}</h1>
     <div v-if="isGm">
       <p>You are the GM!</p>
     </div>
@@ -31,8 +31,4 @@ export default {
 };
 </script>
 
-<style>
-.center {
-  text-align: center;
-}
-</style>
+<style scoped></style>

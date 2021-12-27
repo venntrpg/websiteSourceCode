@@ -31,7 +31,7 @@
     >
       <div class="largePageWidth main" v-responsive="breakpoints">
         <div>
-          <h1>CREATE NEW CHARACTER</h1>
+          <h1 class="centeredText">CREATE NEW CHARACTER</h1>
           <h2>Step 1: Choose a name</h2>
           <p>
             This follows the guide on the
@@ -622,10 +622,6 @@ export default {
 <style scoped lang="postcss">
 .topMargin {
   margin-top: 12px;
-}
-
-h1 {
-  text-align: center;
 }
 
 .nameInput {

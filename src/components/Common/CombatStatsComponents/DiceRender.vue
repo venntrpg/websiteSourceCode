@@ -100,7 +100,6 @@ export default {
   border: 3px solid var(--yellow-300);
 }
 .constant {
-  position: absolute;
   margin-left: -3px; /* margin left instead of top because of 3px border in container */
 }
 
