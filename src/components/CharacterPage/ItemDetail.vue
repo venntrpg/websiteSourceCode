@@ -4,12 +4,11 @@
       <h2>{{ item.name }}</h2>
       <div class="bottomMargin"><b>Description:</b> {{ item.desc }}</div>
       <div class="bottomMargin"><b>Bulk:</b> {{ item.bulk }}</div>
-      <div class="bottomMargin" v-html="abilityAffectHtml"></div>
       <button
         v-on:click="removeItemButton()"
-        class="btn roundedButton wide bottomMargin"
+        class="btn roundedButton clear wide bottomMargin"
       >
-        Remove / Use Item
+        Remove Item
       </button>
     </div>
     <div v-else-if="character !== undefined">

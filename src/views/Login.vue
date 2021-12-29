@@ -3,23 +3,28 @@
     <div v-if="!isLoggedIn" class="smallPageWidth">
       <h1>LOG IN</h1>
       <div class="usernameSection">
-        <div>Enter your username:</div>
+        <label for="login-username">Enter your username:</label>
         <input
           type="text"
           name="username"
+          id="login-username"
           placeholder="Username"
-          class="input smallTopMargin wide"
+          autocomplete="username"
           v-model="fields.username"
+          class="input smallTopMargin wide"
         />
       </div>
       <div class="passwordSection topMargin">
-        <div>Enter your password:</div>
+        <label for="login-password">Enter your password:</label>
         <input
           type="password"
           name="password"
+          id="login-password"
           placeholder="Password"
-          class="input smallTopMargin wide"
+          autocomplete="current-password"
           v-model="fields.password"
+          v-on:keyup.enter="loginButton()"
+          class="input smallTopMargin wide"
         />
       </div>
       <button
@@ -29,7 +34,7 @@
         LOG IN
       </button>
       <div class="topMargin">
-        <div v-text="getErrorMessage" class="errorMessage"></div>
+        <div class="errorMessage">{{ getErrorMessage }}</div>
       </div>
     </div>
     <div v-else class="smallPageWidth">You are already signed in. Log out?</div>
@@ -76,10 +81,10 @@ export default {
 
 <style scoped>
 .topMargin {
-  margin-top: 15px;
+  margin-top: 16px;
 }
 .smallTopMargin {
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .errorMessage {

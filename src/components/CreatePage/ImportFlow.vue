@@ -3,118 +3,132 @@
     <div class="mediumPageWidth">
       <h1 class="centeredText">IMPORT CHARACTER</h1>
       <h2>Copy in details from your Character Stats</h2>
-      Character name:
+      <label for="import-name">Character name:</label>
       <input
         type="text"
         name="name"
         placeholder="Bilbo Baggins"
-        class="input inputMargin"
         v-model="character.name"
         v-on:blur="backupImport"
+        id="import-name"
+        class="input inputMargin"
       />
-      Select gift:
+      <label>Select gift:</label>
       <RadioButtonSelection
         :options="getGiftsSelection"
         :selected="character.gift"
         @selectedUpdated="giftUpdated"
         class="inputMargin"
       />
-      Attributes:
+      <label>Attributes:</label>
       <div class="attributeInputContainer inputMargin">
         <div
           v-for="attr in validAttributes"
           v-bind:key="attr"
           class="attributeInput"
         >
-          <div class="attributeName">{{ attr.toUpperCase() }}:</div>
+          <label v-bind:for="'import' + attr" class="attributeName">
+            {{ attr.toUpperCase() }}:
+          </label>
           <input
             type="number"
             placeholder="0"
-            class="input"
             v-model="character[attr]"
             v-on:blur="backupImport"
+            v-bind:id="'import' + attr"
+            class="input"
           />
         </div>
       </div>
-      Max HP:
+      <label for="import-hp">Max HP:</label>
       <input
         type="number"
         placeholder="0"
-        class="input inputMargin"
         v-model="character.maxHp"
         v-on:blur="backupImport"
+        id="import-hp"
+        class="input inputMargin"
       />
-      Max MP:
+      <label for="import-mp">Max MP:</label>
       <input
         type="number"
         placeholder="0"
-        class="input inputMargin"
         v-model="character.maxMp"
         v-on:blur="backupImport"
+        id="import-mp"
+        class="input inputMargin"
       />
-      Max Vim:
+      <label for="import-vim">Max Vim:</label>
       <input
         type="number"
         placeholder="0"
-        class="input inputMargin"
         v-model="character.maxVim"
         v-on:blur="backupImport"
+        id="import-vim"
+        class="input inputMargin"
       />
-      Current Hero Points:
+      <label for="import-hero">Current Hero Points:</label>
       <input
         type="number"
         placeholder="0"
-        class="input inputMargin"
         v-model="character.hero"
         v-on:blur="backupImport"
+        id="import-hero"
+        class="input inputMargin"
       />
-      Max Hero Points:
+      <label for="import-hero-max">Max Hero Points:</label>
       <input
         type="number"
         placeholder="0"
-        class="input inputMargin"
         v-model="character.maxHero"
         v-on:blur="backupImport"
+        id="import-hero-max"
+        class="input inputMargin"
       />
-      Initiative Bonus:
+      <label for="import-init">Initiative Bonus:</label>
       <input
         type="number"
         placeholder="0"
-        class="input inputMargin"
         v-model="character.init"
         v-on:blur="backupImport"
+        id="import-init"
+        class="input inputMargin"
       />
-      Speed:
+      <label for="import-speed">Speed:</label>
       <input
         type="number"
         placeholder="0"
-        class="input inputMargin"
         v-model="character.speed"
         v-on:blur="backupImport"
+        id="import-speed"
+        class="input inputMargin"
       />
-      Armor:
+      <label for="import-armor">Armor:</label>
       <input
         type="number"
         placeholder="0"
-        class="input inputMargin"
         v-model="character.armor"
         v-on:blur="backupImport"
+        id="import-armor"
+        class="input inputMargin"
       />
-      Total XP:
+      <label for="import-xp">Total XP:</label>
       <input
         type="number"
         placeholder="0"
-        class="input inputMargin"
         v-model="character.xp"
         v-on:blur="backupImport"
+        id="import-xp"
+        class="input inputMargin"
       />
-      SP:
+      <label for="import-sp">SP:</label>
       <input
         type="number"
         placeholder="0"
-        class="input inputMargin"
         v-model="character.sp"
         v-on:blur="backupImport"
+        id="import-sp"
+        class="input inputMargin"
       />
       <p>You can import items and abilities after you create the character.</p>
       <h2>Import your Character</h2>
@@ -270,7 +284,7 @@ export default {
 
 <style scoped>
 .inputMargin {
-  margin-top: 2px;
+  margin-top: 4px;
   margin-bottom: 8px;
 }
 

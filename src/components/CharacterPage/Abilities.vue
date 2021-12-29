@@ -1,6 +1,10 @@
 <template>
   <div>
     <h1>Abilities</h1>
+    <div class="alignRow xpLabel">
+      Remaining XP:
+      <fraction :top="usedXP" :bottom="character.xp" class="xpFraction" />
+    </div>
     <div v-if="sortedAbilities.length > 0" class="card column">
       <div class="alignRow ability header">
         <div class="abilityName headerFont">
@@ -17,7 +21,7 @@
       <div
         v-for="(ability, index) in sortedAbilities"
         v-bind:key="index"
-        class="alignRow"
+        class="alignRow tableItems"
       >
         <div class="ability">
           <div class="abilityName">{{ ability.name }}</div>
@@ -41,18 +45,19 @@
         </router-link>
       </div>
     </div>
-    <h2>Add New Abilities</h2>
+    <label for="abiltiy-search"><h2>Add New Abilities</h2></label>
     <div class="inputRow">
       <input
         placeholder="Search Ability"
         v-on:keyup.enter="abilitySearch()"
         v-model="abilityField"
+        id="abiltiy-search"
         class="input abilityInput"
       />
       <button
         v-on:click="abilitySearch()"
         :disabled="lookupButtonDisabled"
-        class="btn roundedButton addAbilityButton"
+        class="btn roundedButton addAbilityButton clear"
       >
         Lookup
       </button>
@@ -90,6 +95,7 @@
 // NOTE: could update abilityInput on every change in input with 'v-on:input="abilitySearch()"'
 
 import { mapState } from "vuex";
+import Fraction from "../Common/CombatStatsComponents/Fraction.vue";
 import RightArrowSVG from "../Common/SVGs/RightArrowSVG.vue";
 import ParseAbilityEffect from "./ParseAbilityEffect.vue";
 
@@ -98,6 +104,7 @@ export default {
   components: {
     RightArrowSVG,
     ParseAbilityEffect,
+    Fraction,
   },
   data() {
     return {
@@ -136,6 +143,22 @@ export default {
     },
     searchResultHtml() {
       return this.searchAbility.replaceAll("\n\n", "<br>");
+    },
+    usedXP() {
+      if (!this.character.abilities) {
+        return 0;
+      }
+      return this.character.abilities.reduce((sum, ability) => {
+        let cost = parseInt(ability.purchase);
+        if (
+          ability.expedited &&
+          this.character.gift !== "None" &&
+          ability.expedited.includes(this.character.gift)
+        ) {
+          cost = cost / 2;
+        }
+        return sum + cost;
+      }, 0);
     },
     sortedAbilities() {
       if (this.character.abilities === undefined) {
@@ -180,6 +203,7 @@ export default {
           id: this.character.id,
           name: this.abilityField,
         });
+        this.abilityField = "";
       }
     },
     searchSuggestionButton(suggestion) {
@@ -191,9 +215,14 @@ export default {
 </script>
 
 <style scoped>
-.inputRow {
-  display: flex;
+.xpLabel {
+  font-size: 16pt;
+  margin-bottom: 16px;
 }
+.xpFraction {
+  margin-left: 16px;
+}
+
 .abilityInput {
   max-width: 400px;
 }
@@ -221,25 +250,22 @@ export default {
   display: flex;
   align-items: center;
   padding: 8px;
-  font-size: 14pt;
+  font-size: 12pt;
   text-align: left;
   flex-grow: 1;
 }
 .abilityName {
   width: 20%;
+  font-size: 14pt;
 }
 .abilityActivation {
   width: 15%;
 }
 .abilityEffect {
   width: 65%;
-  font-size: 12pt;
 }
 /* Deep selector effects children */
-.abilityEffect >>> p {
-  margin-top: 0px;
-  margin-bottom: 5px;
-}
+.abilityEffect >>> p,
 .abilityEffect >>> ul {
   margin-top: 0px;
   margin-bottom: 5px;
@@ -259,6 +285,9 @@ export default {
   display: none;
 }
 
+.inputRow {
+  display: flex;
+}
 .main.bp500 .inputRow {
   display: block;
 }

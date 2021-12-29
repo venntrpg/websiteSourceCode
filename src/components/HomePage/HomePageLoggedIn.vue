@@ -34,11 +34,13 @@
         </div>
       </router-link>
     </div>
+    <label for="campaign-input">Create a New Campaign</label>
     <div class="alignRow">
       <input
         placeholder="New Campaign Name"
         v-model="campaignName"
         v-on:keyup.enter="newCampaignButton()"
+        id="campaign-input"
         class="input campaignInput"
       />
       <button

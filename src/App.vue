@@ -88,6 +88,8 @@ export default {
   background-color: var(--gray-250);
 }
 
+/* Page Descriptors */
+
 .page {
   margin-top: var(--nav-height);
   display: flex;
@@ -112,8 +114,19 @@ export default {
   margin-right: 20px;
 }
 
+/* Typography */
+
 h1 {
   font-size: 40pt;
+  font-weight: 400;
+}
+
+.centeredText {
+  text-align: center;
+}
+
+.number {
+  font-family: "roboto", monospace;
   font-weight: 400;
 }
 
@@ -133,7 +146,7 @@ h1 {
   text-decoration: underline;
 }
 
-/* General Styles */
+/* Button Styles */
 
 .btn {
   border-style: hidden;
@@ -242,6 +255,8 @@ h1 {
   outline: 0;
 }
 
+/* Input Styles */
+
 .input {
   resize: vertical;
   font-family: "Raleway", sans-serif;
@@ -250,7 +265,7 @@ h1 {
   height: 40px;
   width: 100%;
   border-radius: 5px;
-  color: var(--color-ink);
+  color: black;
   padding: 12px 10px;
   background-color: white;
   border: 1px solid var(--gray-400);
@@ -277,6 +292,12 @@ h1 {
 .input.wide {
   width: 100%;
 }
+.input.textInput {
+  height: 88px;
+  line-height: 24px;
+}
+
+/* Component Styles */
 
 .card {
   display: flex;
@@ -288,11 +309,6 @@ h1 {
 }
 .card.column {
   flex-direction: column;
-}
-
-.number {
-  font-family: "roboto", monospace;
-  font-weight: 400;
 }
 
 .seperator {
@@ -314,8 +330,11 @@ h1 {
   align-items: center;
 }
 
-.centeredText {
-  text-align: center;
+.tableItems {
+  background-color: white;
+}
+.tableItems:nth-child(even) {
+  background-color: var(--gray-200);
 }
 
 /* Nav Styles - useful for subnav styles */

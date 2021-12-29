@@ -17,7 +17,7 @@
       <div
         v-for="(item, index) in consolidatedItems"
         v-bind:key="index"
-        class="alignRow"
+        class="alignRow tableItems"
       >
         <div class="item">
           <div class="itemName">{{ item.name }}</div>
@@ -39,16 +39,33 @@
     </div>
     <h2>Add unique Item</h2>
     <div class="contentRow">
-      <div class="label">Item name:</div>
-      <input placeholder="Donut" v-model="itemName" class="input" />
+      <label for="item-name" class="label">Item name:</label>
+      <input
+        type="text"
+        placeholder="Donut"
+        v-model="itemName"
+        id="item-name"
+        class="input"
+      />
     </div>
     <div class="contentRow">
-      <div class="label">Item bulk:</div>
-      <input type="number" placeholder="0" v-model="itemBulk" class="input" />
+      <label for="item-bulk" class="label">Item bulk:</label>
+      <input
+        type="number"
+        placeholder="0"
+        v-model="itemBulk"
+        id="item-bulk"
+        class="input"
+      />
     </div>
     <div class="contentRow">
-      <div class="label">Item description:</div>
-      <input placeholder="Just a donut" v-model="itemDesc" class="input" />
+      <label for="item-desc" class="label">Item description:</label>
+      <textarea
+        placeholder="Just a donut"
+        v-model="itemDesc"
+        id="item-desc"
+        class="input textInput"
+      ></textarea>
     </div>
     <button
       v-on:click="addItemButton()"
@@ -57,11 +74,13 @@
     >
       Add Item
     </button>
+    <div class="tall"></div>
   </div>
 </template>
 
 <script>
-// TODO: I would like to add a shop link so you can just buy common items without needing to insert all of the details individually
+// TODO: I would like to add a shop link so you can just buy common items without
+// needing to insert all of the details individually
 
 import { mapState } from "vuex";
 import RightArrowSVG from "../Common/SVGs/RightArrowSVG.vue";
@@ -122,6 +141,9 @@ export default {
           item: item,
           refreshCharacter: true,
         });
+        this.itemName = "";
+        this.itemBulk = "0";
+        this.itemDesc = "";
       }
     },
   },

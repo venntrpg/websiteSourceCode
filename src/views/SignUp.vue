@@ -3,33 +3,39 @@
     <div v-if="!isLoggedIn" class="smallPageWidth">
       <h1>SIGN UP</h1>
       <div class="usernameSection">
-        <div>Enter a username:</div>
+        <label for="signup-username">Enter a username:</label>
         <input
           type="text"
           name="username"
+          id="signup-username"
           placeholder="Username"
-          class="input smallTopMargin wide"
+          autocomplete="username"
           v-model="fields.username"
+          class="input smallTopMargin wide"
         />
       </div>
       <div class="password1Section topMargin">
-        <div>Enter a password:</div>
+        <label for="signup-password1">Enter a password:</label>
         <input
           type="password"
           name="password1"
+          id="signup-password1"
           placeholder="Password"
-          class="input smallTopMargin wide"
+          autocomplete="new-password"
           v-model="fields.password1"
+          class="input smallTopMargin wide"
         />
       </div>
       <div class="password1Section topMargin">
-        <div>Re-enter your password:</div>
+        <label for="signup-password2">Verify your password:</label>
         <input
           type="password"
           name="password2"
+          id="signup-password2"
           placeholder="Verify Password"
-          class="input smallTopMargin wide"
+          autocomplete="new-password"
           v-model="fields.password2"
+          class="input smallTopMargin wide"
         />
       </div>
       <button
@@ -39,7 +45,7 @@
         SIGN UP
       </button>
       <div class="topMargin">
-        <div v-text="getErrorMessage" class="errorMessage"></div>
+        <div class="errorMessage">{{ getErrorMessage }}</div>
       </div>
     </div>
     <div v-else class="smallPageWidth">You are already signed in. Log out?</div>
@@ -92,10 +98,10 @@ export default {
 
 <style scoped>
 .topMargin {
-  margin-top: 15px;
+  margin-top: 16px;
 }
 .smallTopMargin {
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .errorMessage {

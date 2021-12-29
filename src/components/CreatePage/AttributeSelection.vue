@@ -10,7 +10,7 @@
       <div class="basicBtnContents">
         <CheckedRadioButton v-if="isSelected(attr)" class="basicBtnSVG" />
         <UncheckedRadioButton v-else class="basicBtnSVG" />
-        <div v-html="attr.toUpperCase()" class="basicBtnContents"></div>
+        <div class="basicBtnContents">{{ attr.toUpperCase() }}</div>
       </div>
     </button>
   </div>

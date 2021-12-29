@@ -44,16 +44,20 @@
             </a>
             .
           </p>
-          <p>
-            Choose a name for your character. You can always come back to this
-            step later. Or, press the button to generate a random name for now.
-          </p>
+          <label for="new-name">
+            <p>
+              Choose a name for your character. You can always come back to this
+              step later. Or, press the button to generate a random name for
+              now.
+            </p>
+          </label>
           <div class="alignRow nameRow">
             <input
               type="text"
               name="charName"
               placeholder="Bilbo Baggins"
               class="input nameInput"
+              id="new-name"
               v-model="create.name"
             />
             <button
@@ -89,8 +93,8 @@
               target="_blank"
               class="link"
             >
-              Flux
-            </a>
+              Flux</a
+            >
             represents who you are right now: your personality, your ambitions,
             and so on.
           </p>
