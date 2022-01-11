@@ -37,3 +37,4 @@ Todo
 - [ ] make color references more generic so we can add a dark mode
 - [ ] make mobile nav button reveal a dropdown
 - [ ] pull main CSS out into seperate file
+- [x] replace SVGs with font

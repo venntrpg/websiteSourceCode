@@ -66,7 +66,7 @@
               :disabled="randomNamesDisabled"
             >
               <div class="btnContents">
-                <RefreshSVG class="matchText" />Random name
+                <span class="material-icons">refresh</span> Random name
               </div>
             </button>
           </div>
@@ -193,6 +193,26 @@
             :disabledChoices="blockBadAttrsChoices"
             @selectedUpdated="badAttrsUpdated"
           />
+          <p>
+            Select an attribute that corresponds to your first grate. This will
+            subtract 1 from the selected attribute. (Optional)
+          </p>
+          <AttributeSelection
+            :attributes="validAttributes"
+            :selected="create.grate1"
+            :maxChoices="1"
+            @selectedUpdated="grate1Updated"
+          />
+          <p>
+            Select an attribute that corresponds to your third grate. This will
+            add 1 from the selected attribute. (Optional)
+          </p>
+          <AttributeSelection
+            :attributes="validAttributes"
+            :selected="create.grate3"
+            :maxChoices="1"
+            @selectedUpdated="grate3Updated"
+          />
           <h2>Step 6: Beginner's equipment</h2>
           <p>
             This section helps you figure out what equipment you have on you.
@@ -266,7 +286,6 @@
 </template>
 
 <script>
-import RefreshSVG from "../Common/SVGs/RefreshSVG.vue";
 import AttributeSelection from "./AttributeSelection.vue";
 import CombatStats from "../Common/CombatStats.vue";
 import GiftSelection from "./GiftSelection.vue";
@@ -281,7 +300,6 @@ const CHAR_LOCAL_STORAGE = "creation-new-wip";
 export default {
   name: "NewFlow",
   components: {
-    RefreshSVG,
     AttributeSelection,
     CombatStats,
     GiftSelection,
@@ -305,6 +323,8 @@ export default {
         childAttrs: [],
         adultAttrs: [],
         badAttrs: [],
+        grate1: [],
+        grate3: [],
         sideItem: "",
         outfit: "",
         itemSet: "",
@@ -375,6 +395,14 @@ export default {
       }
       return sum;
     },
+    calculateMaxBulk() {
+      if (this.create.outfit === "fashionable") {
+        return 5;
+      } else if (this.create.outfit === "functional") {
+        return 15;
+      }
+      return 0;
+    },
     getGiftName() {
       const nameMap = {
         per: "Alertness",
@@ -420,6 +448,7 @@ export default {
         speed: this.calculateSpeed,
         xp: this.calculateXP,
         sp: this.calculateSP,
+        maxBulk: this.calculateMaxBulk,
       };
     },
     blockChildAttrsChoices() {
@@ -538,6 +567,14 @@ export default {
       this.create.badAttrs = newList;
       this.backupCreate();
     },
+    grate1Updated(newList) {
+      this.create.grate1 = newList;
+      this.backupCreate();
+    },
+    grate3Updated(newList) {
+      this.create.grate3 = newList;
+      this.backupCreate();
+    },
     sideItemUpdated(newItem) {
       this.create.sideItem = newItem;
       this.backupCreate();
@@ -568,13 +605,19 @@ export default {
       }
       // child & adult attributes
       if (this.create.childAttrs.includes(attr)) {
-        sum += 1;
+        sum++;
       }
       if (this.create.adultAttrs.includes(attr)) {
-        sum += 1;
+        sum++;
       }
       if (this.create.badAttrs.includes(attr)) {
-        sum -= 1;
+        sum--;
+      }
+      if (this.create.grate1.includes(attr)) {
+        sum--;
+      }
+      if (this.create.grate3.includes(attr)) {
+        sum++;
       }
       // add attribute according to side item
       const sideItemMap = {
@@ -586,7 +629,7 @@ export default {
         read: "int",
       };
       if (sideItemMap[this.create.sideItem] === attr) {
-        sum += 1;
+        sum++;
       }
       // add attribute according to outfit
       const outfitMap = {
@@ -594,7 +637,7 @@ export default {
         functional: "agi",
       };
       if (outfitMap[this.create.outfit] === attr) {
-        sum += 1;
+        sum++;
       }
       return sum;
     },
@@ -640,10 +683,6 @@ export default {
 .btnContents {
   display: flex;
   align-items: center;
-}
-
-.matchText {
-  fill: white;
 }
 
 .bottomMargin {

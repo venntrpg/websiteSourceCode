@@ -6,9 +6,11 @@
       v-on:click="selectionButton(optionCode)"
       class="btn noSelect basicBtn"
     >
-      <div class="basicBtnContents">
-        <CheckedRadioButton v-if="isSelected(optionCode)" class="basicBtnSVG" />
-        <UncheckedRadioButton v-else class="basicBtnSVG" />
+      <div class="basicBtnContents skinny">
+        <span v-if="isSelected(optionCode)" class="material-icons space">
+          radio_button_checked
+        </span>
+        <span v-else class="material-icons space">radio_button_unchecked</span>
         <div v-html="option" class="textContents"></div>
       </div>
     </button>
@@ -16,18 +18,11 @@
 </template>
 
 <script>
-import CheckedRadioButton from "./SVGs/CheckedRadioButtonSVG.vue";
-import UncheckedRadioButton from "./SVGs/UncheckedRadioButtonSVG.vue";
-
 export default {
   name: "RadioButtonSelection",
   props: {
     options: Object,
     selected: String,
-  },
-  components: {
-    CheckedRadioButton,
-    UncheckedRadioButton,
   },
   methods: {
     isSelected(option) {
@@ -48,13 +43,10 @@ export default {
 }
 
 .basicBtnContents {
-  margin-left: 8px;
-  margin: 4px;
   font-size: 12pt;
 }
 
 .textContents {
-  margin-left: 8px;
   text-align: left;
 }
 </style>

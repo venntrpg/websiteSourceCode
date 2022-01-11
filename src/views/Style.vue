@@ -10,7 +10,7 @@
       <div><b>bold</b></div>
       <div>normal text</div>
       <div>
-        <div></div>
+        <span class="material-icons">face</span>
       </div>
     </div>
   </div>

@@ -48,6 +48,7 @@ function convertApiCharacter(character) {
     maxVim: parseInt(character.MAX_VIM),
     hero: parseInt(character.HERO),
     maxHero: parseInt(character.MAX_HERO),
+    maxBulk: parseInt(character.MAX_BULK),
     init: parseInt(character.INIT),
     speed: parseInt(character.SPEED),
     xp: parseInt(character.XP),
@@ -354,6 +355,8 @@ const actions = {
   getCampaign: ({ commit }, campaginId) => {
     return api.getCampaign(campaginId).then((response) => {
       if (checkResponse(response) && response.value) {
+        const campaign = response.value;
+        campaign.id = campaginId; // insert id for future reference
         commit("setCampaign", response.value);
       }
     });

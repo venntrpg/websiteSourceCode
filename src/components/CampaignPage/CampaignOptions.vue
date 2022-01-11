@@ -11,6 +11,13 @@
     <div v-if="isOwner">
       <p>Invite new people</p>
     </div>
+    <div class="tall"></div>
+    <router-link
+      :to="{ name: 'Enemy', query: { campaign: campaign.id } }"
+      class="btn basicBtn link"
+    >
+      <div class="basicBtnContents">Create Enemy for this campaign</div>
+    </router-link>
   </div>
 </template>
 
@@ -22,10 +29,14 @@ export default {
   computed: {
     ...mapState(["username", "campaign"]),
     isGm() {
-      return this.campaign.members[this.username] === "GM";
+      return (
+        this.campaign &&
+        this.campaign.members &&
+        this.campaign.members[this.username] === "GM"
+      );
     },
     isOwner() {
-      return this.campaign.owner === this.username;
+      return this.campaign && this.campaign.owner === this.username;
     },
   },
 };

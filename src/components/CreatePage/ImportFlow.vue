@@ -130,6 +130,15 @@
         id="import-sp"
         class="input inputMargin"
       />
+      <label for="import-max-bulk">Carrying Capacity Bulk:</label>
+      <input
+        type="number"
+        placeholder="0"
+        v-model="character.maxBulk"
+        v-on:blur="backupImport"
+        id="import-max-bulk"
+        class="input inputMargin"
+      />
       <p>You can import items and abilities after you create the character.</p>
       <h2>Import your Character</h2>
       <p>
@@ -188,6 +197,7 @@ export default {
         speed: "",
         xp: "",
         sp: "",
+        maxBulk: "",
       },
     };
   },
@@ -269,10 +279,10 @@ export default {
         speed: this.parseNumber(this.character.speed),
         xp: this.parseNumber(this.character.xp),
         sp: this.parseNumber(this.character.sp),
+        maxBulk: this.parseNumber(this.character.maxBulk),
       };
       this.clearCharacter();
-      console.log(createCharacter);
-      // need to send this, then once confirmed, send weapon if they selected one, then once cofirmed, we should redirect to the character page
+      //console.log(createCharacter);
       this.$store.dispatch("createCharacter", {
         character: createCharacter,
         redirectToCharacter: true,
@@ -290,9 +300,8 @@ export default {
 
 .attributeInputContainer {
   display: grid;
-  grid-template-columns: repeat(3, 33% [col-start]);
+  grid-template-columns: repeat(3, 1fr [col-start]);
   grid-gap: 8px;
-  margin-right: 8px;
 }
 .attributeInput {
   font-size: 16pt;

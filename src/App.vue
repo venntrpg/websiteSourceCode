@@ -41,7 +41,9 @@ export default {
 
 /* STYLES */
 
-#app {
+body {
+  margin: 0 !important;
+
   font-family: "Raleway", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -82,8 +84,13 @@ export default {
   --total-nav-height: calc(var(--nav-height) + var(--sub-nav-height));
   --page-height: calc(100vh - var(--nav-height));
   --sub-nav-page-height: calc(100vh - var(--total-nav-height));
+  --sidebar-width: 400px;
 
-  /* Background Styles*/
+  background-color: var(--gray-250);
+}
+
+#app {
+  /* Background Styles */
   min-height: var(--page-height);
   background-color: var(--gray-250);
 }
@@ -119,6 +126,7 @@ export default {
 h1 {
   font-size: 40pt;
   font-weight: 400;
+  line-height: 1;
 }
 
 .centeredText {
@@ -144,6 +152,23 @@ h1 {
 }
 .link.stealth:hover {
   text-decoration: underline;
+}
+
+p,
+i,
+b,
+a,
+label,
+li {
+  line-height: 1.35;
+}
+
+ul {
+  list-style-type: circle;
+}
+
+.nowrap {
+  white-space: nowrap;
 }
 
 /* Button Styles */
@@ -236,24 +261,29 @@ h1 {
   margin: 8px;
   font-size: 14pt;
 }
-.basicBtnSVG {
-  width: 30px;
-  height: 30px;
-  flex-shrink: 0;
+.basicBtnContents.skinny {
+  margin: 4px;
 }
-.basicBtnSVG.selected {
-  fill: var(--red-500);
+
+/* Override material icons size definition as button icon */
+.material-icons {
+  font-size: 30px;
 }
-.basicBtn:disabled .basicBtnSVG.selected {
-  fill: var(--gray-500);
+.basicBtn .material-icons.selected {
+  color: var(--red-500);
 }
-.basicBtnSVG.space {
+.basicBtn:disabled .material-icons.selected {
+  color: var(--gray-500);
+}
+.material-icons.space {
   margin-right: 8px;
 }
 
+/*
 .noSelect:focus {
   outline: 0;
 }
+*/
 
 /* Input Styles */
 
@@ -310,13 +340,21 @@ h1 {
 .card.column {
   flex-direction: column;
 }
+.card.selectable {
+  border: 1px solid white;
+}
+.card.selectable:hover {
+  border: 1px solid var(--yellow-300);
+}
+.card.selectable.selected {
+  border: 1px solid var(--red-600);
+}
 
 .seperator {
   height: 2px;
   width: 100%;
   background-color: var(--gray-400);
 }
-
 .seperator.thin {
   height: 1px;
 }
@@ -328,6 +366,9 @@ h1 {
 .alignRow {
   display: flex;
   align-items: center;
+}
+.alignRow.gap {
+  gap: 8px;
 }
 
 .tableItems {
@@ -343,11 +384,11 @@ h1 {
   text-decoration: none;
   padding-left: 10px;
   padding-right: 10px;
-  padding-top: 2px;
   background-color: var(--purple-500);
   color: white;
   font-weight: 500;
   font-size: 18pt;
+  line-height: normal;
 }
 .navButton:hover {
   background-color: var(--purple-600);
@@ -387,7 +428,7 @@ h1 {
   top: var(--nav-height);
   left: 0;
   overflow-x: hidden;
-  width: 400px;
+  width: var(--sidebar-width);
   height: var(--page-height);
   overflow-y: auto;
   -webkit-box-shadow: 0px 5px 10px 0px rgb(0 0 0 / 28%);
@@ -404,10 +445,10 @@ h1 {
 }
 
 .sideBarPage {
-  margin-left: 400px;
+  margin-left: var(--sidebar-width);
 }
 .sideBarPage.rightVisible {
-  margin-right: 400px;
+  margin-right: var(--sidebar-width);
 }
 .sideBarPage.hidden {
   margin-left: 0px;

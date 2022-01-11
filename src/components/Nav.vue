@@ -12,7 +12,7 @@
       </router-link>
       <!-- TODO: Update this link to be a dropdown with more items (instead of just linking to the login page) -->
       <router-link to="/login" class="login navButton rightItem mobileOnly">
-        <MenuSVG class="dropDownLink" />
+        <span class="material-icons dropDownLink">menu</span>
       </router-link>
     </div>
     <div v-else class="right">
@@ -26,14 +26,10 @@
 </template>
 
 <script>
-import MenuSVG from "./Common/SVGs/MenuSVG.vue";
 import { mapActions, mapState } from "vuex";
 
 export default {
   name: "Nav",
-  components: {
-    MenuSVG,
-  },
   computed: {
     ...mapState(["isLoggedIn"]),
   },
@@ -85,9 +81,7 @@ export default {
 }
 
 .dropDownLink {
-  height: 35px;
-  width: 35px;
-  fill: white;
+  font-size: 36px;
 }
 
 /* Mobile Styles */

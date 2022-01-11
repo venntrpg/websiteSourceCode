@@ -144,7 +144,7 @@ export default {
     display: none;
   }
   .sideBar.right.rightVisible {
-    width: calc(100% - 400px);
+    width: calc(100% - var(--sidebar-width));
     -webkit-box-shadow: none;
     box-shadow: none;
   }

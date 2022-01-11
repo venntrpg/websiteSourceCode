@@ -7,19 +7,18 @@
       :disabled="buttonDisabled(attr)"
       class="btn noSelect basicBtn"
     >
-      <div class="basicBtnContents">
-        <CheckedRadioButton v-if="isSelected(attr)" class="basicBtnSVG" />
-        <UncheckedRadioButton v-else class="basicBtnSVG" />
-        <div class="basicBtnContents">{{ attr.toUpperCase() }}</div>
+      <div class="basicBtnContents skinny">
+        <span v-if="isSelected(attr)" class="material-icons space">
+          radio_button_checked
+        </span>
+        <span v-else class="material-icons space">radio_button_unchecked</span>
+        <span>{{ attr.toUpperCase() }}</span>
       </div>
     </button>
   </div>
 </template>
 
 <script>
-import CheckedRadioButton from "../Common/SVGs/CheckedRadioButtonSVG.vue";
-import UncheckedRadioButton from "../Common/SVGs/UncheckedRadioButtonSVG.vue";
-
 export default {
   name: "AttributeSelection",
   props: {
@@ -27,10 +26,6 @@ export default {
     selected: Array,
     maxChoices: Number,
     disabledChoices: Array,
-  },
-  components: {
-    CheckedRadioButton,
-    UncheckedRadioButton,
   },
   methods: {
     isSelected(attr) {
@@ -63,11 +58,6 @@ export default {
 <style scoped>
 .container {
   display: grid;
-  grid-template-columns: repeat(3, 33% [col-start]);
-}
-
-.basicBtnContents {
-  margin-left: 8px;
-  margin: 4px;
+  grid-template-columns: repeat(3, 1fr [col-start]);
 }
 </style>

@@ -1,6 +1,14 @@
 <template>
   <div>
     <h1>Inventory</h1>
+    <div class="alignRow bulkLabel">
+      Current Carrying Capacity:
+      <fraction
+        :top="bulkSum"
+        :bottom="character.maxBulk"
+        class="bulkFraction"
+      />
+    </div>
     <div v-if="consolidatedItems.length > 0" class="card column">
       <div class="alignRow item header">
         <div class="itemName headerFont">
@@ -32,7 +40,7 @@
           class="btn basicBtn link"
         >
           <div class="basicBtnContents">
-            <RightArrowSVG class="basicBtnSVG" />
+            <span class="material-icons">keyboard_arrow_right</span>
           </div>
         </router-link>
       </div>
@@ -83,13 +91,11 @@
 // needing to insert all of the details individually
 
 import { mapState } from "vuex";
-import RightArrowSVG from "../Common/SVGs/RightArrowSVG.vue";
+import Fraction from "../Common/CombatStatsComponents/Fraction.vue";
 
 export default {
+  components: { Fraction },
   name: "Inventory",
-  components: {
-    RightArrowSVG,
-  },
   data() {
     return {
       itemName: "",
@@ -106,6 +112,12 @@ export default {
         isNaN(parseInt(this.itemBulk)) ||
         this.itemDesc === ""
       );
+    },
+    bulkSum() {
+      if (this.character.items === undefined) {
+        return 0;
+      }
+      return this.character.items.reduce((sum, item) => sum + item.bulk, 0);
     },
     consolidatedItems() {
       if (this.character.items === undefined) {
@@ -151,6 +163,14 @@ export default {
 </script>
 
 <style scoped>
+.bulkLabel {
+  font-size: 16pt;
+  margin-bottom: 16px;
+}
+.bulkFraction {
+  margin-left: 16px;
+}
+
 .contentRow {
   display: flex;
   align-items: center;

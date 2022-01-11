@@ -7,7 +7,8 @@
         class="btn basicBtn noSelect"
       >
         <div class="basicBtnContents">
-          Hide Unselected Gifts <UpArrowSVG class="basicBtnSVG" />
+          Hide Unselected Gifts
+          <span class="material-icons">keyboard_arrow_up</span>
         </div>
       </button>
       <div class="giftCardGroup">
@@ -15,7 +16,7 @@
           v-for="(giftName, giftCode) in giftMap"
           v-bind:key="giftCode"
           v-on:click="giftButton(giftCode)"
-          class="btn noSelect card giftCard"
+          class="btn noSelect card selectable giftCard"
           v-bind:class="getGiftSelectedClass(giftCode)"
         >
           <GiftDescription :gift="giftName" />
@@ -25,7 +26,8 @@
     <div v-else>
       <button v-on:click="toggleDropDown()" class="btn basicBtn noSelect">
         <div class="basicBtnContents">
-          Show All Gifts <DownArrowSVG class="basicBtnSVG" />
+          Show All Gifts
+          <span class="material-icons">keyboard_arrow_down</span>
         </div>
       </button>
       <div class="card singleCard">
@@ -37,8 +39,6 @@
 
 <script>
 import GiftDescription from "../Common/CombatStatsComponents/GiftDescription.vue";
-import UpArrowSVG from "../Common/SVGs/UpArrowSVG.vue";
-import DownArrowSVG from "../Common/SVGs/DownArrowSVG.vue";
 
 export default {
   name: "GiftSelection",
@@ -47,8 +47,6 @@ export default {
   },
   components: {
     GiftDescription,
-    UpArrowSVG,
-    DownArrowSVG,
   },
   data() {
     return {
@@ -94,7 +92,7 @@ export default {
 };
 </script>
 
-<style scoped lang="postcss">
+<style scoped>
 .basicBtn {
   width: 100%;
   margin-top: 4px;
@@ -102,10 +100,9 @@ export default {
 }
 
 .giftCardGroup {
-  margin-right: 8px;
   margin-top: 2px;
   display: grid;
-  grid-template-columns: repeat(3, 33% [col-start]);
+  grid-template-columns: repeat(3, 1fr [col-start]);
   grid-gap: 8px;
 }
 
@@ -113,29 +110,18 @@ export default {
   flex-direction: column;
   align-items: center;
   flex-grow: 1;
-  border: 1px solid white;
-}
-.giftCard:hover {
-  background-color: var(--gray-100);
-  border: 1px solid var(--yellow-300);
-}
-.giftCard.selected {
-  background-color: var(--gray-100);
-  border: 1px solid var(--red-600);
 }
 
 .singleCard {
   flex-direction: column;
   align-items: center;
-  margin-top: 6px;
 }
 
 /* mobile styles */
 .main.bp900 .giftCardGroup {
-  grid-template-columns: repeat(2, 50% [col-start]);
+  grid-template-columns: repeat(2, 1fr [col-start]);
 }
 .main.bp600 .giftCardGroup {
-  margin-right: 0px;
-  grid-template-columns: repeat(1, 100% [col-start]);
+  grid-template-columns: repeat(1, 1fr [col-start]);
 }
 </style>

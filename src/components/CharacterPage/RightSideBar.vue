@@ -8,7 +8,7 @@
       class="btn basicBtn wide link"
     >
       <div class="basicBtnContents">
-        <CloseSVG class="basicBtnSVG red" />
+        <span class="material-icons space">close</span>
         Close
       </div>
     </router-link>
@@ -22,7 +22,6 @@
 <script>
 import AbilityDetail from "./AbilityDetail.vue";
 import ItemDetail from "./ItemDetail.vue";
-import CloseSVG from "../Common/SVGs/CloseSVG.vue";
 
 const SECTION_ABILITIES = "abilities";
 const SECTION_INVENTORY = "inventory";
@@ -32,7 +31,6 @@ export default {
   components: {
     AbilityDetail,
     ItemDetail,
-    CloseSVG,
   },
   computed: {
     abilitiesPage() {

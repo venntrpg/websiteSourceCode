@@ -72,6 +72,6 @@ export default {
 }
 
 .topMargin {
-  margin-top: 12px;
+  margin-top: 16px;
 }
 </style>

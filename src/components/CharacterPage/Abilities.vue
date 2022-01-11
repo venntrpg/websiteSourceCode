@@ -2,7 +2,7 @@
   <div>
     <h1>Abilities</h1>
     <div class="alignRow xpLabel">
-      Remaining XP:
+      Current XP:
       <fraction :top="usedXP" :bottom="character.xp" class="xpFraction" />
     </div>
     <div v-if="sortedAbilities.length > 0" class="card column">
@@ -40,7 +40,7 @@
           class="btn basicBtn link"
         >
           <div class="basicBtnContents">
-            <RightArrowSVG class="basicBtnSVG" />
+            <span class="material-icons">keyboard_arrow_right</span>
           </div>
         </router-link>
       </div>
@@ -85,7 +85,7 @@
       </div>
     </div>
     <div v-if="showSearchResult">
-      <div v-html="searchResultHtml"></div>
+      <p v-html="searchResultHtml"></p>
     </div>
     <div class="tall"></div>
   </div>
@@ -96,13 +96,11 @@
 
 import { mapState } from "vuex";
 import Fraction from "../Common/CombatStatsComponents/Fraction.vue";
-import RightArrowSVG from "../Common/SVGs/RightArrowSVG.vue";
 import ParseAbilityEffect from "./ParseAbilityEffect.vue";
 
 export default {
   name: "Abilities",
   components: {
-    RightArrowSVG,
     ParseAbilityEffect,
     Fraction,
   },

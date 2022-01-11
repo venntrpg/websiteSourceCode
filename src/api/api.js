@@ -17,6 +17,10 @@ function convertAttribute(attr) {
       return "MAX_MP";
     case "maxVim":
       return "MAX_VIM";
+    case "maxHero":
+      return "MAX_HERO";
+    case "maxBulk":
+      return "MAX_BULK";
     default:
       return attr.toUpperCase();
   }
@@ -80,6 +84,7 @@ const createCharacter = (character) => {
         MAX_VIM: character.maxVim,
         HERO: character.hero,
         MAX_HERO: character.maxHero,
+        MAX_BULK: character.maxBulk,
         ARMOUR: character.armour,
         INIT: character.init,
         SPEED: character.speed,

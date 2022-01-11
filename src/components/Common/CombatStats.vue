@@ -138,7 +138,7 @@
                 class="btn basicBtn noSelect"
               >
                 <div class="basicBtnContents">
-                  <DiceSVG class="basicBtnSVG selected space" />
+                  <span class="material-icons selected space">casino</span>
                   Roll Dice
                 </div>
               </button>
@@ -159,7 +159,7 @@
                 class="btn basicBtn wide noSelect"
               >
                 <div class="basicBtnContents">
-                  <DiceSVG class="basicBtnSVG selected space" />
+                  <span class="material-icons selected space">casino</span>
                   Roll Dice using Hero Point
                 </div>
               </button>
@@ -171,11 +171,15 @@
                 class="btn basicBtn wide noSelect"
               >
                 <div class="basicBtnContents">
-                  <CheckedCheckBoxSVG
+                  <span
                     v-if="propegateChanges"
-                    class="basicBtnSVG space selected"
-                  />
-                  <UncheckedCheckBoxSVG v-else class="basicBtnSVG space" />
+                    class="material-icons selected space"
+                  >
+                    check_box
+                  </span>
+                  <span v-else class="material-icons space">
+                    check_box_outline_blank
+                  </span>
                   Propegate Changes
                 </div>
               </button>
@@ -288,9 +292,6 @@ TODO:
 */
 
 import { DiceRoll } from "rpg-dice-roller";
-import DiceSVG from "./SVGs/DiceSVG.vue";
-import CheckedCheckBoxSVG from "./SVGs/CheckedCheckBoxSVG.vue";
-import UncheckedCheckBoxSVG from "./SVGs/UncheckedCheckBoxSVG.vue";
 import Bullet from "./Bullet.vue";
 import DiceRender from "./CombatStatsComponents/DiceRender.vue";
 import Fraction from "./CombatStatsComponents/Fraction.vue";
@@ -305,9 +306,6 @@ export default {
     },
   },
   components: {
-    DiceSVG,
-    CheckedCheckBoxSVG,
-    UncheckedCheckBoxSVG,
     Bullet,
     DiceRender,
     Fraction,
@@ -343,6 +341,7 @@ export default {
         armor: this.character.armor,
         xp: this.character.xp,
         sp: this.character.sp,
+        maxBulk: this.character.maxBulk,
       },
       adjustFields: {
         hp: "",
@@ -368,7 +367,7 @@ export default {
       ];
     },
     singleRowAttributes() {
-      return ["init", "speed", "armor", "xp", "sp"];
+      return ["init", "speed", "armor", "xp", "sp", "maxBulk"];
     },
     showUpdateDropdown() {
       return this.character.id !== undefined;
@@ -404,6 +403,9 @@ export default {
       if (attr === "init") {
         return "Initiative";
       }
+      if (attr === "maxBulk") {
+        return "Carrying Capacity";
+      }
       if (attr.length <= 2) {
         return attr.toUpperCase();
       }
@@ -438,6 +440,8 @@ export default {
         xp: `Experience Points, the resource gained by player characters during play and spent on Abilities. Your character's level is your xp / 1000.
         <a href="https://vennt.fandom.com/wiki/XP" target="_blank" class="link">Wiki entry</a>`,
         sp: 'Silver Pieces are Amnis\'s main currency. <a href="https://vennt.fandom.com/wiki/Money" target="_blank" class="link">Wiki entry</a>',
+        maxBulk:
+          "Bulk is an abstract unit of measurement to represent the weight and size of one's inventory. You can carry an amount of Bulk up to your carrying capacity.",
       };
       return helpMap[attr];
     },
@@ -769,7 +773,8 @@ export default {
   min-width: 56px;
 }
 .attrLabelWide {
-  min-width: 92px;
+  min-width: 88px;
+  margin-right: 8px;
 }
 
 .seperator.topBottomMargin {
