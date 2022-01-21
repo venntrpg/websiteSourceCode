@@ -1,52 +1,56 @@
 <template>
   <div>
-    <div v-if="showGiftList">
+    <div v-if="showCogTypeList">
       <button
         v-on:click="toggleDropDown()"
         :disabled="dropDownDisabled"
         class="btn basicBtn noSelect"
       >
         <div class="basicBtnContents">
-          Hide Unselected Gifts
+          Hide Unselected Cog Types
           <span class="material-icons">keyboard_arrow_up</span>
         </div>
       </button>
       <div class="giftCardGroup">
         <button
-          v-for="(giftName, giftCode) in giftMap"
-          v-bind:key="giftCode"
-          v-on:click="giftButton(giftCode)"
+          v-for="type in cogTypeList"
+          v-bind:key="type"
+          v-on:click="cogTypeButton(type)"
           class="btn noSelect card selectable giftCard"
-          v-bind:class="getGiftSelectedClass(giftCode)"
+          v-bind:class="getCogTypeSelectedClass(type)"
         >
-          <GiftDescription :gift="giftName" />
+          <cog-type-description :cogType="type" :lvl="lvl" />
         </button>
       </div>
     </div>
     <div v-else>
       <button v-on:click="toggleDropDown()" class="btn basicBtn noSelect">
         <div class="basicBtnContents">
-          Show All Gifts
+          Show All Cog Types
           <span class="material-icons">keyboard_arrow_down</span>
         </div>
       </button>
       <div class="card singleCard">
-        <GiftDescription :gift="giftMap[gift]" />
+        <cog-type-description :cogType="cogType" :lvl="lvl" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import GiftDescription from "../Common/CombatStatsComponents/GiftDescription.vue";
+import CogTypeDescription from "./CogTypeDescription.vue";
 
 export default {
-  name: "GiftSelection",
+  name: "CogTypeSelection",
   props: {
-    gift: String,
+    cogType: String,
+    lvl: {
+      type: String,
+      default: "",
+    },
   },
   components: {
-    GiftDescription,
+    CogTypeDescription,
   },
   data() {
     return {
@@ -55,35 +59,31 @@ export default {
   },
   computed: {
     dropDownDisabled() {
-      return this.giftMap[this.gift] === undefined;
+      return !this.cogType;
     },
-    showGiftList() {
+    showCogTypeList() {
       return this.showFullList || this.dropDownDisabled;
     },
-    giftMap() {
-      return {
-        per: "Alertness",
-        tek: "Craft",
-        agi: "Alacrity",
-        dex: "Finesse",
-        int: "Mind",
-        spi: "Magic",
-        str: "Rage",
-        wis: "Science",
-        cha: "Charm",
-        none: "None",
-      };
+    cogTypeList() {
+      return [
+        "arcanae",
+        "automata",
+        "beastFlora",
+        "humanoid",
+        "monster",
+        "undead",
+      ];
     },
   },
   methods: {
-    getGiftSelectedClass(gift) {
-      if (this.gift === gift) {
+    getCogTypeSelectedClass(cogType) {
+      if (this.cogType === cogType) {
         return "selected";
       }
       return "";
     },
-    giftButton(gift) {
-      this.$emit("giftUpdated", gift);
+    cogTypeButton(type) {
+      this.$emit("cogTypeUpdated", type);
     },
     toggleDropDown() {
       this.showFullList = !this.showFullList;

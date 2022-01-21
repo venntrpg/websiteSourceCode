@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wide">
     <div v-if="showTitle">
       <h3 class="centeredText">{{ giftCopy[gift].title }}</h3>
       <div class="seperator thin"></div>
@@ -88,7 +88,7 @@ export default {
         Rage: {
           title: "Rage, The Gift of Strength",
           flavor:
-            "Brutality is in your blood. The only skill you don't possess is weakness. Everything else you have already taken by force.",
+            "Brutality is in your blood. The only skill you don’t possess is weakness. Everything else you have already taken by force.",
           benefits: [
             "This gift greatly benefits berserkers, bruisers, and fighters.",
             this.getGiftedPathLinkSentence("Path of the Gifted Fighter"),
@@ -128,7 +128,7 @@ export default {
   },
   methods: {
     getGiftedPathLinkSentence(name) {
-      const linkName = name.replace(" ", "_");
+      const linkName = name.replaceAll(" ", "_");
       return `Having this gift partially unlocks the <a href="https://vennt.fandom.com/wiki/${linkName}" target="_blank" class="link">${name}</a>.`;
     },
   },
@@ -136,6 +136,9 @@ export default {
 </script>
 
 <style scoped>
+.wide {
+  width: 100%;
+}
 .textMargin {
   margin: 16px;
   text-align: left;

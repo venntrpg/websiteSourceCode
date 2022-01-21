@@ -171,6 +171,10 @@ ul {
   white-space: nowrap;
 }
 
+.textBlock {
+  max-width: 75ch; /* 75 character limit for legibility */
+}
+
 /* Button Styles */
 
 .btn {

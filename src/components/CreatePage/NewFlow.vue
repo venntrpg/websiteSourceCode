@@ -213,7 +213,7 @@
             :maxChoices="1"
             @selectedUpdated="grate3Updated"
           />
-          <h2>Step 6: Beginner's equipment</h2>
+          <h2>Step 6: Beginner’s equipment</h2>
           <p>
             This section helps you figure out what equipment you have on you.
           </p>
@@ -237,7 +237,7 @@
           />
           <p>3. What did you bring with you?</p>
           <p>
-            Note: Actually adding these items to your inventory hasn't been
+            Note: Actually adding these items to your inventory hasn’t been
             implemented yet here, you will need to add them manually on the
             Character page
           </p>
