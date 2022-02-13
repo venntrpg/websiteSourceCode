@@ -205,7 +205,7 @@
           />
           <p>
             Select an attribute that corresponds to your third grate. This will
-            add 1 from the selected attribute. (Optional)
+            add 1 to the selected attribute. (Optional)
           </p>
           <AttributeSelection
             :attributes="validAttributes"

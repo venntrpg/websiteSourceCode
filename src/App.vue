@@ -245,6 +245,8 @@ ul {
 .basicBtn {
   background-color: transparent;
   border-radius: 10px;
+  fill: black;
+  color: black;
 }
 .basicBtn:disabled {
   fill: var(--gray-500);

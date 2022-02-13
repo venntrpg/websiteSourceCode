@@ -118,9 +118,9 @@ export default {
         return def;
       }
       if (!fun) {
-        return this.lvl;
+        return "L (" + this.lvl + ")";
       }
-      return fun(parseInt(this.lvl));
+      return def + " (" + fun(parseInt(this.lvl)) + ")";
     },
   },
 };

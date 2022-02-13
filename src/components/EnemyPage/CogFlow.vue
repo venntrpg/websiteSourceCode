@@ -7,8 +7,9 @@
         <label for="enemyType" class="nowrap">Cog Name:</label>
         <input
           type="text"
-          v-model="cogName"
+          v-model="cog.name"
           placeholder="Wind Elemental"
+          v-on:blur="backup"
           id="enemyType"
           class="input shortenned"
         />
@@ -27,20 +28,62 @@
         <label for="enemyLevel" class="nowrap">Cog Level:</label>
         <input
           type="number"
-          v-model="cogLevel"
+          v-model="cog.level"
           placeholder="5"
+          v-on:blur="backup"
           id="enemyLevel"
-          class="input shortenned"
+          class="input tiny"
         />
       </div>
-      <h2>Step 3: Choose Template</h2>
+      <h2>Step 3: Choose Number of Copies</h2>
+      <p class="textBlock">
+        By default, Cogs have at least 3 copies or a number of cpoies equal to
+        the number of players.
+        <span v-if="defaultPCCount !== 0">
+          It appears there are {{ defaultPCCount }} player characters registered
+          to the campaign "{{ campaign.name }}"
+        </span>
+      </p>
+      <div class="alignRow gap">
+        <label for="numberPCs" class="nowrap">
+          Number of player characters:
+        </label>
+        <input
+          type="number"
+          min="1"
+          v-model="cog.numberPCs"
+          :placeholder="defaultPCCount"
+          v-on:blur="backup"
+          id="numberPCs"
+          class="input tiny"
+        />
+      </div>
+      <p class="textBlock">
+        By default, there are {{ defaultCopies }} copies of this enemy. However,
+        you may reduce the copies by 1 to gain an extra 2AP to spend on
+        abilities.
+      </p>
+      <div class="alignRow gap">
+        <label for="numberCopies" class="nowrap">Number of cog copies:</label>
+        <input
+          type="number"
+          min="1"
+          :max="playerCount"
+          v-model="cog.numberCopies"
+          :placeholder="defaultCopies"
+          v-on:blur="backup"
+          id="NumberCopies"
+          class="input tiny"
+        />
+      </div>
+      <h2>Step 4: Choose Template</h2>
       <p>Each Cog gains 1 Template.</p>
       <radio-button-selection
         :options="templateOptions"
-        :selected="template"
+        :selected="cog.template"
         @selectedUpdated="templateUpdated"
       />
-      <h2>Step 4: Choose Type</h2>
+      <h2>Step 5: Choose Type</h2>
       <p class="textBlock">
         Each Cog gains 1 Type. A Cog's Attributes are all equal to
         {{ lvlStr("L/2", (lvl) => Math.round(lvl / 2)) }} unless otherwise
@@ -50,11 +93,11 @@
         damage.
       </p>
       <cog-type-selection
-        :cogType="cogType"
-        :lvl="cogLevel"
+        :cogType="cog.type"
+        :lvl="cog.level"
         @cogTypeUpdated="cogTypeUpdated"
       />
-      <h2>Step 4: Create Abilities</h2>
+      <h2>Step 6: Create Abilities</h2>
       <p class="textBlock">
         Cogs have 2L AP to spend on
         <a
@@ -65,8 +108,8 @@
         >. For example, they can have one ability of 2L AP, or two abilities of
         L AP each, or one worth L AP and two worth L/2 AP each.
       </p>
-      <cog-ability-creation :cog="enemy" />
-      <h2>Step 5: Choose Traits</h2>
+      <cog-ability-creation :cog="enemy" :totalAP="totalAP" />
+      <h2>Step 7: Choose Traits</h2>
       <p class="textBlock">
         A Cog gains 3 + L/2 Traits, plus 1 for each player beyond 3.
       </p>
@@ -74,14 +117,17 @@
         To take a Trait labeled II or III, etc., the I Trait must be taken
         first, and the better version replaces the lesser one.
       </p>
-      <h2>Step 6: Choose Weaknesses</h2>
+      <h2>Step 8: Choose Weaknesses</h2>
       <p class="textBlock">
         A Cog starts with 1 Weakness. For each additional Weakness taken, gain 1
         Trait. A Cog cannot have more than {{ lvlStr() }} Weaknesses.
       </p>
-      <h2>Step 7: Create Enemy</h2>
+      <h2>Step 9: Create Enemy</h2>
       <button v-on:click="createEnemyButton" class="btn roundedButton">
         Create Enemy
+      </button>
+      <button v-on:click="deleteEnemy" class="btn roundedButton clear">
+        Delete Enemy
       </button>
       <div class="tall"></div>
     </div>
@@ -93,6 +139,9 @@ import RadioButtonSelection from "../Common/RadioButtonSelection.vue";
 import CogTypeSelection from "./CogTypeSelection.vue";
 import { ResponsiveDirective } from "vue-responsive-components";
 import CogAbilityCreation from "./CogAbilityCreation.vue";
+import { mapState } from "vuex";
+
+const COG_LOCAL_STORAGE = "creation-cog-wip";
 
 export default {
   name: "CogFlow",
@@ -110,13 +159,59 @@ export default {
         bp900: (el) => el.width < 900,
         bp600: (el) => el.width < 600,
       },
-      cogName: "",
-      cogLevel: "",
-      template: "",
-      cogType: "",
+      cog: {
+        name: "",
+        level: "",
+        numberPCs: "",
+        numberCopies: "",
+        template: "",
+        type: "",
+      },
     };
   },
+  beforeMount() {
+    const rawCog = localStorage.getItem(COG_LOCAL_STORAGE);
+    if (rawCog) {
+      try {
+        const cog = JSON.parse(rawCog);
+        // TODO: Might want to do this row by row to ensure we don't get values imported incorrectly
+        this.cog = cog;
+      } catch (e) {
+        // stored json was malformed, so we delete it and restart fresh
+        localStorage.removeItem(COG_LOCAL_STORAGE);
+      }
+    }
+  },
   computed: {
+    ...mapState(["campaign"]),
+    defaultPCCount() {
+      if (this.campaign && this.campaign.entities && this.campaign.members) {
+        const entities = Object.keys(this.campaign.entities).filter((uuid) =>
+          uuid.startsWith("C")
+        ).length;
+        const players = Object.entries(this.campaign.members).filter(
+          (role) => role === "player"
+        ).length;
+        return Math.max(entities, players);
+      }
+      return 0;
+    },
+    playerCount() {
+      return this.cog.numberPCs
+        ? parseInt(this.cog.numberPCs)
+        : this.defaultPCCount;
+    },
+    defaultCopies() {
+      return Math.max(this.playerCount, 3);
+    },
+    copiesCount() {
+      return Math.max(
+        this.cog.numberCopies
+          ? parseInt(this.cog.numberCopies)
+          : this.defaultCopies,
+        1
+      );
+    },
     templateOptions() {
       return {
         mook: `<b>Mook:</b> This Cog loses -6 Initiative and has only ${this.lvlStr()} AP (instead of ${this.lvlStr(
@@ -138,7 +233,7 @@ export default {
     },
     enemy() {
       return {
-        name: this.cogName,
+        name: this.cog.name,
         agi: this.calculateAttribute("agi"),
         cha: this.calculateAttribute("cha"),
         dex: this.calculateAttribute("dex"),
@@ -158,37 +253,37 @@ export default {
         init: this.calculateInit,
         speed: this.calculateSpeed,
         // non-standard character fields
-        template: this.template,
-        level: this.cogLevel,
+        template: this.cog.template,
+        level: this.cog.level,
       };
     },
     calculateHP() {
-      if (!this.cogLevel) {
+      if (!this.cog.level) {
         return 1;
       }
-      const level = parseInt(this.cogLevel);
+      const level = parseInt(this.cog.level);
       let hp = Math.max(level * 5, 1);
       // allow space for traits to effect things here
       return hp;
     },
     calculateMP() {
-      if (!this.cogLevel) {
+      if (!this.cog.level) {
         return 0;
       }
-      const level = parseInt(this.cogLevel);
+      const level = parseInt(this.cog.level);
       let mp = Math.max(level, 0);
-      if (this.template === "tank") {
+      if (this.cog.template === "tank") {
         mp += level;
       }
       // allow space for traits to effect things here
       return mp;
     },
     calculateVim() {
-      if (!this.cogLevel) {
+      if (!this.cog.level) {
         return 0;
       }
-      let level = parseInt(this.cogLevel);
-      if (this.template === "agile") {
+      let level = parseInt(this.cog.level);
+      if (this.cog.template === "agile") {
         level += 2;
       }
       let vim = Math.max(level * 5, 0);
@@ -208,9 +303,9 @@ export default {
       if (level > 14) {
         vim = level * 8;
       }
-      if (this.template === "tank") {
+      if (this.cog.template === "tank") {
         vim += 10;
-      } else if (this.template === "fighter") {
+      } else if (this.cog.template === "fighter") {
         vim += 5;
       }
       // allow space for traits to effect things here
@@ -218,37 +313,37 @@ export default {
     },
     calculateArmor() {
       let armor = 0;
-      if (this.template === "tank") {
-        const level = !this.cogLevel ? 0 : parseInt(this.cogLevel);
+      if (this.cog.template === "tank") {
+        const level = !this.cog.level ? 0 : parseInt(this.cog.level);
         armor += level;
       }
       // allow space for traits to effect things here
       return armor;
     },
     calculateInit() {
-      if (!this.cogLevel) {
+      if (!this.cog.level) {
         return 0;
       }
-      let level = parseInt(this.cogLevel);
-      if (this.template === "agile") {
+      let level = parseInt(this.cog.level);
+      if (this.cog.template === "agile") {
         level += 2;
       }
       let init = level + 11;
       if (level > 14) {
         init = level * 2;
       }
-      if (this.template === "mook") {
+      if (this.cog.template === "mook") {
         init -= 6;
       }
       // allow space for traits to effect things here
       return init;
     },
     calculateSpeed() {
-      if (!this.cogLevel) {
+      if (!this.cog.level) {
         return 0;
       }
-      let level = parseInt(this.cogLevel);
-      if (this.template === "agile") {
+      let level = parseInt(this.cog.level);
+      if (this.cog.template === "agile") {
         level += 2;
       }
       let speed = level + 3;
@@ -261,28 +356,45 @@ export default {
       // allow space for traits to effect things here
       return speed;
     },
+    totalAP() {
+      if (!this.cog.level) {
+        return 0;
+      }
+      const level = parseInt(this.cog.level);
+      let ap = level * 2;
+      if (this.cog.template === "mook") {
+        ap = level;
+      }
+      ap += Math.max(2 * (this.playerCount - this.copiesCount), 0);
+      return ap;
+    },
   },
   methods: {
+    backup() {
+      localStorage.setItem(COG_LOCAL_STORAGE, JSON.stringify(this.cog));
+    },
     templateUpdated(newTemplate) {
-      this.template = newTemplate;
+      this.cog.template = newTemplate;
+      this.backup();
     },
     cogTypeUpdated(newCogType) {
-      this.cogType = newCogType;
+      this.cog.type = newCogType;
+      this.backup();
     },
     lvlStr(def, fun) {
-      if (!this.cogLevel) {
+      if (!this.cog.level) {
         if (!def) {
           return "L";
         }
         return def;
       }
       if (!fun) {
-        return this.cogLevel;
+        return "L (" + this.cog.level + ")";
       }
-      return fun(parseInt(this.cogLevel));
+      return def + " (" + fun(parseInt(this.cog.level)) + ")";
     },
     calculateAttribute(attr) {
-      if (!this.cogLevel) {
+      if (!this.cog.level) {
         return 0;
       }
       const negativeMap = {
@@ -296,23 +408,34 @@ export default {
         monster: ["str", "dex", "per", "agi"],
       };
       if (
-        this.cogType &&
-        negativeMap[this.cogType] &&
-        negativeMap[this.cogType].includes(attr)
+        this.cog.type &&
+        negativeMap[this.cog.type] &&
+        negativeMap[this.cog.type].includes(attr)
       ) {
         return -2;
       }
       if (
-        this.cogType &&
-        useLMap[this.cogType] &&
-        useLMap[this.cogType].includes(attr)
+        this.cog.type &&
+        useLMap[this.cog.type] &&
+        useLMap[this.cog.type].includes(attr)
       ) {
-        return parseInt(this.cogLevel); // Equal to L
+        return parseInt(this.cog.level); // Equal to L
       }
-      return Math.round(parseInt(this.cogLevel) / 2);
+      return Math.round(parseInt(this.cog.level) / 2);
     },
     createEnemyButton() {
       console.log(this.enemy);
+    },
+    deleteEnemy() {
+      localStorage.removeItem(COG_LOCAL_STORAGE);
+      this.cog = {
+        name: "",
+        level: "",
+        numberPCs: "",
+        numberCopies: "",
+        template: "",
+        type: "",
+      };
     },
   },
 };
@@ -321,5 +444,8 @@ export default {
 <style scoped>
 .input.shortenned {
   max-width: 400px;
+}
+.input.tiny {
+  max-width: 80px;
 }
 </style>

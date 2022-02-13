@@ -15,19 +15,9 @@ export default {
   name: "CogAbilityCreation",
   props: {
     cog: Object,
+    totalAP: Number,
   },
   computed: {
-    totalAP() {
-      if (!this.cog.level) {
-        return 0;
-      }
-      const level = parseInt(this.cog.level);
-      let ap = level * 2;
-      if (this.cog.template === "mook") {
-        ap = level;
-      }
-      return ap;
-    },
     remainingAP() {
       // TODO: Subtract AP as they are used
       return this.totalAP;
