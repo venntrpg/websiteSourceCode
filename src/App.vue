@@ -328,6 +328,12 @@ ul {
 .input.wide {
   width: 100%;
 }
+.input.shortenned {
+  max-width: 400px;
+}
+.input.tiny {
+  max-width: 80px;
+}
 .input.textInput {
   height: 88px;
   line-height: 24px;
@@ -339,6 +345,9 @@ ul {
   display: flex;
   background-color: white;
   border-radius: 5px;
+}
+.card.padded {
+  padding: 16px;
 }
 .card.border {
   border: 1px solid var(--gray-400);

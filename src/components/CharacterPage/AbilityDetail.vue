@@ -2,7 +2,9 @@
   <div>
     <div v-if="ability !== undefined">
       <h2>{{ ability.name }}</h2>
-      <div class="bottomMargin">{{ ability.path }}</div>
+      <div class="bottomMargin">
+        <i>{{ ability.path }}</i>
+      </div>
       <div class="bottomMargin">
         <b>Activation:</b> {{ ability.activation }}
       </div>
@@ -21,7 +23,10 @@
         Use ability
       </button>
       <h3>Additional Details</h3>
-      <div class="bottomMargin"><b>Cost:</b> {{ ability.purchase }}</div>
+      <div class="bottomMargin">
+        <b>Cost:</b> {{ ability.purchase }}
+        <i v-if="actualCost">(Actual cost: {{ actualCost }} XP)</i>
+      </div>
       <div v-if="ability.expedited" class="bottomMargin">
         <b>Expedited for:</b> {{ ability.expedited }}
       </div>
@@ -98,6 +103,16 @@ export default {
           return false;
         }
         return true;
+      }
+      return false;
+    },
+    actualCost() {
+      if (
+        this.ability.expedited &&
+        this.character.gift !== "None" &&
+        this.ability.expedited.includes(this.character.gift)
+      ) {
+        return parseInt(this.ability.purchase) / 2;
       }
       return false;
     },

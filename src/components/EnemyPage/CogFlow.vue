@@ -441,11 +441,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.input.shortenned {
-  max-width: 400px;
-}
-.input.tiny {
-  max-width: 80px;
-}
-</style>
+<style scoped></style>
