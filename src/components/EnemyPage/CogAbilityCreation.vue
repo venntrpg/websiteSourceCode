@@ -90,6 +90,18 @@
         />
       </div>
       <h3>Damages</h3>
+      <check-box
+        :checked="hideDamages"
+        :text="'No Damage (0 AP)'"
+        @toggled="hideDamagesToggled"
+      />
+      <div v-if="!hideDamages">
+        <p>Normal Damage</p>
+        <p>Burning Damage</p>
+        <p>Bleeding Damage</p>
+        <p>Armor Damage</p>
+        <p>Stun Damage</p>
+      </div>
       <h3>Effects</h3>
       <h3>Area of Effect</h3>
     </div>
@@ -97,10 +109,11 @@
 </template>
 
 <script>
+import CheckBox from "../Common/CheckBox.vue";
 import Fraction from "../Common/CombatStatsComponents/Fraction.vue";
 import RadioButtonSelection from "../Common/RadioButtonSelection.vue";
 export default {
-  components: { Fraction, RadioButtonSelection },
+  components: { Fraction, RadioButtonSelection, CheckBox },
   name: "CogAbilityCreation",
   props: {
     cog: Object,
@@ -109,13 +122,14 @@ export default {
   data() {
     return {
       showNewAbilityPanel: true,
+      hideDamages: true,
       ability: {
         range: "melee",
         speed: "regular",
         vimCost: "",
         mpCost: "",
         type: "normal",
-        resistanceCheck: "0",
+        resistanceCheck: "1",
         attribute: "0",
         fear: "0",
       },
@@ -148,8 +162,8 @@ export default {
       ap = ap - this.calculateMPCost;
 
       // Ability Type
-      if (this.resistantCheckRequired && this.ability.resistanceCheck !== "0") {
-        ap = ap + parseInt(this.ability.resistanceCheck);
+      if (this.resistantCheckRequired && this.ability.resistanceCheck !== "1") {
+        ap = ap + parseInt(this.ability.resistanceCheck) - 1; // subtract 1 so order of option remains nice
       }
       if (this.attributeAPOption && this.ability.attribute !== "0") {
         ap = ap + parseInt(this.ability.attribute);
@@ -228,12 +242,12 @@ export default {
     },
     resistanceCheckOptions() {
       return {
-        "-1": `DL:  ${this.lvlStr("6 + L", (lvl) => lvl + 6)}. Cost: -1 AP.`,
-        0: `DL:  ${this.lvlStr("7 + L", (lvl) => lvl + 7)}. Cost: 0 AP.`,
-        1: `DL:  ${this.lvlStr("8 + L", (lvl) => lvl + 8)}. Cost: 1 AP.`,
-        2: `DL:  ${this.lvlStr("9 + L", (lvl) => lvl + 9)}. Cost: 2 AP.`,
-        3: `DL:  ${this.lvlStr("10 + L", (lvl) => lvl + 10)}. Cost: 3 AP.`,
-        4: `DL:  ${this.lvlStr("11 + L", (lvl) => lvl + 11)}. Cost: 4 AP.`,
+        0: `DL:  ${this.lvlStr("6 + L", (lvl) => lvl + 6)}. Cost: -1 AP.`,
+        1: `DL:  ${this.lvlStr("7 + L", (lvl) => lvl + 7)}. Cost: 0 AP.`,
+        2: `DL:  ${this.lvlStr("8 + L", (lvl) => lvl + 8)}. Cost: 1 AP.`,
+        3: `DL:  ${this.lvlStr("9 + L", (lvl) => lvl + 9)}. Cost: 2 AP.`,
+        4: `DL:  ${this.lvlStr("10 + L", (lvl) => lvl + 10)}. Cost: 3 AP.`,
+        5: `DL:  ${this.lvlStr("11 + L", (lvl) => lvl + 11)}. Cost: 4 AP.`,
       };
     },
     attributeOptions() {
@@ -271,6 +285,9 @@ export default {
     },
     fearUpdated(newFear) {
       this.ability.fear = newFear;
+    },
+    hideDamagesToggled() {
+      this.hideDamages = !this.hideDamages;
     },
     lvlStr(def, fun) {
       if (!this.cog.level) {

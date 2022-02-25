@@ -169,23 +169,12 @@
               <!-- TODO: It would be neat if we could add abilities here too -->
               <div class="seperator topBottomMargin"></div>
               <div class="attrHeaderMargin">Update Attribute Value:</div>
-              <button
-                v-on:click="propegateChangesButton()"
-                class="btn basicBtn wide noSelect"
-              >
-                <div class="basicBtnContents">
-                  <span
-                    v-if="propegateChanges"
-                    class="material-icons selected space"
-                  >
-                    check_box
-                  </span>
-                  <span v-else class="material-icons space">
-                    check_box_outline_blank
-                  </span>
-                  Propegate Changes
-                </div>
-              </button>
+              <check-box
+                :checked="propegateChanges"
+                :text="'Propegate Changes'"
+                :highlight="true"
+                @toggled="propegateChangesButton()"
+              />
               <div class="alignRow">
                 <div class="incrementLabel">
                   Update {{ attr.toUpperCase() }} value:
@@ -301,6 +290,7 @@ import Bullet from "./Bullet.vue";
 import DiceRender from "./CombatStatsComponents/DiceRender.vue";
 import Fraction from "./CombatStatsComponents/Fraction.vue";
 import GiftDescription from "./CombatStatsComponents/GiftDescription.vue";
+import CheckBox from "./CheckBox.vue";
 
 export default {
   name: "combatStats",
@@ -315,6 +305,7 @@ export default {
     DiceRender,
     Fraction,
     GiftDescription,
+    CheckBox,
   },
   data() {
     return {
