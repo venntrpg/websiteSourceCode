@@ -37,7 +37,7 @@
       </div>
       <h2>Step 3: Choose Number of Copies</h2>
       <p class="textBlock">
-        By default, Cogs have at least 3 copies or a number of cpoies equal to
+        By default, Cogs have at least 3 copies or a number of copies equal to
         the number of players.
         <span v-if="defaultPCCount !== 0">
           It appears there are {{ defaultPCCount }} player characters registered
@@ -194,7 +194,7 @@ export default {
         ).length;
         return Math.max(entities, players);
       }
-      return 0;
+      return 3; // 3 is default
     },
     playerCount() {
       return this.cog.numberPCs

@@ -20,7 +20,7 @@
           {{ example }}
         </li>
       </ul>
-      <p><b>PK0:</b> {{ typeCopy[cogType].pk0 }}</p>
+      <p><b>PKO:</b> {{ typeCopy[cogType].pko }}</p>
     </div>
   </div>
 </template>
@@ -46,7 +46,7 @@ export default {
           title: "Arcanae",
           about: "This Cog is a magical being, creature, or creation.",
           tactics: "Set by GM or use the Tactics of another Type",
-          pk0: "Set by GM or use the Tactics of another Type",
+          pko: "Set by GM or use the Tactics of another Type",
         },
         automata: {
           title: "Automata",
@@ -59,7 +59,7 @@ export default {
           ],
           tactics:
             "Automatons spread out evenly, each targeting a different enemy where possible",
-          pk0: "Automatons don’t interact with the PCs on PKO",
+          pko: "Automatons don’t interact with the PCs on PKO",
         },
         beastFlora: {
           title: "Beast / Flora",
@@ -69,7 +69,7 @@ export default {
             `Their Strength, Dexterity, Perception, and Agility are ${this.lvlStr()}`,
           ],
           tactics: "Beasts swarm the closest enemy",
-          pk0: "Beasts eat everything deemed edible that the PCs carry on them",
+          pko: "Beasts eat everything deemed edible that the PCs carry on them",
         },
         humanoid: {
           title: "Humanoid",
@@ -77,7 +77,7 @@ export default {
             "This Cog is a sentient creature, such as humans, elves, orcs, etc.",
           tactics:
             "Humanoids are unpredictable and use clever strategies, such as focusing the enemy healer or using hazards to their advantage",
-          pk0: "Humanoids steal everything deemed valuable from the PCs",
+          pko: "Humanoids steal everything deemed valuable from the PCs",
         },
         monster: {
           title: "Monster",
@@ -87,7 +87,7 @@ export default {
             `Their Strength, Dexterity, Perception, and Agility are ${this.lvlStr()}`,
           ],
           tactics: "Monsters attack the closest enemy.",
-          pk0: "Monsters eat all of the PCs food and destroy their Lux Wards.",
+          pko: "Monsters eat all of the PCs food and destroy their Lux Wards.",
         },
         undead: {
           title: "Undead",
@@ -104,7 +104,7 @@ export default {
             "All defend their ally healer",
             "All stay adjacent to each other and attack who they can",
           ],
-          pk0: "Undead steal all silver pieces and valuable objects, then destroy all Lux Wards",
+          pko: "Undead steal all silver pieces and valuable objects, then destroy all Lux Wards",
         },
       };
     },

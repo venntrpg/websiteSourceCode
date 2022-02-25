@@ -23,6 +23,10 @@ export default {
   props: {
     options: Object,
     selected: String,
+    unselectable: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     isSelected(option) {
@@ -31,6 +35,8 @@ export default {
     selectionButton(option) {
       if (!this.isSelected(option)) {
         this.$emit("selectedUpdated", option);
+      } else if (this.unselectable) {
+        this.$emit("selectedUpdated", ""); // unselect
       }
     },
   },
