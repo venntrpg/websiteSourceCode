@@ -1,5 +1,9 @@
 <template>
-  <button v-on:click="toggle()" class="btn basicBtn wide noSelect">
+  <button
+    v-on:click="toggle()"
+    v-bind:disabled="disabled"
+    class="btn basicBtn wide noSelect"
+  >
     <div class="basicBtnContents">
       <span
         v-if="checked"
@@ -9,7 +13,7 @@
         check_box
       </span>
       <span v-else class="material-icons space">check_box_outline_blank</span>
-      {{ text }}
+      <span v-bind:class="textClass">{{ text }}</span>
     </div>
   </button>
 </template>
@@ -23,10 +27,21 @@ export default {
       type: Boolean,
       default: false,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    smallText: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     selectedClass() {
       return this.highlight ? "selected" : "";
+    },
+    textClass() {
+      return this.smallText ? "pt-12" : "";
     },
   },
   methods: {

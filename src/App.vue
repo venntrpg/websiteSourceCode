@@ -175,6 +175,10 @@ ul {
   max-width: 75ch; /* 75 character limit for legibility */
 }
 
+.pt-12 {
+  font-size: 12pt;
+}
+
 /* Button Styles */
 
 .btn {
@@ -266,6 +270,7 @@ ul {
   align-items: center;
   margin: 8px;
   font-size: 14pt;
+  text-align: left;
 }
 .basicBtnContents.skinny {
   margin: 4px;

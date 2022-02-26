@@ -101,11 +101,11 @@
       </div>
       <h3>Damages</h3>
       <check-box
-        :checked="hideDamages"
+        :checked="ability.zeroDamage"
         :text="'No Damage (0 AP)'"
-        @toggled="hideDamagesToggled"
+        @toggled="zeroDamageToggled"
       />
-      <div v-if="!hideDamages">
+      <div v-if="!ability.zeroDamage">
         <p>Normal Damage. (Can be unselected)</p>
         <radio-button-selection
           :options="normalDamageOptions"
@@ -150,7 +150,30 @@
         />
       </div>
       <h3>Effects</h3>
+      <p class="textBlock">Each effect may be taken up to once.</p>
+      <cog-toggleable-effects
+        :options="effectsOptions"
+        :selected="ability.effects"
+        :mutuallyExclusive="effectsMutuallyExclusive"
+        :disabled="disabledEffectsOptions"
+        @newSelected="effectsUpdated"
+      />
       <h3>Area of Effect</h3>
+      <p class="textBlock">
+        Up to one Area of Effect type may be taken. Whereas range indicates
+        where the ability effect can start, Area of Effect indicates where it
+        can go. For example, with a line effect, that line may begin and end
+        anywhere within the ability's range so long as the line's length meets
+        the description of the line effect and does not extend outside of the
+        ability's range. If the ability has only Melee range, it must start
+        within a hex that the Cog can reach.
+      </p>
+      <radio-button-selection
+        :options="areaOfEffectOptions"
+        :selected="ability.areaEffect"
+        :unselectable="true"
+        @selectedUpdated="areaEffectUpdated"
+      />
     </div>
   </div>
 </template>
@@ -159,8 +182,14 @@
 import CheckBox from "../Common/CheckBox.vue";
 import Fraction from "../Common/CombatStatsComponents/Fraction.vue";
 import RadioButtonSelection from "../Common/RadioButtonSelection.vue";
+import CogToggleableEffects from "./CogToggleableEffects.vue";
 export default {
-  components: { Fraction, RadioButtonSelection, CheckBox },
+  components: {
+    Fraction,
+    RadioButtonSelection,
+    CheckBox,
+    CogToggleableEffects,
+  },
   name: "CogAbilityCreation",
   props: {
     cog: Object,
@@ -169,7 +198,6 @@ export default {
   data() {
     return {
       showNewAbilityPanel: true,
-      hideDamages: true,
       ability: {
         name: "",
         range: "melee",
@@ -180,12 +208,15 @@ export default {
         resistanceCheck: "res1",
         attribute: "attr0",
         fear: "fear0",
+        zeroDamage: true,
         normalDamage: "",
         burningDamage: "",
         bleedingDamage: "",
         armorDamage: "",
         stunDamage: "",
         paralysisDamage: "",
+        effects: [],
+        areaEffect: "",
       },
     };
   },
@@ -216,7 +247,7 @@ export default {
       }
 
       // Damage Types
-      if (!this.hideDamages) {
+      if (!this.ability.zeroDamage) {
         ap = ap + this.option2AP(this.ability.normalDamage);
         ap = ap + this.option2AP(this.ability.burningDamage);
         ap = ap + this.option2AP(this.ability.bleedingDamage);
@@ -224,6 +255,17 @@ export default {
         ap = ap + this.option2AP(this.ability.stunDamage);
         ap = ap + this.option2AP(this.ability.paralysisDamage);
       }
+
+      // Special Effects
+      ap =
+        ap +
+        this.ability.effects.reduce(
+          (sum, effect) => sum + this.option2AP(effect),
+          0
+        );
+
+      // Area Effects
+      ap = ap + this.option2AP(this.ability.areaEffect);
       return ap;
     },
     calculateVimCost() {
@@ -347,6 +389,44 @@ export default {
         )}`,
       };
     },
+    normalDamageLevel() {
+      if (!this.cog.level) {
+        return 0;
+      }
+      let level = parseInt(this.cog.level);
+      if (this.ability.speed === "fast") {
+        level = level - 3;
+      }
+      if (this.ability.speed === "slow") {
+        level = level + 1;
+      }
+      return level;
+    },
+    normalDamageDiceCount() {
+      const level = this.normalDamageLevel;
+      if (level < 0) {
+        return 0;
+      }
+      if (level <= 2) {
+        return 1;
+      }
+      if (level <= 4) {
+        return 2;
+      }
+      if (level <= 6) {
+        return 3;
+      }
+      if (level <= 8) {
+        return 4;
+      }
+      if (level <= 12) {
+        return 6;
+      }
+      if (level <= 12) {
+        return 9;
+      }
+      return level;
+    },
     normalDamageOptions() {
       return {
         norm0: `Deal ${this.normalDamageStr(-2)} damage. ${this.costStr(
@@ -424,43 +504,90 @@ export default {
         )}`,
       };
     },
-    normalDamageLevel() {
-      if (!this.cog.level) {
-        return 0;
-      }
-      let level = parseInt(this.cog.level);
-      if (this.ability.speed === "fast") {
-        level = level - 3;
-      }
-      if (this.ability.speed === "slow") {
-        level = level + 1;
-      }
-      return level;
+    effectsOptions() {
+      return {
+        Clobbering: `(${this.costStr(
+          "Clobbering"
+        )}) This ability also causes the target to lose ${this.lvlStr()} Vim on a direct hit, or ${this.lvlStr(
+          "L/2",
+          (lvl) => Math.round(lvl / 2)
+        )} Vim on a glancing blow.`,
+        "Defense Breaker": `(${this.costStr(
+          "Defense Breaker"
+        )}) This ability also causes the target to lose 1 Alert after the attack resolves.`,
+        Disorienter: `(${this.costStr(
+          "Disorienter"
+        )}) This ability also reduces the target's Accuracy by 5 until the end of the Encounter.`,
+        Empower: `(Cost: X MP) This ability grants the Cog +X damage for the rest of the Encounter when used. This effect can only be taken if this ability costs Vim and/or MP. If this effect is taken, the amount of AP that can be spent on this effect is at most the amount of AP gained from spending Vim and/or MP.`,
+        Knockdown: `(${this.costStr(
+          "Knockdown"
+        )}) On a direct hit or a failed resistance check, this ability causes the target to be knocked prone.`,
+        "Knockback, Weak": `(${this.costStr(
+          "Knockback, Weak"
+        )}) This ability also knocks the target back ${this.lvlStr()} squares, or none on a glancing blow.`,
+        "Knockback, Strong": `(${this.costStr(
+          "Knockback, Strong"
+        )}) This ability also knocks the target back ${this.lvlStr(
+          "2L",
+          (lvl) => lvl * 2
+        )} squares, or half on a glancing blow.`,
+        Intangible: `(${this.costStr(
+          "Intangible"
+        )}) This ability cannot be Blocked (Beginner).`,
+        Sharpen: `(Cost: X MP) This ability grants the Cog +5X Accuracy for the rest of the Encounter when used. This effect can only be taken if this ability costs Vim and/or MP. If this effect is taken, the amount of AP that can be spent on this effect is at most the amount of AP gained from spending Vim and/or MP.`,
+        Sickening: `(Cost: X MP) On a direct hit, this ability causes the target to be sick for X Rounds.`,
+        Stiffening: `(Cost: X MP) On a direct hit, this ability causes the target to be stiff for X Rounds.`,
+        Threatening: `(${this.costStr(
+          "Threatening"
+        )}) This ability threatens the target.`,
+        "Mana Drain": `(${this.costStr(
+          "Mana Drain"
+        )}) This ability also causes the target to lose ${this.lvlStr(
+          "L/2",
+          (lvl) => Math.round(lvl / 2)
+        )} MP on a direct hit, or none on a glancing blow.`,
+      };
     },
-    normalDamageDiceCount() {
-      const level = this.normalDamageLevel;
-      if (level < 0) {
-        return 0;
+    effectsMutuallyExclusive() {
+      return [["Knockback, Weak", "Knockback, Strong"]];
+    },
+    disabledEffectsOptions() {
+      const disabledList = [];
+      if (this.calculateVimCost === 0 && this.calculateMPCost === 0) {
+        disabledList.push("Empower", "Sharpen"); // need to have spent on vim or MP to be enabled
       }
-      if (level <= 2) {
-        return 1;
-      }
-      if (level <= 4) {
-        return 2;
-      }
-      if (level <= 6) {
-        return 3;
-      }
-      if (level <= 8) {
-        return 4;
-      }
-      if (level <= 12) {
-        return 6;
-      }
-      if (level <= 12) {
-        return 9;
-      }
-      return level;
+      return disabledList;
+    },
+    areaOfEffectOptions() {
+      return {
+        area0: `<b>Chain, Adjacent</b> (${this.costStr(
+          "area0"
+        )}) This ability cannot target an empty hex. After resolving the ability, the ability also affects valid targets who are adjacent to the original target. This chain reaction repeats until there are no valid targets remaining. The ability cannot affect the same target twice.`,
+        area1: `<b>Chain, Long</b> (${this.costStr(
+          "area1"
+        )}) This ability cannot target an empty hex. After resolving the ability, the ability also affects valid targets who are within 3 meters of the original target. This chain reaction repeats until there are no valid targets remaining. The ability cannot affect the same target twice.`,
+        area2: `<b>Line, Short</b> (${this.costStr(
+          "area2"
+        )}) This ability targets 3 hexes in a line.`,
+        area3: `<b>Line, Medium</b> (${this.costStr(
+          "area3"
+        )}) This ability targets 6-12 hexes in a line, chosen by the Cog during creation.`,
+        area4: `<b>Line, Long</b> (${this.costStr(
+          "area4"
+        )}) This ability targets 30-60 hexes in a line, chosen by the Cog during creation.`,
+        area5: `<b>Radius, Small</b> (${this.costStr(
+          "area5"
+        )}) This ability also targets all adjacent hexes.`,
+        area6: `<b>Radius, Medium</b> (${this.costStr(
+          "area6"
+        )}) This ability also targets all hexes within a 2-4 meter radius, chosen by the Cog during creation.`,
+        area7: `<b>Radius, Large</b> (${this.costStr(
+          "area7"
+        )}) This ability also targets all hexes within a 5-12 meter radius, chosen by the Cog during creation.`,
+        area8: `<b>Radius, Huge</b> (${this.costStr(
+          "area8"
+        )}) This ability also targets all hexes within a 30 meter radius.`,
+      };
     },
   },
   methods: {
@@ -485,8 +612,8 @@ export default {
     fearUpdated(newFear) {
       this.ability.fear = newFear;
     },
-    hideDamagesToggled() {
-      this.hideDamages = !this.hideDamages;
+    zeroDamageToggled() {
+      this.ability.zeroDamage = !this.ability.zeroDamage;
     },
     normalDamageUpdated(newDamage) {
       this.ability.normalDamage = newDamage;
@@ -506,39 +633,76 @@ export default {
     paralysisDamageUpdated(newDamage) {
       this.ability.paralysisDamage = newDamage;
     },
+    effectsUpdated(newEffects) {
+      this.ability.effects = newEffects;
+    },
+    areaEffectUpdated(newAreaEffect) {
+      this.ability.areaEffect = newAreaEffect;
+    },
     option2AP(option) {
       const map = {
+        // range
         melee: 0,
         ranged: 1,
         long: 2,
+        // speed
         fast: 4,
         regular: 0,
         slow: -2,
+        // resistance checks type attack
         res0: -1,
         res1: 0,
         res2: 1,
         res3: 2,
         res4: 3,
         res5: 4,
+        // attribute damage type attack
         attr0: 0,
         attr1: 3,
         attr2: 8,
+        // fear type attack
         fear0: 0,
         fear1: 4,
+        // normal damage type
         norm0: 1,
         norm1: 2,
         norm2: 3,
         norm3: 4,
         norm4: 5,
+        // burn damage type
         burn0: 2,
         burn1: 4,
         burn2: 6,
+        // bleed damage type
         bleed0: 2,
         bleed1: 4,
         bleed2: 6,
+        // armor damage
         armor0: 4,
+        // stun damage
         stun0: 3,
+        // paralysis damage
         paralysis0: 3,
+        // Effects
+        Clobbering: 1,
+        "Defense Breaker": 1,
+        Disorienter: 1,
+        Knockdown: 1,
+        "Knockback, Weak": 1,
+        "Knockback, Strong": 2,
+        Intangible: 2,
+        Threatening: 1,
+        "Mana Drain": 1,
+        // Area of Effect
+        area0: 1,
+        area1: 2,
+        area2: 1,
+        area3: 2,
+        area4: 3,
+        area5: 2,
+        area6: 3,
+        area7: 4,
+        area8: 5,
       };
       if (map[option] !== undefined) {
         return map[option];
