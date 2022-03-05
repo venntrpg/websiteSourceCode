@@ -390,6 +390,9 @@ ul {
 .alignRow.gap {
   gap: 8px;
 }
+.alignRow.split {
+  justify-content: space-between;
+}
 
 .tableItems {
   background-color: white;

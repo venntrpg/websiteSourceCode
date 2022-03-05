@@ -158,6 +158,19 @@
         :disabled="disabledEffectsOptions"
         @newSelected="effectsUpdated"
       />
+      <div v-for="effect in activeSpecialEffects" v-bind:key="effect + 'key'">
+        <h4>{{ effect }}</h4>
+        <div class="alignRow gap">
+          <label v-bind:for="effect + 'input'">AP to spend:</label>
+          <input
+            type="number"
+            min="1"
+            v-model="ability.specialEffectsCosts[effect]"
+            v-bind:id="effect + 'input'"
+            class="input tiny mt-2"
+          />
+        </div>
+      </div>
       <h3>Area of Effect</h3>
       <p class="textBlock">
         Up to one Area of Effect type may be taken. Whereas range indicates
@@ -174,6 +187,11 @@
         :unselectable="true"
         @selectedUpdated="areaEffectUpdated"
       />
+      <h3>Add the Ability to your Cog</h3>
+      <div class="alignRow split">
+        <button class="btn roundedButton">Add Ability</button>
+        <button class="btn roundedButton clear">Throw Away</button>
+      </div>
     </div>
   </div>
 </template>
@@ -216,6 +234,7 @@ export default {
         stunDamage: "",
         paralysisDamage: "",
         effects: [],
+        specialEffectsCosts: {},
         areaEffect: "",
       },
     };
@@ -259,10 +278,13 @@ export default {
       // Special Effects
       ap =
         ap +
-        this.ability.effects.reduce(
-          (sum, effect) => sum + this.option2AP(effect),
-          0
-        );
+        this.ability.effects.reduce((sum, effect) => {
+          let val = 0;
+          if (!isNaN(this.option2AP(effect))) {
+            val = this.option2AP(effect);
+          }
+          return sum + val;
+        }, 0);
 
       // Area Effects
       ap = ap + this.option2AP(this.ability.areaEffect);
@@ -299,95 +321,6 @@ export default {
     },
     fearAPOption() {
       return this.ability.type === "fear";
-    },
-    specialDamageLevel() {
-      if (!this.cog.level) {
-        return this.cog.level;
-      }
-      const lvl = parseInt(this.cog.level);
-      if (this.ability.speed === "fast") {
-        // Handle special case where damage is calculated as 3 levels lower
-        return lvl - 3;
-      }
-      return this.cog.level;
-    },
-    rangeOptions() {
-      return {
-        melee: `<b>Range: Melee.</b> ${this.costStr("melee")}`,
-        ranged: `<b>Range: 12m.</b> ${this.costStr("ranged")}`,
-        long: `<b>Range: 60m.</b> ${this.costStr("long")}`,
-      };
-    },
-    speedOptions() {
-      return {
-        fast: `<b>Actions: 1.</b> ${this.costStr(
-          "fast"
-        )}. Added Effects: The Cog's Level is treated as 3 lower for the purpose of all damage.`,
-        regular: `<b>Actions: 2.</b> ${this.costStr("regular")}.`,
-        slow: `<b>Actions: 3.</b> ${this.costStr(
-          "slow"
-        )}. The Cog's Level is treated as 1 higher for the purpose of normal damage.`,
-      };
-    },
-    typeOptions() {
-      return {
-        normal:
-          "<b>Attack, Normal:</b> Acc vs Vim, can be a direct hit or glancing blow. Can be Evaded.",
-        quick:
-          "<b>Attack, Quick:</b> AGI check, fully negated on success; a direct hit on failure. Can NOT be Evaded.",
-        sneak:
-          "<b>Attack, Sneak:</b> PER check, fully negated on success; a direct hit on failure. CanNOT be Evaded.",
-        magical:
-          "<b>Attack, Magical:</b> SPI check, fully negated on success; a direct hit on failure. Can be Evaded.",
-        attribute:
-          "<b>Attribute Damage:</b> STR check, fully negated on success; on failure: glancing blow and the target takes 1 damage to an Attribute specified during this ability's creation. The damage may be increased to 2 for 3 AP, or 3 for 8 AP. Can be Evaded.",
-        charm:
-          "<b>Charm:</b> CHA check, fully negated on success; on failure: glancing blow and the target is charmed. Can NOT be Evaded.",
-        confusion:
-          "<b>Confusion:</b> INT check, fully negated on success; on failure: glancing blow and the target is confused. Can NOT be Evaded.",
-        disarm:
-          "<b>Disarm:</b> DEX check, fully negated on success; on failure: glancing blow and target's weapon is disarmed. Can be Evaded.",
-        fear: "<b>Fear:</b> WIS check, fully negated on success; on failure: glancing blow and the target takes 1 paralysis damage and 3 stun damage or must flee the Cog on their next turn (target's choice). The damage may be increased to 2 and 5 respectively (or flee on their next turn) for 3 AP. CanNOT be Evaded. This effect cannot stack with Cogs of the same type.",
-      };
-    },
-    resistanceCheckOptions() {
-      return {
-        res0: `DL:  ${this.lvlStr("6 + L", (lvl) => lvl + 6)}. ${this.costStr(
-          "res0"
-        )}`,
-        res1: `DL:  ${this.lvlStr("7 + L", (lvl) => lvl + 7)}. ${this.costStr(
-          "res1"
-        )}`,
-        res2: `DL:  ${this.lvlStr("8 + L", (lvl) => lvl + 8)}. ${this.costStr(
-          "res2"
-        )}`,
-        res3: `DL:  ${this.lvlStr("9 + L", (lvl) => lvl + 9)}. ${this.costStr(
-          "res3"
-        )}`,
-        res4: `DL:  ${this.lvlStr("10 + L", (lvl) => lvl + 10)}. ${this.costStr(
-          "res4"
-        )}`,
-        res5: `DL:  ${this.lvlStr("11 + L", (lvl) => lvl + 11)}. ${this.costStr(
-          "res5"
-        )}`,
-      };
-    },
-    attributeOptions() {
-      return {
-        attr0: `Deal 1 attribute damage. ${this.costStr("attr0")}`,
-        attr1: `Deal 2 attribute damage. ${this.costStr("attr1")}`,
-        att2: `Deal 3 attribute damage. ${this.costStr("att2")}`,
-      };
-    },
-    fearOptions() {
-      return {
-        fear0: `Deal 1 paralysis damage and 3 stun damage or must flee the Cog on their next turn. ${this.costStr(
-          "fear0"
-        )}`,
-        fear1: `Deal 2 paralysis damage and 5 stun damage or must flee the Cog on their next turn. ${this.costStr(
-          "fear1"
-        )}`,
-      };
     },
     normalDamageLevel() {
       if (!this.cog.level) {
@@ -427,126 +360,436 @@ export default {
       }
       return level;
     },
-    normalDamageOptions() {
-      return {
-        norm0: `Deal ${this.normalDamageStr(-2)} damage. ${this.costStr(
-          "norm0"
-        )}`,
-        norm1: `Deal ${this.normalDamageStr(-1)} damage. ${this.costStr(
-          "norm1"
-        )}`,
-        norm2: `Deal ${this.normalDamageStr(0)} damage. ${this.costStr(
-          "norm2"
-        )}`,
-        norm3: `Deal ${this.normalDamageStr(1)} damage. ${this.costStr(
-          "norm3"
-        )}`,
-        norm4: `Deal ${this.normalDamageStr(2)} damage. ${this.costStr(
-          "norm4"
-        )}`,
-      };
+    specialDamageLevel() {
+      if (!this.cog.level) {
+        return this.cog.level;
+      }
+      const lvl = parseInt(this.cog.level);
+      if (this.ability.speed === "fast") {
+        // Handle special case where damage is calculated as 3 levels lower
+        return lvl - 3;
+      }
+      return this.cog.level;
     },
-    specialDmgHalfL() {
-      return this.lvlStr(
+    specialEffectsAPMap() {
+      const map = {};
+      this.specialEffects.forEach((effect) => {
+        if (this.activeSpecialEffects.includes(effect)) {
+          const cost = parseInt(this.ability.specialEffectsCosts[effect]);
+          if (isNaN(cost)) {
+            map[effect] = "X";
+          } else {
+            map[effect] = cost;
+          }
+        } else {
+          map[effect] = "X";
+        }
+      });
+      return map;
+    },
+    optionsMap() {
+      // setup special strings for options
+      const sharpenAP = this.specialEffectsAPMap["Sharpen"];
+      let sharpenEffectX = "5X";
+      if (!isNaN(sharpenAP)) {
+        sharpenEffectX = sharpenAP * 5;
+      }
+      // other constants used in options
+      const specialDmgHalfL = this.lvlStr(
         "L/2",
         (lvl) => Math.max(Math.round(lvl / 2), 0),
         true
       );
+      const specialDmgL = this.lvlStr("L", (lvl) => Math.max(lvl, 0), true);
+      const specialDmgDoubleL = this.lvlStr(
+        "2L",
+        (lvl) => Math.max(lvl * 2, 0),
+        true
+      );
+      // actual map
+      return {
+        // range
+        melee: { ap: 0, desc: "Melee", type: "range" },
+        ranged: { ap: 1, desc: "12m", type: "range" },
+        long: { ap: 2, desc: "60m", type: "range" },
+        // speed
+        fast: {
+          ap: 4,
+          desc: "1 Action",
+          type: "speed",
+          optionDetails:
+            "Added Effects: The Cog's Level is treated as 3 lower for the purpose of all damage.",
+        },
+        regular: { ap: 0, desc: "2 Actions", type: "speed" },
+        slow: {
+          ap: -2,
+          desc: "3 Actions",
+          type: "speed",
+          optionDetails:
+            "The Cog's Level is treated as 1 higher for the purpose of normal damage.",
+        },
+        // resistance checks type attack
+        res0: {
+          ap: -1,
+          desc: `DL:  ${this.lvlStr("6 + L", (lvl) => lvl + 6)}`,
+          type: "res",
+        },
+        res1: {
+          ap: 0,
+          desc: `DL:  ${this.lvlStr("7 + L", (lvl) => lvl + 7)}`,
+          type: "res",
+        },
+        res2: {
+          ap: 1,
+          desc: `DL:  ${this.lvlStr("8 + L", (lvl) => lvl + 8)}`,
+          type: "res",
+        },
+        res3: {
+          ap: 2,
+          desc: `DL:  ${this.lvlStr("9 + L", (lvl) => lvl + 9)}`,
+          type: "res",
+        },
+        res4: {
+          ap: 3,
+          desc: `DL:  ${this.lvlStr("10 + L", (lvl) => lvl + 10)}`,
+          type: "res",
+        },
+        res5: {
+          ap: 4,
+          desc: `DL:  ${this.lvlStr("11 + L", (lvl) => lvl + 11)}`,
+          type: "res",
+        },
+        // attribute damage type attack
+        attr0: { ap: 0, desc: "Deal 1 attribute damage.", type: "attr" },
+        attr1: { ap: 3, desc: "Deal 2 attribute damage.", type: "attr" },
+        attr2: { ap: 8, desc: "Deal 3 attribute damage.", type: "attr" },
+        // fear type attack
+        fear0: {
+          ap: 0,
+          desc: "Deal 1 paralysis damage and 3 stun damage or must flee the Cog on their next turn (target's choice).",
+          type: "fear",
+        },
+        fear1: {
+          ap: 4,
+          desc: "Deal 2 paralysis damage and 5 stun damage or must flee the Cog on their next turn (target's choice).",
+          type: "fear",
+        },
+        // normal damage type
+        norm0: {
+          ap: 1,
+          desc: `Deal ${this.normalDamageStr(-2)} damage`,
+          type: "norm",
+        },
+        norm1: {
+          ap: 2,
+          desc: `Deal ${this.normalDamageStr(-1)} damage`,
+          type: "norm",
+        },
+        norm2: {
+          ap: 3,
+          desc: `Deal ${this.normalDamageStr(0)} damage`,
+          type: "norm",
+        },
+        norm3: {
+          ap: 4,
+          desc: `Deal ${this.normalDamageStr(1)} damage`,
+          type: "norm",
+        },
+        norm4: {
+          ap: 5,
+          desc: `Deal ${this.normalDamageStr(2)} damage`,
+          type: "norm",
+        },
+        // burn damage type
+        burn0: {
+          ap: 2,
+          desc: `Deal ${specialDmgHalfL} burning damage.`,
+          type: "burn",
+        },
+        burn1: {
+          ap: 4,
+          desc: `Deal ${specialDmgL} burning damage.`,
+          type: "burn",
+        },
+        burn2: {
+          ap: 6,
+          desc: `Deal ${specialDmgDoubleL} burning damage.`,
+          type: "burn",
+        },
+        // bleed damage type
+        bleed0: {
+          ap: 2,
+          desc: `Deal ${specialDmgHalfL} bleeding damage.`,
+          type: "bleed",
+        },
+        bleed1: {
+          ap: 4,
+          desc: `Deal ${specialDmgL} bleeding damage.`,
+          type: "bleed",
+        },
+        bleed2: {
+          ap: 6,
+          desc: `Deal ${specialDmgDoubleL} bleeding damage.`,
+          type: "bleed",
+        },
+        // armor damage
+        armor0: {
+          ap: 4,
+          desc: `Deal ${specialDmgHalfL} armor damage.`,
+          type: "armor",
+        },
+        // stun damage
+        stun0: {
+          ap: 3,
+          desc: "Deal 1 stun damage on direct hits.",
+          type: "stun",
+        },
+        // paralysis damage
+        paralysis0: {
+          ap: 3,
+          desc: "Deal 1 paralysis damage on direct hits.",
+          type: "paralysis",
+        },
+        // Effects
+        Adapting: {
+          ap: 5,
+          desc: "When this ability is used, until the start of the Cog's next turn, after resolving an attack they gain resistance to that type of attack.",
+          type: "effect",
+        },
+        Clobbering: {
+          ap: 1,
+          desc: `This ability also causes the target to lose ${this.lvlStr()} Vim on a direct hit, or ${this.lvlStr(
+            "L/2",
+            (lvl) => Math.round(lvl / 2)
+          )} Vim on a glancing blow.`,
+          type: "effect",
+        },
+        "Defense Breaker": {
+          ap: 1,
+          desc: "This ability also causes the target to lose 1 Alert after the attack resolves.",
+          type: "effect",
+        },
+        Disorienter: {
+          ap: 1,
+          desc: "This ability also reduces the target's Accuracy by 5 until the end of the Encounter.",
+          type: "effect",
+        },
+        Empower: {
+          ap: this.specialEffectsAPMap["Empower"],
+          desc: `This ability grants the Cog +${this.specialEffectsAPMap["Empower"]} damage for the rest of the Encounter when used.`,
+          type: "effect",
+          optionDetails:
+            "This effect can only be taken if this ability costs Vim and/or MP. If this effect is taken, the amount of AP that can be spent on this effect is at most the amount of AP gained from spending Vim and/or MP.",
+        },
+        Homing: {
+          ap: this.lvlInt(),
+          desc: "This ability cannot be Evaded.",
+          type: "effect",
+        },
+        Knockdown: {
+          ap: 1,
+          desc: "On a direct hit or a failed resistance check, this ability causes the target to be knocked prone.",
+          type: "effect",
+        },
+        "Knockback, Weak": {
+          ap: 1,
+          desc: `This ability also knocks the target back ${this.lvlStr()} squares, or none on a glancing blow.`,
+          type: "effect",
+        },
+        "Knockback, Strong": {
+          ap: 2,
+          desc: `This ability also knocks the target back ${this.lvlStr(
+            "2L",
+            (lvl) => lvl * 2
+          )} squares, or half on a glancing blow.`,
+          type: "effect",
+        },
+        Intangible: {
+          ap: this.lvlInt((lvl) => Math.floor(lvl / 2)),
+          desc: "This ability cannot be Blocked (Beginner)",
+          type: "effect",
+        },
+        Protecting: {
+          ap: this.specialEffectsAPMap["Protecting"],
+          desc: `This ability grants the Cog +${this.specialEffectsAPMap["Protecting"]} Armor until the start of their next turn.`,
+          type: "effect",
+        },
+        Sharpen: {
+          ap: this.specialEffectsAPMap["Sharpen"],
+          desc: `This ability grants the Cog +${sharpenEffectX} Accuracy for the rest of the Encounter when used.`,
+          type: "effect",
+          optionDetails:
+            "This effect can only be taken if this ability costs Vim and/or MP. If this effect is taken, the amount of AP that can be spent on this effect is at most the amount of AP gained from spending Vim and/or MP.",
+        },
+        Sickening: {
+          ap: this.specialEffectsAPMap["Sickening"],
+          desc: `On a direct hit, this ability causes the target to be sick for ${this.specialEffectsAPMap["Sickening"]} Rounds.`,
+          type: "effect",
+        },
+        Silencing: {
+          ap: 4,
+          desc: "On a direct hit or glancing blow, this ability causes the target to be unable to speak and take a -6 penalty to casting rolls. This effect lasts until the end of the target's next turn.",
+          type: "effect",
+        },
+        Stiffening: {
+          ap: this.specialEffectsAPMap["Stiffening"],
+          desc: `On a direct hit, this ability causes the target to be stiff for ${this.specialEffectsAPMap["Stiffening"]} Rounds.`,
+          type: "effect",
+        },
+        Threatening: { ap: 1, desc: "This ability threatens the target." },
+        "Mana Drain": {
+          ap: 1,
+          desc: `This ability also causes the target to lose ${this.lvlStr(
+            "L/2",
+            (lvl) => Math.floor(lvl / 2)
+          )} MP on a direct hit, or none on a glancing blow.`,
+          type: "effect",
+        },
+        // Area of Effect
+        area0: {
+          ap: 1,
+          desc: "This ability cannot target an empty hex. After resolving the ability, the ability also affects valid targets who are adjacent to the original target. This chain reaction repeats until there are no valid targets remaining. The ability cannot affect the same target twice.",
+          type: "area",
+          title: "Chain, Adjacent",
+        },
+        area1: {
+          ap: 2,
+          desc: "This ability cannot target an empty hex. After resolving the ability, the ability also affects valid targets who are within 3 meters of the original target. This chain reaction repeats until there are no valid targets remaining. The ability cannot affect the same target twice.",
+          type: "area",
+          title: "Chain, Long",
+        },
+        area2: {
+          ap: 1,
+          desc: "This ability targets 3 hexes in a line.",
+          type: "area",
+          title: "Line, Short",
+        },
+        area3: {
+          ap: 2,
+          desc: "This ability targets 6-12 hexes in a line, chosen by the Cog during creation.",
+          type: "area",
+          title: "Line, Medium",
+        },
+        area4: {
+          ap: 3,
+          desc: "This ability targets 30-60 hexes in a line, chosen by the Cog during creation.",
+          type: "area",
+          title: "Line, Long",
+        },
+        area5: {
+          ap: 2,
+          desc: "This ability also targets all adjacent hexes.",
+          type: "area",
+          title: "Radius, Small",
+        },
+        area6: {
+          ap: 3,
+          desc: "This ability also targets all hexes within a 2-4 meter radius, chosen by the Cog during creation.",
+          type: "area",
+          title: "Radius, Medium",
+        },
+        area7: {
+          ap: 4,
+          desc: "This ability also targets all hexes within a 5-12 meter radius, chosen by the Cog during creation.",
+          type: "area",
+          title: "Radius, Large",
+        },
+        area8: {
+          ap: 5,
+          desc: "This ability also targets all hexes within a 30 meter radius",
+          type: "area",
+          title: "Radius, Huge",
+        },
+      };
     },
-    specialDmgL() {
-      return this.lvlStr("L", (lvl) => Math.max(lvl, 0), true);
+    rangeOptions() {
+      const map = {};
+      Object.entries(this.optionsMap).forEach((pair) => {
+        const name = pair[0];
+        const details = pair[1];
+        if (details.type === "range") {
+          map[name] = `<b>Range ${details.desc}.</b> ${this.costStr(name)}`;
+        }
+      });
+      return map;
     },
-    specialDmgDoubleL() {
-      return this.lvlStr("2L", (lvl) => Math.max(lvl * 2, 0), true);
+    speedOptions() {
+      const map = {};
+      Object.entries(this.optionsMap).forEach((pair) => {
+        const name = pair[0];
+        const details = pair[1];
+        if (details.type === "speed") {
+          const additionalDetailStr =
+            details.optionDetails === undefined ? "" : details.optionDetails;
+          map[name] = `<b>${details.desc}.</b> ${this.costStr(
+            name
+          )}. ${additionalDetailStr}`;
+        }
+      });
+      return map;
+    },
+    typeOptions() {
+      return {
+        normal:
+          "<b>Attack, Normal:</b> Acc vs Vim, can be a direct hit or glancing blow. Can be Evaded.",
+        quick:
+          "<b>Attack, Quick:</b> AGI check, fully negated on success; a direct hit on failure. Can NOT be Evaded.",
+        sneak:
+          "<b>Attack, Sneak:</b> PER check, fully negated on success; a direct hit on failure. CanNOT be Evaded.",
+        magical:
+          "<b>Attack, Magical:</b> SPI check, fully negated on success; a direct hit on failure. Can be Evaded.",
+        attribute:
+          "<b>Attribute Damage:</b> STR check, fully negated on success; on failure: glancing blow and the target takes 1 damage to an Attribute specified during this ability's creation. The damage may be increased to 2 for 3 AP, or 3 for 8 AP. Can be Evaded.",
+        charm:
+          "<b>Charm:</b> CHA check, fully negated on success; on failure: glancing blow and the target is charmed. Can NOT be Evaded.",
+        confusion:
+          "<b>Confusion:</b> INT check, fully negated on success; on failure: glancing blow and the target is confused. Can NOT be Evaded.",
+        disarm:
+          "<b>Disarm:</b> DEX check, fully negated on success; on failure: glancing blow and target's weapon is disarmed. Can be Evaded.",
+        fear: "<b>Fear:</b> WIS check, fully negated on success; on failure: glancing blow and the target takes 1 paralysis damage and 3 stun damage or must flee the Cog on their next turn (target's choice). The damage may be increased to 2 and 5 respectively (or flee on their next turn) for 3 AP. CanNOT be Evaded. This effect cannot stack with Cogs of the same type.",
+      };
+    },
+    resistanceCheckOptions() {
+      return this.basicOptionMap("res");
+    },
+    attributeOptions() {
+      return this.basicOptionMap("attr");
+    },
+    fearOptions() {
+      return this.basicOptionMap("fear");
+    },
+    normalDamageOptions() {
+      return this.basicOptionMap("norm");
     },
     burningDamageOptions() {
-      return {
-        burn0: `Deal ${this.specialDmgHalfL} burning damage. ${this.costStr(
-          "burn0"
-        )}`,
-        burn1: `Deal ${this.specialDmgL} burning damage. ${this.costStr(
-          "burn1"
-        )}`,
-        burn2: `Deal ${this.specialDmgDoubleL} burning damage. ${this.costStr(
-          "burn2"
-        )}`,
-      };
+      return this.basicOptionMap("burn");
     },
     bleedingDamageOptions() {
-      return {
-        bleed0: `Deal ${this.specialDmgHalfL} bleeding damage. ${this.costStr(
-          "bleed0"
-        )}`,
-        bleed1: `Deal ${this.specialDmgL} bleeding damage. ${this.costStr(
-          "bleed1"
-        )}`,
-        bleed2: `Deal ${this.specialDmgDoubleL} bleeding damage. ${this.costStr(
-          "bleed2"
-        )}`,
-      };
+      return this.basicOptionMap("bleed");
     },
     armorDamageOptions() {
-      return {
-        armor0: `Deal ${this.specialDmgHalfL} armor damage. ${this.costStr(
-          "armor0"
-        )}`,
-      };
+      return this.basicOptionMap("armor");
     },
     stunDamageOptions() {
-      return {
-        stun0: `Deal 1 stun damage on direct hits. ${this.costStr("stun0")}`,
-      };
+      return this.basicOptionMap("stun");
     },
     paralysisDamageOptions() {
-      return {
-        paralysis0: `Deal 1 paralysis damage on direct hits. ${this.costStr(
-          "paralysis0"
-        )}`,
-      };
+      return this.basicOptionMap("paralysis");
     },
     effectsOptions() {
-      return {
-        Clobbering: `(${this.costStr(
-          "Clobbering"
-        )}) This ability also causes the target to lose ${this.lvlStr()} Vim on a direct hit, or ${this.lvlStr(
-          "L/2",
-          (lvl) => Math.round(lvl / 2)
-        )} Vim on a glancing blow.`,
-        "Defense Breaker": `(${this.costStr(
-          "Defense Breaker"
-        )}) This ability also causes the target to lose 1 Alert after the attack resolves.`,
-        Disorienter: `(${this.costStr(
-          "Disorienter"
-        )}) This ability also reduces the target's Accuracy by 5 until the end of the Encounter.`,
-        Empower: `(Cost: X MP) This ability grants the Cog +X damage for the rest of the Encounter when used. This effect can only be taken if this ability costs Vim and/or MP. If this effect is taken, the amount of AP that can be spent on this effect is at most the amount of AP gained from spending Vim and/or MP.`,
-        Knockdown: `(${this.costStr(
-          "Knockdown"
-        )}) On a direct hit or a failed resistance check, this ability causes the target to be knocked prone.`,
-        "Knockback, Weak": `(${this.costStr(
-          "Knockback, Weak"
-        )}) This ability also knocks the target back ${this.lvlStr()} squares, or none on a glancing blow.`,
-        "Knockback, Strong": `(${this.costStr(
-          "Knockback, Strong"
-        )}) This ability also knocks the target back ${this.lvlStr(
-          "2L",
-          (lvl) => lvl * 2
-        )} squares, or half on a glancing blow.`,
-        Intangible: `(${this.costStr(
-          "Intangible"
-        )}) This ability cannot be Blocked (Beginner).`,
-        Sharpen: `(Cost: X MP) This ability grants the Cog +5X Accuracy for the rest of the Encounter when used. This effect can only be taken if this ability costs Vim and/or MP. If this effect is taken, the amount of AP that can be spent on this effect is at most the amount of AP gained from spending Vim and/or MP.`,
-        Sickening: `(Cost: X MP) On a direct hit, this ability causes the target to be sick for X Rounds.`,
-        Stiffening: `(Cost: X MP) On a direct hit, this ability causes the target to be stiff for X Rounds.`,
-        Threatening: `(${this.costStr(
-          "Threatening"
-        )}) This ability threatens the target.`,
-        "Mana Drain": `(${this.costStr(
-          "Mana Drain"
-        )}) This ability also causes the target to lose ${this.lvlStr(
-          "L/2",
-          (lvl) => Math.round(lvl / 2)
-        )} MP on a direct hit, or none on a glancing blow.`,
-      };
+      const map = {};
+      Object.entries(this.optionsMap).forEach((pair) => {
+        const name = pair[0];
+        const details = pair[1];
+        if (details.type === "effect") {
+          const additionalDetailStr =
+            details.optionDetails === undefined ? "" : details.optionDetails;
+          map[name] = `(${this.costStr(name)}) ${
+            details.desc
+          } ${additionalDetailStr}`;
+        }
+      });
+      return map;
     },
     effectsMutuallyExclusive() {
       return [["Knockback, Weak", "Knockback, Strong"]];
@@ -558,35 +801,54 @@ export default {
       }
       return disabledList;
     },
+    specialEffects() {
+      // effects that require the user to specify how much AP to spend
+      return ["Empower", "Protecting", "Sharpen", "Sickening", "Stiffening"];
+    },
+    activeSpecialEffects() {
+      return this.ability.effects.filter((effect) =>
+        this.specialEffects.includes(effect)
+      );
+    },
     areaOfEffectOptions() {
+      const map = {};
+      Object.entries(this.optionsMap).forEach((pair) => {
+        const name = pair[0];
+        const details = pair[1];
+        if (details.type === "area") {
+          map[name] = `<b>${details.title}</b> (${this.costStr(name)}) ${
+            details.desc
+          }`;
+        }
+      });
+      return map;
+    },
+    formattedAbility() {
+      // calculate activation costs
+      const activationList = [this.optionsMap[this.ability.speed].desc];
+      const costMap = { A: parseInt(this.optionsMap[this.ability.speed].desc) };
+      if (this.calculateVimCost > 0) {
+        activationList.push(this.calculateVimCost + " Vim");
+        costMap.V = this.calculateVimCost;
+      }
+      if (this.calculateMPCost > 0) {
+        activationList.push(this.calculateMPCost + " MP");
+        costMap.M = this.calculateMPCost;
+      }
+      const activationStr = activationList.join(", ");
+      // calculate range string
+      const areaOfEffectStr =
+        this.optionsMap[this.ability.areaEffect] === undefined
+          ? ""
+          : this.optionsMap[this.ability.areaEffect].desc;
+      const rangeStr =
+        this.optionsMap[this.ability.range].desc + areaOfEffectStr;
       return {
-        area0: `<b>Chain, Adjacent</b> (${this.costStr(
-          "area0"
-        )}) This ability cannot target an empty hex. After resolving the ability, the ability also affects valid targets who are adjacent to the original target. This chain reaction repeats until there are no valid targets remaining. The ability cannot affect the same target twice.`,
-        area1: `<b>Chain, Long</b> (${this.costStr(
-          "area1"
-        )}) This ability cannot target an empty hex. After resolving the ability, the ability also affects valid targets who are within 3 meters of the original target. This chain reaction repeats until there are no valid targets remaining. The ability cannot affect the same target twice.`,
-        area2: `<b>Line, Short</b> (${this.costStr(
-          "area2"
-        )}) This ability targets 3 hexes in a line.`,
-        area3: `<b>Line, Medium</b> (${this.costStr(
-          "area3"
-        )}) This ability targets 6-12 hexes in a line, chosen by the Cog during creation.`,
-        area4: `<b>Line, Long</b> (${this.costStr(
-          "area4"
-        )}) This ability targets 30-60 hexes in a line, chosen by the Cog during creation.`,
-        area5: `<b>Radius, Small</b> (${this.costStr(
-          "area5"
-        )}) This ability also targets all adjacent hexes.`,
-        area6: `<b>Radius, Medium</b> (${this.costStr(
-          "area6"
-        )}) This ability also targets all hexes within a 2-4 meter radius, chosen by the Cog during creation.`,
-        area7: `<b>Radius, Large</b> (${this.costStr(
-          "area7"
-        )}) This ability also targets all hexes within a 5-12 meter radius, chosen by the Cog during creation.`,
-        area8: `<b>Radius, Huge</b> (${this.costStr(
-          "area8"
-        )}) This ability also targets all hexes within a 30 meter radius.`,
+        name: this.ability.name,
+        purchase: this.costAP + " AP",
+        range: rangeStr,
+        activation: activationStr,
+        cost: costMap,
       };
     },
   },
@@ -640,72 +902,11 @@ export default {
       this.ability.areaEffect = newAreaEffect;
     },
     option2AP(option) {
-      const map = {
-        // range
-        melee: 0,
-        ranged: 1,
-        long: 2,
-        // speed
-        fast: 4,
-        regular: 0,
-        slow: -2,
-        // resistance checks type attack
-        res0: -1,
-        res1: 0,
-        res2: 1,
-        res3: 2,
-        res4: 3,
-        res5: 4,
-        // attribute damage type attack
-        attr0: 0,
-        attr1: 3,
-        attr2: 8,
-        // fear type attack
-        fear0: 0,
-        fear1: 4,
-        // normal damage type
-        norm0: 1,
-        norm1: 2,
-        norm2: 3,
-        norm3: 4,
-        norm4: 5,
-        // burn damage type
-        burn0: 2,
-        burn1: 4,
-        burn2: 6,
-        // bleed damage type
-        bleed0: 2,
-        bleed1: 4,
-        bleed2: 6,
-        // armor damage
-        armor0: 4,
-        // stun damage
-        stun0: 3,
-        // paralysis damage
-        paralysis0: 3,
-        // Effects
-        Clobbering: 1,
-        "Defense Breaker": 1,
-        Disorienter: 1,
-        Knockdown: 1,
-        "Knockback, Weak": 1,
-        "Knockback, Strong": 2,
-        Intangible: 2,
-        Threatening: 1,
-        "Mana Drain": 1,
-        // Area of Effect
-        area0: 1,
-        area1: 2,
-        area2: 1,
-        area3: 2,
-        area4: 3,
-        area5: 2,
-        area6: 3,
-        area7: 4,
-        area8: 5,
-      };
-      if (map[option] !== undefined) {
-        return map[option];
+      if (
+        this.optionsMap[option] !== undefined &&
+        this.optionsMap[option].ap !== undefined
+      ) {
+        return this.optionsMap[option].ap;
       }
       return 0;
     },
@@ -728,6 +929,14 @@ export default {
       }
       return def + " (" + fun(parseInt(lvl)) + ")";
     },
+    lvlInt(fun) {
+      const directLvl = parseInt(this.cog.level);
+      const lvl = isNaN(directLvl) ? 0 : directLvl;
+      if (!fun) {
+        return lvl;
+      }
+      return fun(lvl);
+    },
     normalDamageStr(modifier) {
       const level = this.normalDamageLevel;
       let diceCount = this.normalDamageDiceCount + modifier;
@@ -748,6 +957,17 @@ export default {
         rollAdjustment = "+12";
       }
       return diceCount + "d6" + rollAdjustment;
+    },
+    basicOptionMap(type) {
+      const map = {};
+      Object.entries(this.optionsMap).forEach((pair) => {
+        const name = pair[0];
+        const details = pair[1];
+        if (details.type === type) {
+          map[name] = `${details.desc}. ${this.costStr(name)}`;
+        }
+      });
+      return map;
     },
   },
 };

@@ -5,7 +5,7 @@
       v-bind:key="title"
       :checked="optionSelected(title)"
       :disabled="optionDisabled(title)"
-      :text="body"
+      :text="title + ': ' + body"
       :highlight="true"
       :smallText="true"
       @toggled="emitNewSelectedList(title)"
