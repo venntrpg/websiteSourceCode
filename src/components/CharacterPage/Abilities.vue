@@ -96,7 +96,7 @@
 
 import { mapState } from "vuex";
 import Fraction from "../Common/CombatStatsComponents/Fraction.vue";
-import ParseAbilityEffect from "./ParseAbilityEffect.vue";
+import ParseAbilityEffect from "../Common/Abilities/ParseAbilityEffect.vue";
 
 export default {
   name: "Abilities",

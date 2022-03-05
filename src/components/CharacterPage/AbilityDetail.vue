@@ -1,20 +1,7 @@
 <template>
   <div>
     <div v-if="ability !== undefined">
-      <h2>{{ ability.name }}</h2>
-      <div class="bottomMargin">
-        <i>{{ ability.path }}</i>
-      </div>
-      <div class="bottomMargin">
-        <b>Activation:</b> {{ ability.activation }}
-      </div>
-      <div class="bottomMargin">
-        <p><b>Effect:</b></p>
-        <p>
-          <i>{{ ability.flavor }}</i>
-        </p>
-        <parse-ability-effect :ability="ability" />
-      </div>
+      <display-basic-ability-details :ability="ability" />
       <button
         v-if="showUseAbilityButton"
         :disabled="!canUseAbility"
@@ -51,11 +38,11 @@
 
 <script>
 import { mapState } from "vuex";
-import ParseAbilityEffect from "./ParseAbilityEffect.vue";
+import DisplayBasicAbilityDetails from "../Common/Abilities/DisplayBasicAbilityDetails.vue";
 
 export default {
   name: "abilityDetail",
-  components: { ParseAbilityEffect },
+  components: { DisplayBasicAbilityDetails },
   computed: {
     ...mapState(["character"]),
     ability() {
@@ -65,28 +52,6 @@ export default {
       return this.character.abilities.find(
         (searchAbility) => searchAbility.name === this.$route.params.detail
       );
-    },
-    abilityAffectHtml() {
-      let result = "";
-      let inList = false;
-      for (const line of this.ability.effect.split("\n")) {
-        if (line.length <= 0) {
-          continue;
-        }
-        if (line.at(0) === "-" && line.length > 1) {
-          if (!inList) {
-            inList = true;
-            result += "<ul>";
-          }
-          result += "<li>" + line.substring(2) + "</li>";
-        } else {
-          if (inList) {
-            result += "</ul>";
-          }
-          result += "<p>" + line + "</p>";
-        }
-      }
-      return result;
     },
     showUseAbilityButton() {
       return !(this.ability && this.ability.cost && this.ability.cost.Passive);

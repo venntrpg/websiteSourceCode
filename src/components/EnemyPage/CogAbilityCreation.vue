@@ -1,221 +1,213 @@
 <template>
-  <div>
-    <h3>Ability Creation</h3>
-    <div class="alignRow gap labelText">
-      Remaining AP (Action Points):
-      <fraction :top="remainingAP" :bottom="totalAP" />
+  <div class="card border padded column mt-8">
+    <h2>New Ability</h2>
+    <div class="alignRow gap">
+      <label for="abilityName" class="nowrap">Ability Name:</label>
+      <input
+        type="text"
+        v-model="ability.name"
+        placeholder="Big Kick"
+        id="abilityName"
+        class="input shortenned"
+      />
     </div>
-    <!-- TODO: List active abilities -->
-    <button v-on:click="addAbilityButton" class="btn roundedButton">
-      Add another ability
-    </button>
-    <div v-if="showNewAbilityPanel" class="card border padded column mt-8">
-      <h2>New Ability</h2>
-      <div class="alignRow gap">
-        <label for="abilityName" class="nowrap">Ability Name:</label>
-        <input
-          type="text"
-          v-model="ability.name"
-          placeholder="Big Kick"
-          id="abilityName"
-          class="input shortenned"
-        />
-      </div>
-      <p>
-        AP Cost: <span class="number">{{ costAP }}</span>
-      </p>
-      <h3>Range</h3>
-      <p>Select one</p>
+    <p>
+      AP Cost: <span class="number">{{ costAP }}</span>
+    </p>
+    <h3>Range</h3>
+    <p>Select one</p>
+    <radio-button-selection
+      :options="rangeOptions"
+      :selected="ability.range"
+      @selectedUpdated="rangeUpdated"
+    />
+    <h3>Action Speed</h3>
+    <p>Select one</p>
+    <radio-button-selection
+      :options="speedOptions"
+      :selected="ability.speed"
+      @selectedUpdated="speedUpdated"
+    />
+    <h3>Resource Cost</h3>
+    <p>
+      Enter a value for X, where X represents 5X the amount of vim to activate
+      the ability. The ability will cost X AP less.
+    </p>
+    <div class="alignRow gap">
+      <label for="vimCost">5X Vim cost:</label>
+      <input
+        type="number"
+        min="0"
+        v-model="ability.vimCost"
+        id="vimCost"
+        class="input tiny mt-2"
+      />
+    </div>
+    <p>Resulting vim cost: {{ calculateVimCost }} vim.</p>
+    <p>
+      Enter a value for X, where X represents the amount of MP to activate the
+      ability. The ability will cost X AP less.
+    </p>
+    <div class="alignRow gap">
+      <label for="mpCost">MP cost:</label>
+      <input
+        type="number"
+        min="0"
+        v-model="ability.mpCost"
+        id="mpCost"
+        class="input tiny mt-2"
+      />
+    </div>
+    <p>Resulting MP cost: {{ calculateMPCost }} MP.</p>
+    <h3>Ability Type</h3>
+    <radio-button-selection
+      :options="typeOptions"
+      :selected="ability.type"
+      @selectedUpdated="typeUpdated"
+    />
+    <div v-if="resistantCheckRequired">
+      <h4>DL for Resistance Checks</h4>
       <radio-button-selection
-        :options="rangeOptions"
-        :selected="ability.range"
-        @selectedUpdated="rangeUpdated"
+        :options="resistanceCheckOptions"
+        :selected="ability.resistanceCheck"
+        @selectedUpdated="resistanceCheckUpdated"
       />
-      <h3>Action Speed</h3>
-      <p>Select one</p>
+    </div>
+    <div v-if="attributeAPOption">
+      <h4>Attribute Damage Type Option</h4>
       <radio-button-selection
-        :options="speedOptions"
-        :selected="ability.speed"
-        @selectedUpdated="speedUpdated"
+        :options="attributeOptions"
+        :selected="ability.attribute"
+        @selectedUpdated="attributeUpdated"
       />
-      <h3>Resource Cost</h3>
-      <p>
-        Enter a value for X, where X represents 5X the amount of vim to activate
-        the ability. The ability will cost X AP less.
-      </p>
-      <div class="alignRow gap">
-        <label for="vimCost">5X Vim cost:</label>
-        <input
-          type="number"
-          min="0"
-          v-model="ability.vimCost"
-          id="vimCost"
-          class="input tiny mt-2"
-        />
-      </div>
-      <p>Resulting vim cost: {{ calculateVimCost }} vim.</p>
-      <p>
-        Enter a value for X, where X represents the amount of MP to activate the
-        ability. The ability will cost X AP less.
-      </p>
-      <div class="alignRow gap">
-        <label for="mpCost">MP cost:</label>
-        <input
-          type="number"
-          min="0"
-          v-model="ability.mpCost"
-          id="mpCost"
-          class="input tiny mt-2"
-        />
-      </div>
-      <p>Resulting MP cost: {{ calculateMPCost }} MP.</p>
-      <h3>Ability Type</h3>
+    </div>
+    <div v-if="fearAPOption">
+      <h4>Fear Type Option</h4>
       <radio-button-selection
-        :options="typeOptions"
-        :selected="ability.type"
-        @selectedUpdated="typeUpdated"
+        :options="fearOptions"
+        :selected="ability.fear"
+        @selectedUpdated="fearUpdated"
       />
-      <div v-if="resistantCheckRequired">
-        <h4>DL for Resistance Checks</h4>
-        <radio-button-selection
-          :options="resistanceCheckOptions"
-          :selected="ability.resistanceCheck"
-          @selectedUpdated="resistanceCheckUpdated"
-        />
-      </div>
-      <div v-if="attributeAPOption">
-        <h4>Attribute Damage Type Option</h4>
-        <radio-button-selection
-          :options="attributeOptions"
-          :selected="ability.attribute"
-          @selectedUpdated="attributeUpdated"
-        />
-      </div>
-      <div v-if="fearAPOption">
-        <h4>Fear Type Option</h4>
-        <radio-button-selection
-          :options="fearOptions"
-          :selected="ability.fear"
-          @selectedUpdated="fearUpdated"
-        />
-      </div>
-      <h3>Damages</h3>
-      <check-box
-        :checked="ability.zeroDamage"
-        :text="'No Damage (0 AP)'"
-        @toggled="zeroDamageToggled"
-      />
-      <div v-if="!ability.zeroDamage">
-        <p>Normal Damage. (Can be unselected)</p>
-        <radio-button-selection
-          :options="normalDamageOptions"
-          :selected="ability.normalDamage"
-          :unselectable="true"
-          @selectedUpdated="normalDamageUpdated"
-        />
-        <p>Burning Damage (Can be unselected)</p>
-        <radio-button-selection
-          :options="burningDamageOptions"
-          :selected="ability.burningDamage"
-          :unselectable="true"
-          @selectedUpdated="burningDamageUpdated"
-        />
-        <p>Bleeding Damage (Can be unselected)</p>
-        <radio-button-selection
-          :options="bleedingDamageOptions"
-          :selected="ability.bleedingDamage"
-          :unselectable="true"
-          @selectedUpdated="bleedingDamageUpdated"
-        />
-        <p>Armor Damage (Can be unselected)</p>
-        <radio-button-selection
-          :options="armorDamageOptions"
-          :selected="ability.armorDamage"
-          :unselectable="true"
-          @selectedUpdated="armorDamageUpdated"
-        />
-        <p>Stun Damage (Can be unselected)</p>
-        <radio-button-selection
-          :options="stunDamageOptions"
-          :selected="ability.stunDamage"
-          :unselectable="true"
-          @selectedUpdated="stunDamageUpdated"
-        />
-        <p>Paralysis Damage (Can be unselected)</p>
-        <radio-button-selection
-          :options="paralysisDamageOptions"
-          :selected="ability.paralysisDamage"
-          :unselectable="true"
-          @selectedUpdated="paralysisDamageUpdated"
-        />
-      </div>
-      <h3>Effects</h3>
-      <p class="textBlock">Each effect may be taken up to once.</p>
-      <cog-toggleable-effects
-        :options="effectsOptions"
-        :selected="ability.effects"
-        :mutuallyExclusive="effectsMutuallyExclusive"
-        :disabled="disabledEffectsOptions"
-        @newSelected="effectsUpdated"
-      />
-      <div v-for="effect in activeSpecialEffects" v-bind:key="effect + 'key'">
-        <h4>{{ effect }}</h4>
-        <div class="alignRow gap">
-          <label v-bind:for="effect + 'input'">AP to spend:</label>
-          <input
-            type="number"
-            min="1"
-            v-model="ability.specialEffectsCosts[effect]"
-            v-bind:id="effect + 'input'"
-            class="input tiny mt-2"
-          />
-        </div>
-      </div>
-      <h3>Area of Effect</h3>
-      <p class="textBlock">
-        Up to one Area of Effect type may be taken. Whereas range indicates
-        where the ability effect can start, Area of Effect indicates where it
-        can go. For example, with a line effect, that line may begin and end
-        anywhere within the ability's range so long as the line's length meets
-        the description of the line effect and does not extend outside of the
-        ability's range. If the ability has only Melee range, it must start
-        within a hex that the Cog can reach.
-      </p>
+    </div>
+    <h3>Damages</h3>
+    <check-box
+      :checked="ability.zeroDamage"
+      :text="'No Damage (0 AP)'"
+      @toggled="zeroDamageToggled"
+    />
+    <div v-if="!ability.zeroDamage">
+      <p>Normal Damage. (Can be unselected)</p>
       <radio-button-selection
-        :options="areaOfEffectOptions"
-        :selected="ability.areaEffect"
+        :options="normalDamageOptions"
+        :selected="ability.normalDamage"
         :unselectable="true"
-        @selectedUpdated="areaEffectUpdated"
+        @selectedUpdated="normalDamageUpdated"
       />
-      <h3>Add the Ability to your Cog</h3>
-      <div class="alignRow split">
-        <button class="btn roundedButton">Add Ability</button>
-        <button class="btn roundedButton clear">Throw Away</button>
+      <p>Burning Damage (Can be unselected)</p>
+      <radio-button-selection
+        :options="burningDamageOptions"
+        :selected="ability.burningDamage"
+        :unselectable="true"
+        @selectedUpdated="burningDamageUpdated"
+      />
+      <p>Bleeding Damage (Can be unselected)</p>
+      <radio-button-selection
+        :options="bleedingDamageOptions"
+        :selected="ability.bleedingDamage"
+        :unselectable="true"
+        @selectedUpdated="bleedingDamageUpdated"
+      />
+      <p>Armor Damage (Can be unselected)</p>
+      <radio-button-selection
+        :options="armorDamageOptions"
+        :selected="ability.armorDamage"
+        :unselectable="true"
+        @selectedUpdated="armorDamageUpdated"
+      />
+      <p>Stun Damage (Can be unselected)</p>
+      <radio-button-selection
+        :options="stunDamageOptions"
+        :selected="ability.stunDamage"
+        :unselectable="true"
+        @selectedUpdated="stunDamageUpdated"
+      />
+      <p>Paralysis Damage (Can be unselected)</p>
+      <radio-button-selection
+        :options="paralysisDamageOptions"
+        :selected="ability.paralysisDamage"
+        :unselectable="true"
+        @selectedUpdated="paralysisDamageUpdated"
+      />
+    </div>
+    <h3>Effects</h3>
+    <p class="textBlock">Each effect may be taken up to once.</p>
+    <cog-toggleable-effects
+      :options="effectsOptions"
+      :selected="ability.effects"
+      :mutuallyExclusive="effectsMutuallyExclusive"
+      :disabled="disabledEffectsOptions"
+      @newSelected="effectsUpdated"
+    />
+    <div v-for="effect in activeSpecialEffects" v-bind:key="effect + 'key'">
+      <h4>{{ effect }}</h4>
+      <div class="alignRow gap">
+        <label v-bind:for="effect + 'input'">AP to spend:</label>
+        <input
+          type="number"
+          min="1"
+          v-model="ability.specialEffectsCosts[effect]"
+          v-bind:id="effect + 'input'"
+          class="input tiny mt-2"
+        />
       </div>
+    </div>
+    <h3>Area of Effect</h3>
+    <p class="textBlock">
+      Up to one Area of Effect type may be taken. Whereas range indicates where
+      the ability effect can start, Area of Effect indicates where it can go.
+      For example, with a line effect, that line may begin and end anywhere
+      within the ability's range so long as the line's length meets the
+      description of the line effect and does not extend outside of the
+      ability's range. If the ability has only Melee range, it must start within
+      a hex that the Cog can reach.
+    </p>
+    <radio-button-selection
+      :options="areaOfEffectOptions"
+      :selected="ability.areaEffect"
+      :unselectable="true"
+      @selectedUpdated="areaEffectUpdated"
+    />
+    <h3>Add the Ability to your Cog</h3>
+    <p>
+      AP Cost: <span class="number">{{ costAP }}</span>
+    </p>
+    <p>Sample of what your ability will look like:</p>
+    <display-basic-ability-details :ability="formattedAbility" />
+    <div class="alignRow split">
+      <button class="btn roundedButton">Add Ability</button>
+      <button class="btn roundedButton clear">Throw Away</button>
     </div>
   </div>
 </template>
 
 <script>
+import DisplayBasicAbilityDetails from "../Common/Abilities/DisplayBasicAbilityDetails.vue";
 import CheckBox from "../Common/CheckBox.vue";
-import Fraction from "../Common/CombatStatsComponents/Fraction.vue";
 import RadioButtonSelection from "../Common/RadioButtonSelection.vue";
 import CogToggleableEffects from "./CogToggleableEffects.vue";
 export default {
   components: {
-    Fraction,
     RadioButtonSelection,
     CheckBox,
     CogToggleableEffects,
+    DisplayBasicAbilityDetails,
   },
   name: "CogAbilityCreation",
   props: {
     cog: Object,
-    totalAP: Number,
   },
   data() {
     return {
-      showNewAbilityPanel: true,
       ability: {
         name: "",
         range: "melee",
@@ -240,10 +232,6 @@ export default {
     };
   },
   computed: {
-    remainingAP() {
-      // TODO: Subtract AP as they are used
-      return this.totalAP;
-    },
     costAP() {
       let ap = 0;
 
@@ -824,6 +812,11 @@ export default {
       return map;
     },
     formattedAbility() {
+      // calculate name string
+      let name = this.ability.name;
+      if (name === undefined || name === "") {
+        name = `Attack ${this.cog.abilities.length}`;
+      }
       // calculate activation costs
       const activationList = [this.optionsMap[this.ability.speed].desc];
       const costMap = { A: parseInt(this.optionsMap[this.ability.speed].desc) };
@@ -835,27 +828,59 @@ export default {
         activationList.push(this.calculateMPCost + " MP");
         costMap.M = this.calculateMPCost;
       }
-      const activationStr = activationList.join(", ");
-      // calculate range string
-      const areaOfEffectStr =
-        this.optionsMap[this.ability.areaEffect] === undefined
-          ? ""
-          : this.optionsMap[this.ability.areaEffect].desc;
-      const rangeStr =
-        this.optionsMap[this.ability.range].desc + areaOfEffectStr;
+      const activation = activationList.join(", ");
+      // calculate effect
+      const abilityEffects = [];
+      // - damage effects
+      if (!this.ability.zeroDamage) {
+        if (this.ability.normalDamage) {
+          abilityEffects.push(this.optionsMap[this.ability.normalDamage].desc);
+        }
+        if (this.ability.burningDamage) {
+          abilityEffects.push(this.optionsMap[this.ability.burningDamage].desc);
+        }
+        if (this.ability.bleedingDamage) {
+          abilityEffects.push(
+            this.optionsMap[this.ability.bleedingDamage].desc
+          );
+        }
+        if (this.ability.armorDamage) {
+          abilityEffects.push(this.optionsMap[this.ability.armorDamage].desc);
+        }
+        if (this.ability.stunDamage) {
+          abilityEffects.push(this.optionsMap[this.ability.stunDamage].desc);
+        }
+        if (this.ability.paralysisDamage) {
+          abilityEffects.push(
+            this.optionsMap[this.ability.paralysisDamage].desc
+          );
+        }
+      }
+      // - special effects
+      if (this.ability.effects.length > 0) {
+        abilityEffects.push("Special Effects:");
+        this.ability.effects.forEach((effect) =>
+          abilityEffects.push(`- ${effect}: ${this.optionsMap[effect].desc}`)
+        );
+      }
+      // - area effects
+      if (this.optionsMap[this.ability.areaEffect] !== undefined) {
+        abilityEffects.push(
+          `Area Effect: ${this.optionsMap[this.ability.areaEffect].desc}`
+        );
+      }
+      const effect = abilityEffects.join("\n"); // split by newline to match backend webscraper
       return {
-        name: this.ability.name,
-        purchase: this.costAP + " AP",
-        range: rangeStr,
-        activation: activationStr,
+        name,
+        purchase: `${this.costAP} AP`,
+        range: this.optionsMap[this.ability.range].desc,
+        activation,
         cost: costMap,
+        effect,
       };
     },
   },
   methods: {
-    addAbilityButton() {
-      this.showNewAbilityPanel = !this.showNewAbilityPanel;
-    },
     rangeUpdated(newRange) {
       this.ability.range = newRange;
     },

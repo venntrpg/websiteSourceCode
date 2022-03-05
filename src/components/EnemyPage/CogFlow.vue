@@ -108,7 +108,7 @@
         >. For example, they can have one ability of 2L AP, or two abilities of
         L AP each, or one worth L AP and two worth L/2 AP each.
       </p>
-      <cog-ability-creation :cog="enemy" :totalAP="totalAP" />
+      <cog-ability-editable-list :cog="enemy" :totalAP="totalAP" />
       <h2>Step 7: Choose Traits</h2>
       <p class="textBlock">
         A Cog gains 3 + L/2 Traits, plus 1 for each player beyond 3.
@@ -138,8 +138,8 @@
 import RadioButtonSelection from "../Common/RadioButtonSelection.vue";
 import CogTypeSelection from "./CogTypeSelection.vue";
 import { ResponsiveDirective } from "vue-responsive-components";
-import CogAbilityCreation from "./CogAbilityCreation.vue";
 import { mapState } from "vuex";
+import CogAbilityEditableList from "./CogAbilityEditableList.vue";
 
 const COG_LOCAL_STORAGE = "creation-cog-wip";
 
@@ -148,7 +148,7 @@ export default {
   components: {
     RadioButtonSelection,
     CogTypeSelection,
-    CogAbilityCreation,
+    CogAbilityEditableList,
   },
   directives: {
     responsive: ResponsiveDirective,
@@ -255,6 +255,8 @@ export default {
         // non-standard character fields
         template: this.cog.template,
         level: this.cog.level,
+        // abilities - TODO - fill with custom abilties AND traits AND weaknesses
+        abilities: [],
       };
     },
     calculateHP() {

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex">
+  <div class="flex" v-bind:class="warningClass">
     <div class="number">{{ top }}</div>
     <div v-if="Number.isInteger(bottom)" class="flex">
       <div class="slash">/</div>
@@ -14,6 +14,17 @@ export default {
   props: {
     top: Number,
     bottom: Number,
+    noWarning: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    warningClass() {
+      return (this.top > this.bottom || this.bottom < 0) && !this.noWarning
+        ? "errorText"
+        : "";
+    },
   },
 };
 </script>

@@ -179,6 +179,10 @@ ul {
   font-size: 12pt;
 }
 
+.errorText {
+  color: var(--red-600);
+}
+
 /* Button Styles */
 
 .btn {
