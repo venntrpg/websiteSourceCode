@@ -246,6 +246,22 @@ ul {
   border: solid 2px var(--red-700);
   color: white;
 }
+.roundedButton.purple {
+  background-color: var(--purple-400);
+  border: solid 2px var(--purple-400);
+}
+.roundedButton.purple:disabled {
+  background-color: var(--purple-300);
+  border: solid 2px var(--purple-300);
+}
+.roundedButton.purple:hover:not(:disabled) {
+  background-color: var(--purple-600);
+  border: solid 2px var(--purple-600);
+}
+.roundedButton.purple:active:not(:disabled) {
+  background-color: var(--purple-700);
+  border: solid 2px var(--purple-700);
+}
 .roundedButton.wide {
   width: calc(100% - 24px);
 }
@@ -396,6 +412,9 @@ ul {
 }
 .alignRow.split {
   justify-content: space-between;
+}
+.alignRow.end {
+  justify-content: end;
 }
 
 .tableItems {

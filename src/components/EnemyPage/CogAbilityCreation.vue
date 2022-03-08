@@ -1,6 +1,16 @@
 <template>
   <div class="card border padded column mt-8">
     <h2>New Ability</h2>
+    <p>
+      Current version:
+      <a
+        href="https://vennt.fandom.com/wiki/Foe_Ability?oldid=3856"
+        target="_blank"
+        class="link"
+      >
+        Revision as of 17:02, 27 February 2022
+      </a>
+    </p>
     <div class="alignRow gap">
       <label for="abilityName" class="nowrap">Ability Name:</label>
       <input
@@ -187,12 +197,14 @@
       <button class="btn roundedButton">Add Ability</button>
       <button class="btn roundedButton clear">Throw Away</button>
     </div>
+    <confirmation-modal />
   </div>
 </template>
 
 <script>
 import DisplayBasicAbilityDetails from "../Common/Abilities/DisplayBasicAbilityDetails.vue";
 import CheckBox from "../Common/CheckBox.vue";
+import ConfirmationModal from "../Common/ConfirmationModal.vue";
 import RadioButtonSelection from "../Common/RadioButtonSelection.vue";
 import CogToggleableEffects from "./CogToggleableEffects.vue";
 export default {
@@ -201,6 +213,7 @@ export default {
     CheckBox,
     CogToggleableEffects,
     DisplayBasicAbilityDetails,
+    ConfirmationModal,
   },
   name: "CogAbilityCreation",
   props: {
@@ -448,19 +461,38 @@ export default {
           type: "res",
         },
         // attribute damage type attack
-        attr0: { ap: 0, desc: "Deal 1 attribute damage.", type: "attr" },
-        attr1: { ap: 3, desc: "Deal 2 attribute damage.", type: "attr" },
-        attr2: { ap: 8, desc: "Deal 3 attribute damage.", type: "attr" },
+        attr0: {
+          ap: 0,
+          desc: "Deal 1 attribute damage.",
+          type: "attr",
+          num: 1,
+        },
+        attr1: {
+          ap: 3,
+          desc: "Deal 2 attribute damage.",
+          type: "attr",
+          num: 2,
+        },
+        attr2: {
+          ap: 8,
+          desc: "Deal 3 attribute damage.",
+          type: "attr",
+          num: 3,
+        },
         // fear type attack
         fear0: {
           ap: 0,
           desc: "Deal 1 paralysis damage and 3 stun damage or must flee the Cog on their next turn (target's choice).",
           type: "fear",
+          paralysis: 1,
+          stun: 3,
         },
         fear1: {
           ap: 4,
           desc: "Deal 2 paralysis damage and 5 stun damage or must flee the Cog on their next turn (target's choice).",
           type: "fear",
+          paralysis: 2,
+          stun: 5,
         },
         // normal damage type
         norm0: {
@@ -716,26 +748,86 @@ export default {
       });
       return map;
     },
-    typeOptions() {
+    typeOptionsMap() {
+      // relies on output of optionMap.
       return {
-        normal:
-          "<b>Attack, Normal:</b> Acc vs Vim, can be a direct hit or glancing blow. Can be Evaded.",
-        quick:
-          "<b>Attack, Quick:</b> AGI check, fully negated on success; a direct hit on failure. Can NOT be Evaded.",
-        sneak:
-          "<b>Attack, Sneak:</b> PER check, fully negated on success; a direct hit on failure. CanNOT be Evaded.",
-        magical:
-          "<b>Attack, Magical:</b> SPI check, fully negated on success; a direct hit on failure. Can be Evaded.",
-        attribute:
-          "<b>Attribute Damage:</b> STR check, fully negated on success; on failure: glancing blow and the target takes 1 damage to an Attribute specified during this ability's creation. The damage may be increased to 2 for 3 AP, or 3 for 8 AP. Can be Evaded.",
-        charm:
-          "<b>Charm:</b> CHA check, fully negated on success; on failure: glancing blow and the target is charmed. Can NOT be Evaded.",
-        confusion:
-          "<b>Confusion:</b> INT check, fully negated on success; on failure: glancing blow and the target is confused. Can NOT be Evaded.",
-        disarm:
-          "<b>Disarm:</b> DEX check, fully negated on success; on failure: glancing blow and target's weapon is disarmed. Can be Evaded.",
-        fear: "<b>Fear:</b> WIS check, fully negated on success; on failure: glancing blow and the target takes 1 paralysis damage and 3 stun damage or must flee the Cog on their next turn (target's choice). The damage may be increased to 2 and 5 respectively (or flee on their next turn) for 3 AP. CanNOT be Evaded. This effect cannot stack with Cogs of the same type.",
+        normal: {
+          title: "Attack, Normal",
+          desc: "Acc vs Vim, can be a direct hit or glancing blow. Can be Evaded.",
+          outputStr: `Acc vs Vim, can be a direct hit or glancing blow. Can be Evaded.`,
+        },
+        quick: {
+          title: "Attack, Quick",
+          desc: "AGI check, fully negated on success; a direct hit on failure. Can NOT be Evaded.",
+          outputStr: `${
+            this.optionsMap[this.ability.resistanceCheck].desc
+          } AGI check, fully negated on success; a direct hit on failure. Can NOT be Evaded.`,
+        },
+        sneak: {
+          title: "Attack, Sneak",
+          desc: "PER check, fully negated on success; a direct hit on failure. Can NOT be Evaded.",
+          outputStr: `${
+            this.optionsMap[this.ability.resistanceCheck].desc
+          } PER check, fully negated on success; a direct hit on failure. Can NOT be Evaded.`,
+        },
+        magical: {
+          title: "Attack, Magical",
+          desc: "SPI check, fully negated on success; a direct hit on failure. Can be Evaded.",
+          outputStr: `${
+            this.optionsMap[this.ability.resistanceCheck].desc
+          } SPI check, fully negated on success; a direct hit on failure. Can be Evaded.`,
+        },
+        attribute: {
+          title: "Attribute Damage",
+          desc: "STR check, fully negated on success; on failure: glancing blow and the target takes 1 damage to an Attribute specified during this ability's creation. The damage may be increased to 2 for 3 AP, or 3 for 8 AP. Can be Evaded.",
+          outputStr: `${
+            this.optionsMap[this.ability.resistanceCheck].desc
+          } STR check, fully negated on success; on failure: glancing blow and the target takes ${
+            this.optionsMap[this.ability.attribute].num
+          } damage to an Attribute specified during this ability's creation. Can be Evaded.`,
+        },
+        charm: {
+          title: "Charm",
+          desc: "CHA check, fully negated on success; on failure: glancing blow and the target is charmed. Can NOT be Evaded.",
+          outputStr: `${
+            this.optionsMap[this.ability.resistanceCheck].desc
+          } CHA check, fully negated on success; on failure: glancing blow and the target is charmed. Can NOT be Evaded.`,
+        },
+        confusion: {
+          title: "Confusion",
+          desc: "INT check, fully negated on success; on failure: glancing blow and the target is confused. Can NOT be Evaded.",
+          outputStr: `${
+            this.optionsMap[this.ability.resistanceCheck].desc
+          } INT check, fully negated on success; on failure: glancing blow and the target is confused. Can NOT be Evaded.`,
+        },
+        disarm: {
+          title: "Disarm",
+          desc: "DEX check, fully negated on success; on failure: glancing blow and target's weapon is disarmed. Can be Evaded.",
+          outputStr: `${
+            this.optionsMap[this.ability.resistanceCheck].desc
+          } DEX check, fully negated on success; on failure: glancing blow and target's weapon is disarmed. Can be Evaded.`,
+        },
+        fear: {
+          title: "Fear",
+          desc: "WIS check, fully negated on success; on failure: glancing blow and the target takes 1 paralysis damage and 3 stun damage or must flee the Cog on their next turn (target's choice). The damage may be increased to 2 and 5 respectively (or flee on their next turn) for 3 AP. CanNOT be Evaded. This effect cannot stack with Cogs of the same type.",
+          outputStr: `${
+            this.optionsMap[this.ability.resistanceCheck].desc
+          } WIS check, fully negated on success; on failure: glancing blow and the target takes ${
+            this.optionsMap[this.ability.fear].paralysis
+          } paralysis damage and ${
+            this.optionsMap[this.ability.fear].stun
+          } stun damage or must flee the Cog on their next turn (target's choice). Can NOT be Evaded. This effect cannot stack with Cogs of the same type.`,
+        },
       };
+    },
+    typeOptions() {
+      const map = {};
+      Object.entries(this.typeOptionsMap).forEach((pair) => {
+        const name = pair[0];
+        const details = pair[1];
+        map[name] = `<b>${details.title}:</b> ${details.desc}`;
+      });
+      return map;
     },
     resistanceCheckOptions() {
       return this.basicOptionMap("res");
@@ -830,31 +922,31 @@ export default {
       }
       const activation = activationList.join(", ");
       // calculate effect
-      const abilityEffects = [];
+      const type = `${this.typeOptionsMap[this.ability.type].title}: ${
+        this.typeOptionsMap[this.ability.type].outputStr
+      }`;
+      const abilityEffects = [type];
       // - damage effects
-      if (!this.ability.zeroDamage) {
-        if (this.ability.normalDamage) {
-          abilityEffects.push(this.optionsMap[this.ability.normalDamage].desc);
-        }
-        if (this.ability.burningDamage) {
-          abilityEffects.push(this.optionsMap[this.ability.burningDamage].desc);
-        }
-        if (this.ability.bleedingDamage) {
-          abilityEffects.push(
-            this.optionsMap[this.ability.bleedingDamage].desc
-          );
-        }
-        if (this.ability.armorDamage) {
-          abilityEffects.push(this.optionsMap[this.ability.armorDamage].desc);
-        }
-        if (this.ability.stunDamage) {
-          abilityEffects.push(this.optionsMap[this.ability.stunDamage].desc);
-        }
-        if (this.ability.paralysisDamage) {
-          abilityEffects.push(
-            this.optionsMap[this.ability.paralysisDamage].desc
-          );
-        }
+      const damaged = [
+        "normalDamage",
+        "burningDamage",
+        "bleedingDamage",
+        "armorDamage",
+        "stunDamage",
+        "paralysisDamage",
+      ];
+      const damageCount = damaged
+        .map((damage) => this.ability[damage])
+        .filter((choice) => choice !== "").length;
+      if (!this.ability.zeroDamage && damageCount > 0) {
+        const preStr = damageCount === 1 ? "" : "- ";
+        damaged.forEach((damage) => {
+          if (this.ability[damage] !== "") {
+            abilityEffects.push(
+              preStr + this.optionsMap[this.ability[damage]].desc
+            );
+          }
+        });
       }
       // - special effects
       if (this.ability.effects.length > 0) {

@@ -39,6 +39,7 @@ export default {
         } else {
           if (inList) {
             result += "</ul>";
+            inList = false;
           }
           result += "<p>" + line + "</p>";
         }
