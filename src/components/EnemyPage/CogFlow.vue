@@ -322,7 +322,7 @@ export default {
       }
       const level = parseInt(this.cog.level);
       let mp = Math.max(level, 0);
-      if (this.cog.template === "tank") {
+      if (this.cog.template === "magician") {
         mp += level;
       }
       // allow space for traits to effect things here
@@ -424,6 +424,10 @@ export default {
       if (level > 14) {
         acc = level * 6;
       }
+      if (this.cog.template === "fighter") {
+        acc += 20;
+      }
+      // allow space for traits to effect things here
       return acc;
     },
     totalAP() {
