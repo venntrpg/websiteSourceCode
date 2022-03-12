@@ -6,17 +6,26 @@
       <fraction :top="remainingAP" :bottom="totalAP" />
     </div>
     <div v-for="(ability, index) in cogAbilities" v-bind:key="index">
-      <div class="card border padded column mb-8 ability">
-        <display-basic-ability-details :ability="ability.formatted" />
+      <div class="card padded column mb-8 ability">
         <!-- TODO: Can probably remove list and just leave a header and edit / delete buttons 
         since abilities should be listed in the side panel soon -->
-        <div class="alignRow end gap">
-          <button
-            v-on:click="editAbilityButton(index)"
-            class="btn roundedButton"
-          >
-            Edit
-          </button>
+        <div class="alignRow split gap">
+          <h3>{{ ability.formatted.name }}</h3>
+          <div class="alignRow gap">
+            <button
+              v-on:click="editAbilityButton(index)"
+              class="btn roundedButton"
+            >
+              Edit
+            </button>
+            <confirmation-modal
+              :buttonText="'Delete'"
+              :buttonClass="'clear'"
+              :confStr="'Delete'"
+              :details="'Are you sure you want to delete this ability? It will not be saved.'"
+              @mainButton="deleteAbility(index)"
+            />
+          </div>
         </div>
       </div>
       <cog-ability-creation
@@ -25,7 +34,8 @@
         :givenAbility="ability.ability"
         :index="index"
         @createAbility="addAbility"
-        @deleteAbility="deleteTempAbility"
+        @deleteAbility="deleteAbility"
+        class="mb-8"
       />
     </div>
     <button v-on:click="addAbilityButton" class="btn roundedButton mb-8">
@@ -35,17 +45,17 @@
       v-if="showNewAbilityPanel"
       :cog="cog"
       @createAbility="addAbility"
-      @deleteAbility="deleteTempAbility"
+      @deleteAbility="deleteAbility"
     />
   </div>
 </template>
 
 <script>
-import DisplayBasicAbilityDetails from "../Common/Abilities/DisplayBasicAbilityDetails.vue";
 import Fraction from "../Common/CombatStatsComponents/Fraction.vue";
+import ConfirmationModal from "../Common/ConfirmationModal.vue";
 import CogAbilityCreation from "./CogAbilityCreation.vue";
 export default {
-  components: { Fraction, CogAbilityCreation, DisplayBasicAbilityDetails },
+  components: { Fraction, CogAbilityCreation, ConfirmationModal },
   name: "CogAbilityEditableList",
   props: {
     cog: Object,
@@ -82,7 +92,7 @@ export default {
       }
       this.$emit("updateAbilities", abilities);
     },
-    deleteTempAbility(index) {
+    deleteAbility(index) {
       if (index !== -1) {
         const abilities = [...this.cogAbilities];
         abilities.splice(index, 1);
@@ -114,6 +124,8 @@ export default {
   margin-bottom: 8px;
 }
 .ability {
-  padding-top: 0px; /* Padding gets added by header */
+  /* Padding gets added by header */
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 </style>

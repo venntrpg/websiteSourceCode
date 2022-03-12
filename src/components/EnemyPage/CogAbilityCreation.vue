@@ -5,7 +5,7 @@
     <p>
       Current version:
       <a
-        href="https://vennt.fandom.com/wiki/Foe_Ability?oldid=3856"
+        href="https://vennt.fandom.com/wiki/Foe_Ability?oldid=4250"
         target="_blank"
         class="link"
       >
@@ -195,7 +195,11 @@
     <p>Sample of what your ability will look like:</p>
     <display-basic-ability-details :ability="formattedAbility" />
     <div class="alignRow split">
-      <button v-on:click="emitCreate()" class="btn roundedButton">
+      <button
+        v-bind:disabled="createButtonDisabled"
+        v-on:click="emitCreate()"
+        class="btn roundedButton"
+      >
         Save Ability
       </button>
       <confirmation-modal
@@ -240,11 +244,11 @@ export default {
       ability: {
         name: "",
         range: "melee",
-        speed: "regular",
+        speed: "slow",
         vimCost: "",
         mpCost: "",
         type: "normal",
-        resistanceCheck: "res1",
+        resistanceCheck: "res0",
         attribute: "attr0",
         fear: "fear0",
         zeroDamage: true,
@@ -273,8 +277,8 @@ export default {
     costAP() {
       let ap = 0;
 
-      ap = ap + this.option2AP(this.ability.range);
-      ap = ap + this.option2AP(this.ability.speed);
+      ap = ap + this.option2APNumber(this.ability.range);
+      ap = ap + this.option2APNumber(this.ability.speed);
 
       // Resource Cost
       ap = ap - this.calculateVimCost / 5;
@@ -293,27 +297,24 @@ export default {
 
       // Damage Types
       if (!this.ability.zeroDamage) {
-        ap = ap + this.option2AP(this.ability.normalDamage);
-        ap = ap + this.option2AP(this.ability.burningDamage);
-        ap = ap + this.option2AP(this.ability.bleedingDamage);
-        ap = ap + this.option2AP(this.ability.armorDamage);
-        ap = ap + this.option2AP(this.ability.stunDamage);
-        ap = ap + this.option2AP(this.ability.paralysisDamage);
+        ap = ap + this.option2APNumber(this.ability.normalDamage);
+        ap = ap + this.option2APNumber(this.ability.burningDamage);
+        ap = ap + this.option2APNumber(this.ability.bleedingDamage);
+        ap = ap + this.option2APNumber(this.ability.armorDamage);
+        ap = ap + this.option2APNumber(this.ability.stunDamage);
+        ap = ap + this.option2APNumber(this.ability.paralysisDamage);
       }
 
       // Special Effects
       ap =
         ap +
-        this.ability.effects.reduce((sum, effect) => {
-          let val = 0;
-          if (!isNaN(this.option2AP(effect))) {
-            val = this.option2AP(effect);
-          }
-          return sum + val;
-        }, 0);
+        this.ability.effects.reduce(
+          (sum, effect) => sum + this.option2APNumber(effect),
+          0
+        );
 
       // Area Effects
-      ap = ap + this.option2AP(this.ability.areaEffect);
+      ap = ap + this.option2APNumber(this.ability.areaEffect);
       return ap;
     },
     calculateVimCost() {
@@ -420,6 +421,11 @@ export default {
       if (!isNaN(sharpenAP)) {
         sharpenEffectX = sharpenAP * 5;
       }
+      const piercingAP = this.specialEffectsAPMap["Piercing"];
+      let piercingEffectX = "2X";
+      if (!isNaN(piercingAP)) {
+        piercingEffectX = piercingAP * 2;
+      }
       // other constants used in options
       const specialDmgHalfL = this.lvlStr(
         "L/2",
@@ -436,19 +442,19 @@ export default {
       return {
         // range
         melee: { ap: 0, desc: "Melee", type: "range" },
-        ranged: { ap: 1, desc: "12m", type: "range" },
-        long: { ap: 2, desc: "60m", type: "range" },
+        ranged: { ap: 2, desc: "12m", type: "range" },
+        long: { ap: 4, desc: "60m", type: "range" },
         // speed
         fast: {
-          ap: 4,
+          ap: "x2", // TODO: Deal with this
           desc: "1 Action",
           type: "speed",
           optionDetails:
             "Added Effects: The Cog's Level is treated as 3 lower for the purpose of all damage.",
         },
-        regular: { ap: 0, desc: "2 Actions", type: "speed" },
+        regular: { ap: 3, desc: "2 Actions", type: "speed" },
         slow: {
-          ap: -2,
+          ap: 0,
           desc: "3 Actions",
           type: "speed",
           optionDetails:
@@ -456,32 +462,32 @@ export default {
         },
         // resistance checks type attack
         res0: {
-          ap: -1,
+          ap: 0,
           desc: `DL:  ${this.lvlStr("6 + L", (lvl) => lvl + 6)}`,
           type: "res",
         },
         res1: {
-          ap: 0,
+          ap: 1,
           desc: `DL:  ${this.lvlStr("7 + L", (lvl) => lvl + 7)}`,
           type: "res",
         },
         res2: {
-          ap: 1,
+          ap: 2,
           desc: `DL:  ${this.lvlStr("8 + L", (lvl) => lvl + 8)}`,
           type: "res",
         },
         res3: {
-          ap: 2,
+          ap: 4,
           desc: `DL:  ${this.lvlStr("9 + L", (lvl) => lvl + 9)}`,
           type: "res",
         },
         res4: {
-          ap: 3,
+          ap: 6,
           desc: `DL:  ${this.lvlStr("10 + L", (lvl) => lvl + 10)}`,
           type: "res",
         },
         res5: {
-          ap: 4,
+          ap: 8,
           desc: `DL:  ${this.lvlStr("11 + L", (lvl) => lvl + 11)}`,
           type: "res",
         },
@@ -536,12 +542,12 @@ export default {
           type: "norm",
         },
         norm3: {
-          ap: 4,
+          ap: 5,
           desc: `Deal ${this.normalDamageStr(1)} damage`,
           type: "norm",
         },
         norm4: {
-          ap: 5,
+          ap: 7,
           desc: `Deal ${this.normalDamageStr(2)} damage`,
           type: "norm",
         },
@@ -580,18 +586,18 @@ export default {
         // armor damage
         armor0: {
           ap: 4,
-          desc: `Deal ${specialDmgHalfL} armor damage.`,
+          desc: `Deal 1 armor damage.`,
           type: "armor",
         },
         // stun damage
         stun0: {
-          ap: 3,
+          ap: 4,
           desc: "Deal 1 stun damage on direct hits.",
           type: "stun",
         },
         // paralysis damage
         paralysis0: {
-          ap: 3,
+          ap: 4,
           desc: "Deal 1 paralysis damage on direct hits.",
           type: "paralysis",
         },
@@ -602,7 +608,7 @@ export default {
           type: "effect",
         },
         Clobbering: {
-          ap: 1,
+          ap: 2,
           desc: `This ability also causes the target to lose ${this.lvlStr()} Vim on a direct hit, or ${this.lvlStr(
             "L/2",
             (lvl) => Math.round(lvl / 2)
@@ -610,12 +616,12 @@ export default {
           type: "effect",
         },
         "Defense Breaker": {
-          ap: 1,
+          ap: 2,
           desc: "This ability also causes the target to lose 1 Alert after the attack resolves.",
           type: "effect",
         },
         Disorienter: {
-          ap: 1,
+          ap: 2,
           desc: "This ability also reduces the target's Accuracy by 5 until the end of the Encounter.",
           type: "effect",
         },
@@ -627,7 +633,7 @@ export default {
             "This effect can only be taken if this ability costs Vim and/or MP. If this effect is taken, the amount of AP that can be spent on this effect is at most the amount of AP gained from spending Vim and/or MP.",
         },
         Homing: {
-          ap: this.lvlInt(),
+          ap: this.lvlInt((lvl) => lvl + 5),
           desc: "This ability cannot be Evaded.",
           type: "effect",
         },
@@ -650,13 +656,18 @@ export default {
           type: "effect",
         },
         Intangible: {
-          ap: this.lvlInt((lvl) => Math.floor(lvl / 2)),
+          ap: this.lvlInt((lvl) => Math.floor(lvl / 2) + 3),
           desc: "This ability cannot be Blocked (Beginner)",
           type: "effect",
         },
         Protecting: {
           ap: this.specialEffectsAPMap["Protecting"],
           desc: `This ability grants the Cog +${this.specialEffectsAPMap["Protecting"]} Armor until the start of their next turn.`,
+          type: "effect",
+        },
+        Piercing: {
+          ap: this.specialEffectsAPMap["Piercing"],
+          desc: `This ability ignores ${piercingEffectX} Armor.`,
           type: "effect",
         },
         Sharpen: {
@@ -683,7 +694,7 @@ export default {
         },
         Threatening: { ap: 1, desc: "This ability threatens the target." },
         "Mana Drain": {
-          ap: 1,
+          ap: 2,
           desc: `This ability also causes the target to lose ${this.lvlStr(
             "L/2",
             (lvl) => Math.floor(lvl / 2)
@@ -692,55 +703,55 @@ export default {
         },
         // Area of Effect
         area0: {
-          ap: 1,
+          ap: 2,
           desc: "This ability cannot target an empty hex. After resolving the ability, the ability also affects valid targets who are adjacent to the original target. This chain reaction repeats until there are no valid targets remaining. The ability cannot affect the same target twice.",
           type: "area",
           title: "Chain, Adjacent",
         },
         area1: {
-          ap: 2,
+          ap: 3,
           desc: "This ability cannot target an empty hex. After resolving the ability, the ability also affects valid targets who are within 3 meters of the original target. This chain reaction repeats until there are no valid targets remaining. The ability cannot affect the same target twice.",
           type: "area",
           title: "Chain, Long",
         },
         area2: {
-          ap: 1,
+          ap: 2,
           desc: "This ability targets 3 hexes in a line.",
           type: "area",
           title: "Line, Short",
         },
         area3: {
-          ap: 2,
+          ap: 3,
           desc: "This ability targets 6-12 hexes in a line, chosen by the Cog during creation.",
           type: "area",
           title: "Line, Medium",
         },
         area4: {
-          ap: 3,
+          ap: 4,
           desc: "This ability targets 30-60 hexes in a line, chosen by the Cog during creation.",
           type: "area",
           title: "Line, Long",
         },
         area5: {
-          ap: 2,
+          ap: 3,
           desc: "This ability also targets all adjacent hexes.",
           type: "area",
           title: "Radius, Small",
         },
         area6: {
-          ap: 3,
+          ap: 4,
           desc: "This ability also targets all hexes within a 2-4 meter radius, chosen by the Cog during creation.",
           type: "area",
           title: "Radius, Medium",
         },
         area7: {
-          ap: 4,
+          ap: 6,
           desc: "This ability also targets all hexes within a 5-12 meter radius, chosen by the Cog during creation.",
           type: "area",
           title: "Radius, Large",
         },
         area8: {
-          ap: 5,
+          ap: 8,
           desc: "This ability also targets all hexes within a 30 meter radius",
           type: "area",
           title: "Radius, Huge",
@@ -908,7 +919,14 @@ export default {
     },
     specialEffects() {
       // effects that require the user to specify how much AP to spend
-      return ["Empower", "Protecting", "Sharpen", "Sickening", "Stiffening"];
+      return [
+        "Empower",
+        "Piercing",
+        "Protecting",
+        "Sharpen",
+        "Sickening",
+        "Stiffening",
+      ];
     },
     activeSpecialEffects() {
       return this.ability.effects.filter((effect) =>
@@ -999,6 +1017,17 @@ export default {
         ap: this.costAP,
       };
     },
+    createButtonDisabled() {
+      // cannot create ability if any effect costs haven't been entered
+      if (
+        this.activeSpecialEffects.some((effect) =>
+          isNaN(this.ability.specialEffectsCosts[effect])
+        )
+      ) {
+        return true;
+      }
+      return false;
+    },
   },
   methods: {
     rangeUpdated(newRange) {
@@ -1054,6 +1083,11 @@ export default {
         return this.optionsMap[option].ap;
       }
       return 0;
+    },
+    option2APNumber(option) {
+      // ensures the response is a number and never a string
+      const ap = this.option2AP(option);
+      return isNaN(ap) ? 0 : ap;
     },
     costStr(option) {
       return `Cost: ${this.option2AP(option)} AP`;

@@ -31,7 +31,7 @@ Todo
 - [ ] move toolTip css to main / generally try to consolidate css
 - [ ] split vuex into seperate modules
 - [ ] keep splitting components if possible
-- [ ] update double confirm button with a confirmation modal floating in the middle of the screen
+- [x] update double confirm button with a confirmation modal floating in the middle of the screen
 - [x] convert divs to labels for inputs
 - [x] use mustaches when possible {{ }} to replace v-text & v-html
 - [ ] make color references more generic so we can add a dark mode

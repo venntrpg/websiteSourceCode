@@ -204,7 +204,7 @@
       </div>
     </div>
     <div class="tall"></div>
-    <!-- SINGLE LINE STATS -->
+    <!-- CUSTOM SINGLE LINE STATS -->
     <button
       v-if="character.gift"
       v-on:click="attrButton('gift')"
@@ -224,6 +224,29 @@
         <gift-description :gift="character.gift" :showTitle="false" />
       </div>
     </div>
+    <div v-if="isCog && character.template" class="card stat singleStat">
+      Template: {{ character.template }}
+    </div>
+    <button
+      v-if="isCog && character.cogType"
+      v-on:click="attrButton('cogType')"
+      class="btn basicBtn attrButton noSelect singleStat"
+      v-bind:class="attrButtonClass('cogType')"
+    >
+      <div class="basicBtnContents attrButtonContents">
+        Type: {{ character.cogType }}
+      </div>
+    </button>
+    <div
+      v-if="showDropDown('cogType')"
+      class="card diceDropDown left right singleStat"
+    >
+      <div class="margin">
+        <div class="seperator bottomMargin"></div>
+        <cog-type-description :cogType="character.cogType" :showTitle="false" />
+      </div>
+    </div>
+    <!-- SINGLE LINE STATS -->
     <div v-for="attr in singleRowAttributes" v-bind:key="attr">
       <button
         v-on:click="attrButton(attr)"
@@ -278,6 +301,19 @@
         </div>
       </div>
     </div>
+    <div v-if="showAbilities && character.abilities.length > 0">
+      <div class="flex">
+        <Bullet :character="character" />
+        <h2>Abilities</h2>
+      </div>
+      <div
+        v-for="(ability, index) in character.abilities"
+        v-bind:key="index"
+        class="card stat singleStat regtext"
+      >
+        <display-basic-ability-details :ability="ability" />
+      </div>
+    </div>
     <div class="tall"></div>
   </div>
 </template>
@@ -297,6 +333,8 @@ import DiceRender from "./CombatStatsComponents/DiceRender.vue";
 import Fraction from "./CombatStatsComponents/Fraction.vue";
 import GiftDescription from "./CombatStatsComponents/GiftDescription.vue";
 import CheckBox from "./CheckBox.vue";
+import CogTypeDescription from "../EnemyPage/CogTypeDescription.vue";
+import DisplayBasicAbilityDetails from "./Abilities/DisplayBasicAbilityDetails.vue";
 
 export default {
   name: "combatStats",
@@ -320,6 +358,8 @@ export default {
     Fraction,
     GiftDescription,
     CheckBox,
+    CogTypeDescription,
+    DisplayBasicAbilityDetails,
   },
   data() {
     return {
@@ -365,7 +405,7 @@ export default {
   computed: {
     combatStatsRows() {
       if (this.isCog) {
-        return [["hp"], ["mp"], ["vim"]];
+        return [["hp"], ["mp", "vim"]];
       }
       return [
         ["hp", "mp"],
@@ -381,7 +421,7 @@ export default {
     },
     singleRowAttributes() {
       if (this.isCog) {
-        return ["init", "speed", "armor"];
+        return ["acc", "init", "speed", "armor", "level"];
       }
       return ["init", "speed", "armor", "xp", "sp", "maxBulk"];
     },
@@ -459,6 +499,9 @@ export default {
         sp: 'Silver Pieces are Amnis\'s main currency. <a href="https://vennt.fandom.com/wiki/Money" target="_blank" class="link">Wiki entry</a>',
         maxBulk:
           "Bulk is an abstract unit of measurement to represent the weight and size of one's inventory. You can carry an amount of Bulk up to your carrying capacity.",
+        level:
+          'Level of the cog. See the <a href="https://vennt.fandom.com/wiki/Course_of_Tactics#The_L_stat" target="_blank" class="link">Wiki entry</a>',
+        acc: 'Attacks are generally made by comparing the target\'s Accuracy to the target\'s Vim. <a href="https://vennt.fandom.com/wiki/Accuracy" target="_blank" class="link">Wiki entry</a>',
       };
       return helpMap[attr];
     },
@@ -679,13 +722,17 @@ export default {
   margin-right: 16px;
 }
 
-/* not used - investiage */
+/* used for non-opennable stats */
 .stat {
   font-size: 16pt;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 8px 10px 8px;
+}
+
+.stat.regtext {
+  font-size: inherit;
 }
 
 .flex {

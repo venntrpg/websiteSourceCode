@@ -7,7 +7,7 @@
         v-bind:class="getMobileSidebarClass"
         class="btn navButton subNavButton noSelect createNavButton"
       >
-        CREATE CHARACTER
+        CREATE COG
       </button>
       <button
         v-on:click="toggleNavButton()"
@@ -21,10 +21,10 @@
     <div class="sideBar" v-bind:class="getMobileSidebarClass">
       <combat-stats :character="enemy" :isCog="true" :showAbilities="true" />
     </div>
-    <!--  --------------------- START OF CHARACTER CREATION FLOW --------------------- -->
+    <!--  --------------------- START OF COG CREATION FLOW --------------------- -->
     <div class="page sideBarPage" v-bind:class="getMobileSidebarClass">
       <div class="largePageWidth main" v-responsive="breakpoints">
-        <h1 class="centeredText">CREATE COG</h1>
+        <h1 class="centeredText">CREATE BATTLE COG</h1>
         <h2>Step 1: Cog Name</h2>
         <div class="alignRow gap">
           <label for="enemyType" class="nowrap">Cog Name:</label>
@@ -58,6 +58,7 @@
             class="input tiny"
           />
         </div>
+        <!--
         <h2>Step 3: Choose Number of Copies</h2>
         <p class="textBlock">
           By default, Cogs have at least 3 copies or a number of copies equal to
@@ -99,14 +100,15 @@
             class="input tiny"
           />
         </div>
-        <h2>Step 4: Choose Template</h2>
+        -->
+        <h2>Step 3: Choose Template</h2>
         <p>Each Cog gains 1 Template.</p>
         <radio-button-selection
           :options="templateOptions"
           :selected="cog.template"
           @selectedUpdated="templateUpdated"
         />
-        <h2>Step 5: Choose Type</h2>
+        <h2>Step 4: Choose Type</h2>
         <p class="textBlock">
           Each Cog gains 1 Type. A Cog's Attributes are all equal to
           {{ lvlStr("L/2", (lvl) => Math.round(lvl / 2)) }} unless otherwise
@@ -120,7 +122,7 @@
           :lvl="cog.level"
           @cogTypeUpdated="cogTypeUpdated"
         />
-        <h2>Step 6: Create Abilities</h2>
+        <h2>Step 5: Create Abilities</h2>
         <p class="textBlock">
           Cogs have 2L AP to spend on
           <a
@@ -137,20 +139,18 @@
           :cogAbilities="cog.cogAbilities"
           @updateAbilities="updateCogAbilities"
         />
-        <h2>Step 7: Choose Traits</h2>
-        <p class="textBlock">
-          A Cog gains 3 + L/2 Traits, plus 1 for each player beyond 3.
-        </p>
+        <h2>Step 6: Choose Traits</h2>
+        <p class="textBlock">A Cog gains 3 + L/2 Traits.</p>
         <p class="textBlock">
           To take a Trait labeled II or III, etc., the I Trait must be taken
           first, and the better version replaces the lesser one.
         </p>
-        <h2>Step 8: Choose Weaknesses</h2>
+        <h2>Step 7: Choose Weaknesses</h2>
         <p class="textBlock">
           A Cog starts with 1 Weakness. For each additional Weakness taken, gain
           1 Trait. A Cog cannot have more than {{ lvlStr() }} Weaknesses.
         </p>
-        <h2>Step 9: Create Enemy</h2>
+        <h2>Step 8: Create Enemy</h2>
         <button v-on:click="createEnemyButton" class="btn roundedButton">
           Create Enemy
         </button>
@@ -224,6 +224,7 @@ export default {
     getMobileSidebarClass() {
       return this.showingStats ? "showStats" : "";
     },
+    /*
     defaultPCCount() {
       if (this.campaign && this.campaign.entities && this.campaign.members) {
         const entities = Object.keys(this.campaign.entities).filter((uuid) =>
@@ -252,6 +253,7 @@ export default {
         1
       );
     },
+    */
     templateOptions() {
       return {
         mook: `<b>Mook:</b> This Cog loses -6 Initiative and has only ${this.lvlStr()} AP (instead of ${this.lvlStr(
@@ -298,9 +300,10 @@ export default {
         speed: this.calculateSpeed,
         // non-standard character fields
         template: this.cog.template,
-        enemyType: this.cog.type,
+        cogType: this.cog.type,
         level: this.cog.level,
-        // abilities - TODO - fill with custom abilties AND traits AND weaknesses
+        acc: this.calculateAcc,
+        // copies: this.copiesCount,
         abilities,
       };
     },
@@ -403,6 +406,26 @@ export default {
       // allow space for traits to effect things here
       return speed;
     },
+    calculateAcc() {
+      if (!this.cog.level) {
+        return 0;
+      }
+      const level = parseInt(this.cog.level);
+      let acc = Math.max(level * 5, 0);
+      if (level >= 6) {
+        acc += 5;
+      }
+      if (level >= 9) {
+        acc += 5;
+      }
+      if (level >= 12) {
+        acc += 5;
+      }
+      if (level > 14) {
+        acc = level * 6;
+      }
+      return acc;
+    },
     totalAP() {
       if (!this.cog.level) {
         return 0;
@@ -412,7 +435,7 @@ export default {
       if (this.cog.template === "mook") {
         ap = level;
       }
-      ap += Math.max(2 * (this.playerCount - this.copiesCount), 0);
+      //ap += Math.max(2 * (this.playerCount - this.copiesCount), 0);
       return ap;
     },
   },
