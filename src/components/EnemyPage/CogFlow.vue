@@ -1,135 +1,164 @@
 <template>
-  <div class="page">
-    <div class="largePageWidth main" v-responsive="breakpoints">
-      <h1 class="centeredText">CREATE COG</h1>
-      <h2>Step 1: Cog Name</h2>
-      <div class="alignRow gap">
-        <label for="enemyType" class="nowrap">Cog Name:</label>
-        <input
-          type="text"
-          v-model="cog.name"
-          placeholder="Wind Elemental"
-          v-on:blur="backup"
-          id="enemyType"
-          class="input shortenned"
-        />
-      </div>
-      <h2>Step 2: Choose Level</h2>
-      <p class="textBlock">
-        A Cog’s stats revolve around their Level (L). Always round up when
-        calculating L/2.
-      </p>
-      <p class="textBlock">
-        Each Encounter can have a difficulty of Easy, Medium, or Hard. This
-        difficulty sets what the sum of Cogs’ Levels should be in relation to
-        the sum of the Players’ Levels.
-      </p>
-      <div class="alignRow gap">
-        <label for="enemyLevel" class="nowrap">Cog Level:</label>
-        <input
-          type="number"
-          v-model="cog.level"
-          placeholder="5"
-          v-on:blur="backup"
-          id="enemyLevel"
-          class="input tiny"
-        />
-      </div>
-      <h2>Step 3: Choose Number of Copies</h2>
-      <p class="textBlock">
-        By default, Cogs have at least 3 copies or a number of copies equal to
-        the number of players.
-        <span v-if="defaultPCCount !== 0">
-          It appears there are {{ defaultPCCount }} player characters registered
-          to the campaign "{{ campaign.name }}"
-        </span>
-      </p>
-      <div class="alignRow gap">
-        <label for="numberPCs" class="nowrap">
-          Number of player characters:
-        </label>
-        <input
-          type="number"
-          min="1"
-          v-model="cog.numberPCs"
-          :placeholder="defaultPCCount"
-          v-on:blur="backup"
-          id="numberPCs"
-          class="input tiny"
-        />
-      </div>
-      <p class="textBlock">
-        By default, there are {{ defaultCopies }} copies of this enemy. However,
-        you may reduce the copies by 1 to gain an extra 2AP to spend on
-        abilities.
-      </p>
-      <div class="alignRow gap">
-        <label for="numberCopies" class="nowrap">Number of cog copies:</label>
-        <input
-          type="number"
-          min="1"
-          :max="playerCount"
-          v-model="cog.numberCopies"
-          :placeholder="defaultCopies"
-          v-on:blur="backup"
-          id="NumberCopies"
-          class="input tiny"
-        />
-      </div>
-      <h2>Step 4: Choose Template</h2>
-      <p>Each Cog gains 1 Template.</p>
-      <radio-button-selection
-        :options="templateOptions"
-        :selected="cog.template"
-        @selectedUpdated="templateUpdated"
-      />
-      <h2>Step 5: Choose Type</h2>
-      <p class="textBlock">
-        Each Cog gains 1 Type. A Cog's Attributes are all equal to
-        {{ lvlStr("L/2", (lvl) => Math.round(lvl / 2)) }} unless otherwise
-        specified by their Type. These Attributes are used ONLY for Attribute
-        checks, and do not affect secondary stats such as Accuracy or Speed. A
-        Cog never uses its Attributes for the purpose of Accuracy or bonus
-        damage.
-      </p>
-      <cog-type-selection
-        :cogType="cog.type"
-        :lvl="cog.level"
-        @cogTypeUpdated="cogTypeUpdated"
-      />
-      <h2>Step 6: Create Abilities</h2>
-      <p class="textBlock">
-        Cogs have 2L AP to spend on
-        <a
-          href="https://vennt.fandom.com/wiki/Foe_Ability"
-          target="_blank"
-          class="link"
-          >Foe Abilities</a
-        >. For example, they can have one ability of 2L AP, or two abilities of
-        L AP each, or one worth L AP and two worth L/2 AP each.
-      </p>
-      <cog-ability-editable-list :cog="enemy" :totalAP="totalAP" />
-      <h2>Step 7: Choose Traits</h2>
-      <p class="textBlock">
-        A Cog gains 3 + L/2 Traits, plus 1 for each player beyond 3.
-      </p>
-      <p class="textBlock">
-        To take a Trait labeled II or III, etc., the I Trait must be taken
-        first, and the better version replaces the lesser one.
-      </p>
-      <h2>Step 8: Choose Weaknesses</h2>
-      <p class="textBlock">
-        A Cog starts with 1 Weakness. For each additional Weakness taken, gain 1
-        Trait. A Cog cannot have more than {{ lvlStr() }} Weaknesses.
-      </p>
-      <h2>Step 9: Create Enemy</h2>
-      <button v-on:click="createEnemyButton" class="btn roundedButton">
-        Create Enemy
+  <div>
+    <!--  --------------------- SUB NAV --------------------- -->
+    <div class="subNav">
+      <button
+        v-on:click="toggleNavButton()"
+        v-bind:class="getMobileSidebarClass"
+        class="btn navButton subNavButton noSelect createNavButton"
+      >
+        CREATE CHARACTER
       </button>
-      <button v-on:click="deleteEnemy" class="btn roundedButton clear">
-        Delete Enemy
+      <button
+        v-on:click="toggleNavButton()"
+        v-bind:class="getMobileSidebarClass"
+        class="btn navButton subNavButton noSelect statsNavButton"
+      >
+        SHOW STATS
       </button>
-      <div class="tall"></div>
+    </div>
+    <!--  --------------------- SIDE BAR --------------------- -->
+    <div class="sideBar" v-bind:class="getMobileSidebarClass">
+      <combat-stats :character="enemy" :isCog="true" :showAbilities="true" />
+    </div>
+    <!--  --------------------- START OF CHARACTER CREATION FLOW --------------------- -->
+    <div class="page sideBarPage" v-bind:class="getMobileSidebarClass">
+      <div class="largePageWidth main" v-responsive="breakpoints">
+        <h1 class="centeredText">CREATE COG</h1>
+        <h2>Step 1: Cog Name</h2>
+        <div class="alignRow gap">
+          <label for="enemyType" class="nowrap">Cog Name:</label>
+          <input
+            type="text"
+            v-model="cog.name"
+            placeholder="Wind Elemental"
+            v-on:blur="backup"
+            id="enemyType"
+            class="input shortenned"
+          />
+        </div>
+        <h2>Step 2: Choose Level</h2>
+        <p class="textBlock">
+          A Cog’s stats revolve around their Level (L). Always round up when
+          calculating L/2.
+        </p>
+        <p class="textBlock">
+          Each Encounter can have a difficulty of Easy, Medium, or Hard. This
+          difficulty sets what the sum of Cogs’ Levels should be in relation to
+          the sum of the Players’ Levels.
+        </p>
+        <div class="alignRow gap">
+          <label for="enemyLevel" class="nowrap">Cog Level:</label>
+          <input
+            type="number"
+            v-model="cog.level"
+            placeholder="5"
+            v-on:blur="backup"
+            id="enemyLevel"
+            class="input tiny"
+          />
+        </div>
+        <h2>Step 3: Choose Number of Copies</h2>
+        <p class="textBlock">
+          By default, Cogs have at least 3 copies or a number of copies equal to
+          the number of players.
+          <span v-if="defaultPCCount !== 0">
+            It appears there are {{ defaultPCCount }} player characters
+            registered to the campaign "{{ campaign.name }}"
+          </span>
+        </p>
+        <div class="alignRow gap">
+          <label for="numberPCs" class="nowrap">
+            Number of player characters:
+          </label>
+          <input
+            type="number"
+            min="1"
+            v-model="cog.numberPCs"
+            :placeholder="defaultPCCount"
+            v-on:blur="backup"
+            id="numberPCs"
+            class="input tiny"
+          />
+        </div>
+        <p class="textBlock">
+          By default, there are {{ defaultCopies }} copies of this enemy.
+          However, you may reduce the copies by 1 to gain an extra 2AP to spend
+          on abilities.
+        </p>
+        <div class="alignRow gap">
+          <label for="numberCopies" class="nowrap">Number of cog copies:</label>
+          <input
+            type="number"
+            min="1"
+            :max="playerCount"
+            v-model="cog.numberCopies"
+            :placeholder="defaultCopies"
+            v-on:blur="backup"
+            id="NumberCopies"
+            class="input tiny"
+          />
+        </div>
+        <h2>Step 4: Choose Template</h2>
+        <p>Each Cog gains 1 Template.</p>
+        <radio-button-selection
+          :options="templateOptions"
+          :selected="cog.template"
+          @selectedUpdated="templateUpdated"
+        />
+        <h2>Step 5: Choose Type</h2>
+        <p class="textBlock">
+          Each Cog gains 1 Type. A Cog's Attributes are all equal to
+          {{ lvlStr("L/2", (lvl) => Math.round(lvl / 2)) }} unless otherwise
+          specified by their Type. These Attributes are used ONLY for Attribute
+          checks, and do not affect secondary stats such as Accuracy or Speed. A
+          Cog never uses its Attributes for the purpose of Accuracy or bonus
+          damage.
+        </p>
+        <cog-type-selection
+          :cogType="cog.type"
+          :lvl="cog.level"
+          @cogTypeUpdated="cogTypeUpdated"
+        />
+        <h2>Step 6: Create Abilities</h2>
+        <p class="textBlock">
+          Cogs have 2L AP to spend on
+          <a
+            href="https://vennt.fandom.com/wiki/Foe_Ability"
+            target="_blank"
+            class="link"
+            >Foe Abilities</a
+          >. For example, they can have one ability of 2L AP, or two abilities
+          of L AP each, or one worth L AP and two worth L/2 AP each.
+        </p>
+        <cog-ability-editable-list
+          :cog="enemy"
+          :totalAP="totalAP"
+          :cogAbilities="cog.cogAbilities"
+          @updateAbilities="updateCogAbilities"
+        />
+        <h2>Step 7: Choose Traits</h2>
+        <p class="textBlock">
+          A Cog gains 3 + L/2 Traits, plus 1 for each player beyond 3.
+        </p>
+        <p class="textBlock">
+          To take a Trait labeled II or III, etc., the I Trait must be taken
+          first, and the better version replaces the lesser one.
+        </p>
+        <h2>Step 8: Choose Weaknesses</h2>
+        <p class="textBlock">
+          A Cog starts with 1 Weakness. For each additional Weakness taken, gain
+          1 Trait. A Cog cannot have more than {{ lvlStr() }} Weaknesses.
+        </p>
+        <h2>Step 9: Create Enemy</h2>
+        <button v-on:click="createEnemyButton" class="btn roundedButton">
+          Create Enemy
+        </button>
+        <button v-on:click="deleteEnemy" class="btn roundedButton clear">
+          Delete Enemy
+        </button>
+        <div class="tall"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -140,6 +169,7 @@ import CogTypeSelection from "./CogTypeSelection.vue";
 import { ResponsiveDirective } from "vue-responsive-components";
 import { mapState } from "vuex";
 import CogAbilityEditableList from "./CogAbilityEditableList.vue";
+import CombatStats from "../Common/CombatStats.vue";
 
 const COG_LOCAL_STORAGE = "creation-cog-wip";
 
@@ -149,12 +179,14 @@ export default {
     RadioButtonSelection,
     CogTypeSelection,
     CogAbilityEditableList,
+    CombatStats,
   },
   directives: {
     responsive: ResponsiveDirective,
   },
   data() {
     return {
+      showingStats: false,
       breakpoints: {
         bp900: (el) => el.width < 900,
         bp600: (el) => el.width < 600,
@@ -166,6 +198,7 @@ export default {
         numberCopies: "",
         template: "",
         type: "",
+        cogAbilities: [],
       },
     };
   },
@@ -175,6 +208,10 @@ export default {
       try {
         const cog = JSON.parse(rawCog);
         // TODO: Might want to do this row by row to ensure we don't get values imported incorrectly
+        if (cog.cogAbilities === undefined) {
+          // TODO: Remove this. This is a temporary solution to delete previous saved items which are no longer valid
+          throw "invalid saved item";
+        }
         this.cog = cog;
       } catch (e) {
         // stored json was malformed, so we delete it and restart fresh
@@ -184,6 +221,9 @@ export default {
   },
   computed: {
     ...mapState(["campaign"]),
+    getMobileSidebarClass() {
+      return this.showingStats ? "showStats" : "";
+    },
     defaultPCCount() {
       if (this.campaign && this.campaign.entities && this.campaign.members) {
         const entities = Object.keys(this.campaign.entities).filter((uuid) =>
@@ -232,6 +272,10 @@ export default {
       };
     },
     enemy() {
+      const abilities = [];
+      this.cog.cogAbilities.forEach((ability) =>
+        abilities.push(ability.formatted)
+      );
       return {
         name: this.cog.name,
         agi: this.calculateAttribute("agi"),
@@ -254,9 +298,10 @@ export default {
         speed: this.calculateSpeed,
         // non-standard character fields
         template: this.cog.template,
+        enemyType: this.cog.type,
         level: this.cog.level,
         // abilities - TODO - fill with custom abilties AND traits AND weaknesses
-        abilities: [],
+        abilities,
       };
     },
     calculateHP() {
@@ -372,6 +417,9 @@ export default {
     },
   },
   methods: {
+    toggleNavButton() {
+      this.showingStats = !this.showingStats;
+    },
     backup() {
       localStorage.setItem(COG_LOCAL_STORAGE, JSON.stringify(this.cog));
     },
@@ -425,6 +473,10 @@ export default {
       }
       return Math.round(parseInt(this.cog.level) / 2);
     },
+    updateCogAbilities(newCogAbilities) {
+      this.cog.cogAbilities = newCogAbilities;
+      this.backup();
+    },
     createEnemyButton() {
       console.log(this.enemy);
     },
@@ -437,8 +489,50 @@ export default {
         numberCopies: "",
         template: "",
         type: "",
+        cogAbilities: [],
       };
     },
   },
 };
 </script>
+
+<style scoped>
+/* subNav and sideBar Styles */
+.subNav {
+  display: none;
+  justify-content: center;
+}
+.createNavButton:not(.showStats) {
+  display: none;
+}
+.statsNavButton.showStats {
+  display: none;
+}
+
+@media screen and (max-width: 800px) {
+  .subNav {
+    display: flex;
+  }
+  .page {
+    margin-top: var(--total-nav-height);
+  }
+  .sideBar {
+    top: var(--total-nav-height);
+    height: var(--sub-nav-page-height);
+    width: 100%;
+  }
+  .sideBar:not(.showStats) {
+    display: none;
+  }
+  .sideBar.showStats {
+    display: block;
+  }
+  .sideBarPage:not(.showStats) {
+    display: flex;
+    margin-left: 0px;
+  }
+  .sideBarPage.showStats {
+    display: none;
+  }
+}
+</style>

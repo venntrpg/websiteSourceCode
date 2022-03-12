@@ -142,15 +142,21 @@
               >
                 <div class="basicBtnContents">
                   <span class="material-icons selected space">casino</span>
-                  Roll Dice
+                  Roll {{ attr.toUpperCase() }}
                 </div>
               </button>
             </div>
             <div class="diceSection">
               <div v-if="showDice(attr)">
                 <DiceRender :roll="getDice(attr)" />
-                <div>Dice Rolled: {{ getDiceNotation(attr) }}</div>
-                <div>Average Roll: {{ getDiceAverage(attr) }}</div>
+                <div>
+                  Dice Rolled:
+                  <span class="number">{{ getDiceNotation(attr) }}</span>
+                </div>
+                <div>
+                  Average Roll:
+                  <span class="number">{{ getDiceAverage(attr) }}</span>
+                </div>
               </div>
             </div>
             <div v-if="showUpdateDropdown">
@@ -299,6 +305,14 @@ export default {
       type: Object,
       required: true,
     },
+    isCog: {
+      type: Boolean,
+      default: false,
+    },
+    showAbilities: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     Bullet,
@@ -350,6 +364,9 @@ export default {
   },
   computed: {
     combatStatsRows() {
+      if (this.isCog) {
+        return [["hp"], ["mp"], ["vim"]];
+      }
       return [
         ["hp", "mp"],
         ["vim", "hero"],
@@ -363,9 +380,13 @@ export default {
       ];
     },
     singleRowAttributes() {
+      if (this.isCog) {
+        return ["init", "speed", "armor"];
+      }
       return ["init", "speed", "armor", "xp", "sp", "maxBulk"];
     },
     showUpdateDropdown() {
+      // We are only able to update elements when the character's id is present
       return this.character.id !== undefined;
     },
   },
@@ -433,7 +454,7 @@ export default {
           'Your Speed is 3 + Agility minus any Burden from your Armor. <a href="https://vennt.fandom.com/wiki/Movement" target="_blank" class="link">Wiki entry</a>',
         armor:
           'Your Armor serves as damage reduction from blows dealt to you. <a href="https://vennt.fandom.com/wiki/Armor" target="_blank" class="link">Wiki entry</a>',
-        xp: `Experience Points, the resource gained by player characters during play and spent on Abilities. Your character's level is your xp / 1000.
+        xp: `Experience Points, the resource gained by player characters during play and spent on Abilities. Your character's level is your xp&nbsp;/&nbsp;1000.
         <a href="https://vennt.fandom.com/wiki/XP" target="_blank" class="link">Wiki entry</a>`,
         sp: 'Silver Pieces are Amnis\'s main currency. <a href="https://vennt.fandom.com/wiki/Money" target="_blank" class="link">Wiki entry</a>',
         maxBulk:
@@ -802,21 +823,6 @@ export default {
 }
 
 /* Mobile Styles */
-@media screen and (max-width: 376px) {
-  .hpHelp,
-  .mpHelp,
-  .vimHelp,
-  .heroHelp {
-    display: none;
-  }
-
-  .hp:hover .hpToolTip,
-  .mp:hover .mpToolTip,
-  .vim:hover .vimToolTip,
-  .hero:hover .heroToolTip {
-    display: block;
-  }
-}
 @media screen and (max-width: 366px) {
   .panel {
     margin-left: 0px;

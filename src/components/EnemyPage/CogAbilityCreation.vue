@@ -1,6 +1,7 @@
 <template>
-  <div class="card border padded column mt-8">
-    <h2>New Ability</h2>
+  <div class="card border padded column">
+    <h2 v-if="isEdit">Edit {{ ability.name }}</h2>
+    <h2 v-else>New Ability</h2>
     <p>
       Current version:
       <a
@@ -50,7 +51,7 @@
         min="0"
         v-model="ability.vimCost"
         id="vimCost"
-        class="input tiny mt-2"
+        class="input tiny"
       />
     </div>
     <p>Resulting vim cost: {{ calculateVimCost }} vim.</p>
@@ -65,7 +66,7 @@
         min="0"
         v-model="ability.mpCost"
         id="mpCost"
-        class="input tiny mt-2"
+        class="input tiny"
       />
     </div>
     <p>Resulting MP cost: {{ calculateMPCost }} MP.</p>
@@ -167,7 +168,7 @@
           min="1"
           v-model="ability.specialEffectsCosts[effect]"
           v-bind:id="effect + 'input'"
-          class="input tiny mt-2"
+          class="input tiny"
         />
       </div>
     </div>
@@ -194,10 +195,17 @@
     <p>Sample of what your ability will look like:</p>
     <display-basic-ability-details :ability="formattedAbility" />
     <div class="alignRow split">
-      <button class="btn roundedButton">Add Ability</button>
-      <button class="btn roundedButton clear">Throw Away</button>
+      <button v-on:click="emitCreate()" class="btn roundedButton">
+        Save Ability
+      </button>
+      <confirmation-modal
+        :buttonText="'Throw Away'"
+        :buttonClass="'clear'"
+        :confStr="'Delete'"
+        :details="'Are you sure you want to delete this ability? It will not be saved.'"
+        @mainButton="emitDelete"
+      />
     </div>
-    <confirmation-modal />
   </div>
 </template>
 
@@ -218,6 +226,14 @@ export default {
   name: "CogAbilityCreation",
   props: {
     cog: Object,
+    givenAbility: {
+      type: Object,
+      default: undefined,
+    },
+    index: {
+      type: Number,
+      default: -1,
+    },
   },
   data() {
     return {
@@ -244,7 +260,16 @@ export default {
       },
     };
   },
+  beforeMount() {
+    // copy prop value if it was set
+    if (this.isEdit) {
+      this.ability = this.givenAbility;
+    }
+  },
   computed: {
+    isEdit() {
+      return this.givenAbility !== undefined && this.index !== -1;
+    },
     costAP() {
       let ap = 0;
 
@@ -969,6 +994,9 @@ export default {
         activation,
         cost: costMap,
         effect,
+        // special cogAbility fields
+        cogAbility: true,
+        ap: this.costAP,
       };
     },
   },
@@ -1086,18 +1114,43 @@ export default {
       });
       return map;
     },
+    emitCreate() {
+      this.$emit("createAbility", {
+        data: {
+          ability: this.ability,
+          formatted: this.formattedAbility,
+        },
+        index: this.index,
+      });
+      this.resetData();
+    },
+    emitDelete() {
+      this.$emit("deleteAbility", this.index);
+      this.resetData();
+    },
+    resetData() {
+      this.ability = {
+        name: "",
+        range: "melee",
+        speed: "regular",
+        vimCost: "",
+        mpCost: "",
+        type: "normal",
+        resistanceCheck: "res1",
+        attribute: "attr0",
+        fear: "fear0",
+        zeroDamage: true,
+        normalDamage: "",
+        burningDamage: "",
+        bleedingDamage: "",
+        armorDamage: "",
+        stunDamage: "",
+        paralysisDamage: "",
+        effects: [],
+        specialEffectsCosts: {},
+        areaEffect: "",
+      };
+    },
   },
 };
 </script>
-
-<style>
-.labelText {
-  font-size: 16pt;
-}
-.mt-2 {
-  margin-top: 2px;
-}
-.mt-8 {
-  margin-top: 8px;
-}
-</style>

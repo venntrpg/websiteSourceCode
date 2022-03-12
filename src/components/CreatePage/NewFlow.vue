@@ -30,255 +30,252 @@
       v-bind:class="[getHiddenSidebarClass, getMobileSidebarClass]"
     >
       <div class="largePageWidth main" v-responsive="breakpoints">
+        <h1 class="centeredText">CREATE NEW CHARACTER</h1>
+        <h2>Step 1: Choose a name</h2>
+        <p>
+          This follows the guide on the
+          <a
+            href="https://vennt.fandom.com/wiki/Character_Creation"
+            target="_blank"
+            class="link"
+          >
+            character creation wiki page
+          </a>
+          .
+        </p>
+        <label for="new-name">
+          <p>
+            Choose a name for your character. You can always come back to this
+            step later. Or, press the button to generate a random name for now.
+          </p>
+        </label>
+        <div class="alignRow nameRow">
+          <input
+            type="text"
+            name="charName"
+            placeholder="Bilbo Baggins"
+            class="input nameInput"
+            id="new-name"
+            v-model="create.name"
+          />
+          <button
+            v-on:click="randomNameButton()"
+            class="btn roundedButton randomNameButton"
+            :disabled="randomNamesDisabled"
+          >
+            <div class="btnContents">
+              <span class="material-icons">refresh</span> Random name
+            </div>
+          </button>
+        </div>
+        <h2>Step 2: Create your backstory</h2>
+        <p>
+          For now, this process must be completed in a seperate document. Follow
+          <a
+            href="https://vennt.fandom.com/wiki/Backstory"
+            target="_blank"
+            class="link"
+          >
+            this wiki page
+          </a>
+          for help with coming up a character concept and describing your
+          backstory.
+        </p>
+        <h2>Step 3: Develop your Flux</h2>
+        <!-- TODO: intergrate this into the site better. -->
+        <p>
+          Once you have developed your backstory, your
+          <a
+            href="https://vennt.fandom.com/wiki/Flux"
+            target="_blank"
+            class="link"
+          >
+            Flux</a
+          >
+          represents who you are right now: your personality, your ambitions,
+          and so on.
+        </p>
+        <ol>
+          <li>
+            Create 1-3
+            <a
+              href="https://vennt.fandom.com/wiki/Tides"
+              target="_blank"
+              class="link"
+            >
+              Tides
+            </a>
+          </li>
+          <li>
+            Create 1-3
+            <a
+              href="https://vennt.fandom.com/wiki/Grates"
+              target="_blank"
+              class="link"
+            >
+              Grates
+            </a>
+          </li>
+          <li>
+            Create 1-3
+            <a
+              href="https://vennt.fandom.com/wiki/Quests"
+              target="_blank"
+              class="link"
+            >
+              Quests
+            </a>
+          </li>
+        </ol>
+        <h2>Step 4: Choose a Gift</h2>
         <div>
-          <h1 class="centeredText">CREATE NEW CHARACTER</h1>
-          <h2>Step 1: Choose a name</h2>
           <p>
-            This follows the guide on the
-            <a
-              href="https://vennt.fandom.com/wiki/Character_Creation"
-              target="_blank"
-              class="link"
-            >
-              character creation wiki page
-            </a>
-            .
+            <i>
+              Most legends are born gifted in some way. Mozart was gifted in
+              music, Achilles was gifted in combat, and Merlin was gifted in
+              magic. There are nine gifts available to choose from as a hero of
+              Amnis, each one providing unique boons to your character.
+            </i>
           </p>
-          <label for="new-name">
-            <p>
-              Choose a name for your character. You can always come back to this
-              step later. Or, press the button to generate a random name for
-              now.
-            </p>
-          </label>
-          <div class="alignRow nameRow">
-            <input
-              type="text"
-              name="charName"
-              placeholder="Bilbo Baggins"
-              class="input nameInput"
-              id="new-name"
-              v-model="create.name"
-            />
-            <button
-              v-on:click="randomNameButton()"
-              class="btn roundedButton randomNameButton"
-              :disabled="randomNamesDisabled"
-            >
-              <div class="btnContents">
-                <span class="material-icons">refresh</span> Random name
-              </div>
-            </button>
-          </div>
-          <h2>Step 2: Create your backstory</h2>
-          <p>
-            For now, this process must be completed in a seperate document.
-            Follow
-            <a
-              href="https://vennt.fandom.com/wiki/Backstory"
-              target="_blank"
-              class="link"
-            >
-              this wiki page
-            </a>
-            for help with coming up a character concept and describing your
-            backstory.
-          </p>
-          <h2>Step 3: Develop your Flux</h2>
-          <!-- TODO: intergrate this into the site better. -->
-          <p>
-            Once you have developed your backstory, your
-            <a
-              href="https://vennt.fandom.com/wiki/Flux"
-              target="_blank"
-              class="link"
-            >
-              Flux</a
-            >
-            represents who you are right now: your personality, your ambitions,
-            and so on.
-          </p>
-          <ol>
-            <li>
-              Create 1-3
-              <a
-                href="https://vennt.fandom.com/wiki/Tides"
-                target="_blank"
-                class="link"
-              >
-                Tides
-              </a>
-            </li>
-            <li>
-              Create 1-3
-              <a
-                href="https://vennt.fandom.com/wiki/Grates"
-                target="_blank"
-                class="link"
-              >
-                Grates
-              </a>
-            </li>
-            <li>
-              Create 1-3
-              <a
-                href="https://vennt.fandom.com/wiki/Quests"
-                target="_blank"
-                class="link"
-              >
-                Quests
-              </a>
-            </li>
-          </ol>
-          <h2>Step 4: Choose a Gift</h2>
-          <div>
-            <p>
-              <i>
-                Most legends are born gifted in some way. Mozart was gifted in
-                music, Achilles was gifted in combat, and Merlin was gifted in
-                magic. There are nine gifts available to choose from as a hero
-                of Amnis, each one providing unique boons to your character.
-              </i>
-            </p>
-          </div>
-          <GiftSelection :gift="create.gift" @giftUpdated="giftUpdated" />
-          <h2>Step 5: Attribute scores</h2>
-          <p>In this step, you select your base attributes.</p>
-          <p>
-            Select three attributes you used most as a child. If this would
-            cause any of your Attributes to go over 3, pick the second-most
-            relevant Attribute, and increase that by one instead.
-          </p>
-          <AttributeSelection
-            :attributes="validAttributes"
-            :selected="create.childAttrs"
-            :maxChoices="3"
-            :disabledChoices="blockChildAttrsChoices"
-            @selectedUpdated="childAttrsUpdated"
-            class="bottomMargin"
+        </div>
+        <GiftSelection :gift="create.gift" @giftUpdated="giftUpdated" />
+        <h2>Step 5: Attribute scores</h2>
+        <p>In this step, you select your base attributes.</p>
+        <p>
+          Select three attributes you used most as a child. If this would cause
+          any of your Attributes to go over 3, pick the second-most relevant
+          Attribute, and increase that by one instead.
+        </p>
+        <AttributeSelection
+          :attributes="validAttributes"
+          :selected="create.childAttrs"
+          :maxChoices="3"
+          :disabledChoices="blockChildAttrsChoices"
+          @selectedUpdated="childAttrsUpdated"
+          class="bottomMargin"
+        />
+        <p>
+          Select three attributes you used most in the last six years. If this
+          would cause any of your Attributes to go over 3, pick the second-most
+          relevant Attribute, and increase that by one instead.
+        </p>
+        <AttributeSelection
+          :attributes="validAttributes"
+          :selected="create.adultAttrs"
+          :maxChoices="3"
+          :disabledChoices="blockAdultAttrsChoices"
+          @selectedUpdated="adultAttrsUpdated"
+          class="bottomMargin"
+        />
+        <p>
+          Select one attribute that is currently at 0. If you have no Attributes
+          at 0, skip this step. You may pick any Attribute from amongst those at
+          0, but if your character is...
+        </p>
+        <ul>
+          <li>Inattentive... ...You might want to pick PER.</li>
+          <li>A luddite... ...You might want to pick TEK.</li>
+          <li>Clumsy... ...You might want to pick DEX.</li>
+          <li>Ignorant... ...You might want to pick INT.</li>
+          <li>Impatient... ...You might want to pick WIS.</li>
+          <li>Sluggish... ...You might want to pick AGI.</li>
+          <li>Apathetic... ...You might want to pick SPI.</li>
+          <li>Weak... ...You might want to pick STR.</li>
+          <li>Repulsive... ...You might want to pick CHA.</li>
+        </ul>
+        <AttributeSelection
+          :attributes="validAttributes"
+          :selected="create.badAttrs"
+          :maxChoices="1"
+          :disabledChoices="blockBadAttrsChoices"
+          @selectedUpdated="badAttrsUpdated"
+        />
+        <p>
+          Select an attribute that corresponds to your first grate. This will
+          subtract 1 from the selected attribute. (Optional)
+        </p>
+        <AttributeSelection
+          :attributes="validAttributes"
+          :selected="create.grate1"
+          :maxChoices="1"
+          @selectedUpdated="grate1Updated"
+        />
+        <p>
+          Select an attribute that corresponds to your third grate. This will
+          add 1 to the selected attribute. (Optional)
+        </p>
+        <AttributeSelection
+          :attributes="validAttributes"
+          :selected="create.grate3"
+          :maxChoices="1"
+          @selectedUpdated="grate3Updated"
+        />
+        <h2>Step 6: Beginner’s equipment</h2>
+        <p>This section helps you figure out what equipment you have on you.</p>
+        <p>1. What do you keep at your side?</p>
+        <RadioButtonSelection
+          :options="getSideEquipmentOptions"
+          :selected="create.sideItem"
+          @selectedUpdated="sideItemUpdated"
+          class="bottomMargin"
+        />
+        <p>2. Describe your outfit.</p>
+        <p>
+          This is your starting Item Container. If you buy another item
+          container, it replaces this one.
+        </p>
+        <RadioButtonSelection
+          :options="getOutfitOptions"
+          :selected="create.outfit"
+          @selectedUpdated="outfitUpdated"
+          class="bottomMargin"
+        />
+        <p>3. What did you bring with you?</p>
+        <p>
+          Note: Actually adding these items to your inventory hasn’t been
+          implemented yet here, you will need to add them manually on the
+          Character page
+        </p>
+        <RadioButtonSelection
+          :options="getItemSetOptions"
+          :selected="create.itemSet"
+          @selectedUpdated="itemSetUpdated"
+        />
+        <h2>Step 7: XP and Abilities</h2>
+        <p>Are you new to adventuring?</p>
+        <RadioButtonSelection
+          :options="getInexperiencedOptions"
+          :selected="getInexperiencedOption"
+          @selectedUpdated="experienceUpdated"
+          class="bottomMargin"
+        />
+        <p>
+          For now, you need to go to the Character page to select abilities and
+          buy / sell items
+        </p>
+        <h2>Step 8: Finish the character</h2>
+        <p>
+          Click the "Create Character" button to officially create the
+          character.
+        </p>
+        <p>
+          Click the "Clear Character" button to delete this character and start
+          again.
+        </p>
+        <div class="bottomButtons">
+          <confirmation-modal
+            :buttonText="'Create Character'"
+            :confStr="'Create Character'"
+            :details="'Are you sure you are done editing this character? Most fields will still be editable once you save this character to the server.'"
+            @mainButton="createCharacterButton"
           />
-          <p>
-            Select three attributes you used most in the last six years. If this
-            would cause any of your Attributes to go over 3, pick the
-            second-most relevant Attribute, and increase that by one instead.
-          </p>
-          <AttributeSelection
-            :attributes="validAttributes"
-            :selected="create.adultAttrs"
-            :maxChoices="3"
-            :disabledChoices="blockAdultAttrsChoices"
-            @selectedUpdated="adultAttrsUpdated"
-            class="bottomMargin"
+          <confirmation-modal
+            :buttonText="'Clear Character'"
+            :buttonClass="'clear'"
+            :confStr="'Delete Character'"
+            :details="'Are you sure you want to delete your progress on this character? It will not be saved.'"
+            @mainButton="clearCharacter"
           />
-          <p>
-            Select one attribute that is currently at 0. If you have no
-            Attributes at 0, skip this step. You may pick any Attribute from
-            amongst those at 0, but if your character is...
-          </p>
-          <ul>
-            <li>Inattentive... ...You might want to pick PER.</li>
-            <li>A luddite... ...You might want to pick TEK.</li>
-            <li>Clumsy... ...You might want to pick DEX.</li>
-            <li>Ignorant... ...You might want to pick INT.</li>
-            <li>Impatient... ...You might want to pick WIS.</li>
-            <li>Sluggish... ...You might want to pick AGI.</li>
-            <li>Apathetic... ...You might want to pick SPI.</li>
-            <li>Weak... ...You might want to pick STR.</li>
-            <li>Repulsive... ...You might want to pick CHA.</li>
-          </ul>
-          <AttributeSelection
-            :attributes="validAttributes"
-            :selected="create.badAttrs"
-            :maxChoices="1"
-            :disabledChoices="blockBadAttrsChoices"
-            @selectedUpdated="badAttrsUpdated"
-          />
-          <p>
-            Select an attribute that corresponds to your first grate. This will
-            subtract 1 from the selected attribute. (Optional)
-          </p>
-          <AttributeSelection
-            :attributes="validAttributes"
-            :selected="create.grate1"
-            :maxChoices="1"
-            @selectedUpdated="grate1Updated"
-          />
-          <p>
-            Select an attribute that corresponds to your third grate. This will
-            add 1 to the selected attribute. (Optional)
-          </p>
-          <AttributeSelection
-            :attributes="validAttributes"
-            :selected="create.grate3"
-            :maxChoices="1"
-            @selectedUpdated="grate3Updated"
-          />
-          <h2>Step 6: Beginner’s equipment</h2>
-          <p>
-            This section helps you figure out what equipment you have on you.
-          </p>
-          <p>1. What do you keep at your side?</p>
-          <RadioButtonSelection
-            :options="getSideEquipmentOptions"
-            :selected="create.sideItem"
-            @selectedUpdated="sideItemUpdated"
-            class="bottomMargin"
-          />
-          <p>2. Describe your outfit.</p>
-          <p>
-            This is your starting Item Container. If you buy another item
-            container, it replaces this one.
-          </p>
-          <RadioButtonSelection
-            :options="getOutfitOptions"
-            :selected="create.outfit"
-            @selectedUpdated="outfitUpdated"
-            class="bottomMargin"
-          />
-          <p>3. What did you bring with you?</p>
-          <p>
-            Note: Actually adding these items to your inventory hasn’t been
-            implemented yet here, you will need to add them manually on the
-            Character page
-          </p>
-          <RadioButtonSelection
-            :options="getItemSetOptions"
-            :selected="create.itemSet"
-            @selectedUpdated="itemSetUpdated"
-          />
-          <h2>Step 7: XP and Abilities</h2>
-          <p>Are you new to adventuring?</p>
-          <RadioButtonSelection
-            :options="getInexperiencedOptions"
-            :selected="getInexperiencedOption"
-            @selectedUpdated="experienceUpdated"
-            class="bottomMargin"
-          />
-          <p>
-            For now, you need to go to the Character page to select abilities
-            and buy / sell items
-          </p>
-          <h2>Step 8: Finish the character</h2>
-          <p>
-            Click the "Create Character" button to officially create the
-            character.
-          </p>
-          <p>
-            Click the "Clear Character" button to delete this character and
-            start again.
-          </p>
-          <div class="bottomButtons">
-            <button
-              v-on:click="createCharacterButton()"
-              class="btn roundedButton"
-            >
-              <div class="btnContents">Create Character</div>
-            </button>
-            <ConfirmSelectionButton
-              :defaultText="'Clear Character'"
-              @secondClick="clearCharacter"
-            />
-          </div>
         </div>
       </div>
     </div>
@@ -290,7 +287,7 @@ import AttributeSelection from "./AttributeSelection.vue";
 import CombatStats from "../Common/CombatStats.vue";
 import GiftSelection from "./GiftSelection.vue";
 import RadioButtonSelection from "../Common/RadioButtonSelection.vue";
-import ConfirmSelectionButton from "../Common/ConfirmSelectionButton.vue";
+import ConfirmationModal from "../Common/ConfirmationModal.vue";
 import { ResponsiveDirective } from "vue-responsive-components";
 import { mapState } from "vuex";
 
@@ -304,7 +301,7 @@ export default {
     CombatStats,
     GiftSelection,
     RadioButtonSelection,
-    ConfirmSelectionButton,
+    ConfirmationModal,
   },
   directives: {
     responsive: ResponsiveDirective,
@@ -350,7 +347,7 @@ export default {
     this.$store.dispatch("getRandomNames");
   },
   computed: {
-    ...mapState(["isLoggedIn", "randomNames", "randomNamesDisabled"]),
+    ...mapState(["randomNames", "randomNamesDisabled"]),
     getHiddenSidebarClass() {
       return this.create.name === "" ? "hidden" : "";
     },
