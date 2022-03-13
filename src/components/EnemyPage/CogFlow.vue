@@ -1,7 +1,7 @@
 <template>
   <div>
     <!--  --------------------- SUB NAV --------------------- -->
-    <div class="subNav">
+    <nav class="subNav">
       <button
         v-on:click="toggleNavButton()"
         v-bind:class="getMobileSidebarClass"
@@ -16,7 +16,7 @@
       >
         SHOW STATS
       </button>
-    </div>
+    </nav>
     <!--  --------------------- SIDE BAR --------------------- -->
     <div class="sideBar" v-bind:class="getMobileSidebarClass">
       <combat-stats :character="enemy" :isCog="true" :showAbilities="true" />
@@ -145,6 +145,12 @@
           To take a Trait labeled II or III, etc., the I Trait must be taken
           first, and the better version replaces the lesser one.
         </p>
+        <cog-traits
+          :cog="enemy"
+          :selected="cog.traits"
+          :totalTraits="totalTraits"
+          @newTraitsList="updateTraits"
+        />
         <h2>Step 7: Choose Weaknesses</h2>
         <p class="textBlock">
           A Cog starts with 1 Weakness. For each additional Weakness taken, gain
@@ -170,6 +176,7 @@ import { ResponsiveDirective } from "vue-responsive-components";
 import { mapState } from "vuex";
 import CogAbilityEditableList from "./CogAbilityEditableList.vue";
 import CombatStats from "../Common/CombatStats.vue";
+import CogTraits from "./CogTraits.vue";
 
 const COG_LOCAL_STORAGE = "creation-cog-wip";
 
@@ -180,6 +187,7 @@ export default {
     CogTypeSelection,
     CogAbilityEditableList,
     CombatStats,
+    CogTraits,
   },
   directives: {
     responsive: ResponsiveDirective,
@@ -199,6 +207,8 @@ export default {
         template: "",
         type: "",
         cogAbilities: [],
+        traits: [],
+        weaknesses: [],
       },
     };
   },
@@ -208,7 +218,7 @@ export default {
       try {
         const cog = JSON.parse(rawCog);
         // TODO: Might want to do this row by row to ensure we don't get values imported incorrectly
-        if (cog.cogAbilities === undefined) {
+        if (cog.traits === undefined) {
           // TODO: Remove this. This is a temporary solution to delete previous saved items which are no longer valid
           throw "invalid saved item";
         }
@@ -442,6 +452,20 @@ export default {
       //ap += Math.max(2 * (this.playerCount - this.copiesCount), 0);
       return ap;
     },
+    totalTraits() {
+      if (!this.cog.level) {
+        return 0;
+      }
+      const halfLevel = Math.round(parseInt(this.cog.level) / 2);
+      let traits = Math.max(3 + halfLevel, 0);
+      if (this.cog.template === "specialist") {
+        traits += halfLevel;
+      }
+      if (this.cog.weaknesses.length > 1) {
+        traits += this.cog.weaknesses.length - 1;
+      }
+      return traits;
+    },
   },
   methods: {
     toggleNavButton() {
@@ -469,6 +493,18 @@ export default {
         return "L (" + this.cog.level + ")";
       }
       return def + " (" + fun(parseInt(this.cog.level)) + ")";
+    },
+    updateCogAbilities(newCogAbilities) {
+      this.cog.cogAbilities = newCogAbilities;
+      this.backup();
+    },
+    updateTraits(newTraits) {
+      this.cog.traits = newTraits;
+      this.backup();
+    },
+    updateWeaknesses(newWeaknesses) {
+      this.cog.weaknesses = newWeaknesses;
+      this.backup();
     },
     calculateAttribute(attr) {
       if (!this.cog.level) {
@@ -499,10 +535,6 @@ export default {
         return parseInt(this.cog.level); // Equal to L
       }
       return Math.round(parseInt(this.cog.level) / 2);
-    },
-    updateCogAbilities(newCogAbilities) {
-      this.cog.cogAbilities = newCogAbilities;
-      this.backup();
     },
     createEnemyButton() {
       console.log(this.enemy);

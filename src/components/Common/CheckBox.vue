@@ -13,7 +13,7 @@
         check_box
       </span>
       <span v-else class="material-icons space">check_box_outline_blank</span>
-      <span v-bind:class="textClass">{{ text }}</span>
+      <span v-bind:class="textClass" v-html="text"></span>
     </div>
   </button>
 </template>

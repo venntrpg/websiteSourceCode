@@ -1,5 +1,5 @@
 <template>
-  <div class="nav">
+  <nav class="nav">
     <div class="left">
       <router-link to="/" class="navButton homeLink">VENNT</router-link>
     </div>
@@ -22,7 +22,7 @@
         </button>
       </div>
     </div>
-  </div>
+  </nav>
 </template>
 
 <script>

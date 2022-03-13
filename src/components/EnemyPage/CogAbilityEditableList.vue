@@ -111,9 +111,6 @@ export default {
 </script>
 
 <style scoped>
-.labelText {
-  font-size: 16pt;
-}
 .mt-2 {
   margin-top: 2px;
 }

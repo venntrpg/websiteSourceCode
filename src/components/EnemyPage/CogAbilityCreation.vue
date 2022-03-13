@@ -905,9 +905,11 @@ export default {
         if (details.type === "effect") {
           const additionalDetailStr =
             details.optionDetails === undefined ? "" : details.optionDetails;
-          map[name] = `(${this.costStr(name)}) ${
-            details.desc
-          } ${additionalDetailStr}`;
+          map[name] = {
+            text: `(${this.costStr(name)}) ${
+              details.desc
+            } ${additionalDetailStr}`,
+          };
         }
       });
       return map;
@@ -1018,7 +1020,7 @@ export default {
         cost: costMap,
         effect,
         // special cogAbility fields
-        cogAbility: true,
+        specialAbilityType: "cogAbility",
         ap: this.costAP,
       };
     },

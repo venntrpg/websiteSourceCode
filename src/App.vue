@@ -183,6 +183,10 @@ ul {
   color: var(--red-600);
 }
 
+.labelText {
+  font-size: 16pt;
+}
+
 /* Button Styles */
 
 .btn {

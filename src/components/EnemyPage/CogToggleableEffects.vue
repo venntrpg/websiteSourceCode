@@ -1,15 +1,16 @@
 <template>
   <div>
-    <check-box
-      v-for="(body, title) in options"
-      v-bind:key="title"
-      :checked="optionSelected(title)"
-      :disabled="optionDisabled(title)"
-      :text="title + ': ' + body"
-      :highlight="true"
-      :smallText="true"
-      @toggled="emitNewSelectedList(title)"
-    />
+    <div v-for="(body, title) in options" v-bind:key="title">
+      <h3 v-if="body.section">{{ body.section }}</h3>
+      <check-box
+        :checked="optionSelected(title)"
+        :disabled="optionDisabled(title)"
+        :text="'<b>' + title + '</b>: ' + body.text"
+        :highlight="true"
+        :smallText="true"
+        @toggled="emitNewSelectedList(title)"
+      />
+    </div>
   </div>
 </template>
 
@@ -28,9 +29,17 @@ export default {
       type: Array,
       default: () => [],
     },
+    progressiveOptions: {
+      type: Array,
+      default: () => [],
+    },
     disabled: {
       type: Array,
       default: () => [],
+    },
+    maxSelections: {
+      type: Number,
+      default: -1,
     },
   },
   methods: {
@@ -41,23 +50,63 @@ export default {
       if (this.disabled.includes(title)) {
         return true;
       }
+      // see if it is disabled because we have reached the maximum selections
+      if (
+        this.maxSelections >= 0 &&
+        this.selected.length > this.maxSelections &&
+        !this.optionSelected(title)
+      ) {
+        return true;
+      }
       // look through mutually exclusive lists and disable of another option of one of those lists was already selected
-      return this.mutuallyExclusive
-        .filter((list) => list.includes(title))
-        .some((list) =>
-          list.some((item) => item !== title && this.optionSelected(item))
-        );
+      if (
+        this.mutuallyExclusive
+          .filter((list) => list.includes(title))
+          .some((list) =>
+            list.some((item) => item !== title && this.optionSelected(item))
+          )
+      ) {
+        return true;
+      }
+      // look through progressive options and disable if a lower option on the scale is not selected
+      if (
+        this.progressiveOptions
+          .filter((list) => list.includes(title))
+          .some((list) => {
+            const index = list.indexOf(title);
+            if (index <= 0) {
+              return false;
+            }
+            // check option 1 earlier
+            return !this.optionSelected(list[index - 1]);
+          })
+      ) {
+        return true;
+      }
+      return false;
     },
     emitNewSelectedList(title) {
+      let newList = [];
       if (this.optionSelected(title)) {
+        const itemsToUnselect = [title];
+        const progressiveLists = this.progressiveOptions.filter((list) =>
+          list.includes(title)
+        );
+        // Handle case where an item of a progressive list is unselected
+        progressiveLists.forEach((list) => {
+          const index = list.indexOf(title);
+          // need to unselect all items after this index
+          const toAdd = list.slice(index);
+          itemsToUnselect.push(...toAdd);
+        });
         // need to unselect it
-        this.$emit(
-          "newSelected",
-          this.selected.filter((item) => item !== title)
+        newList = this.selected.filter(
+          (item) => !itemsToUnselect.includes(item)
         );
       } else {
-        this.$emit("newSelected", [...this.selected, title]);
+        newList = [...this.selected, title];
       }
+      this.$emit("newSelected", newList);
     },
   },
 };
