@@ -286,13 +286,13 @@ export default {
 
       // Ability Type
       if (this.resistantCheckRequired) {
-        ap = ap + this.option2AP(this.ability.resistanceCheck);
+        ap = ap + this.option2APNumber(this.ability.resistanceCheck);
       }
       if (this.attributeAPOption) {
-        ap = ap + this.option2AP(this.ability.attribute);
+        ap = ap + this.option2APNumber(this.ability.attribute);
       }
       if (this.fearAPOption) {
-        ap = ap + this.option2AP(this.ability.fear);
+        ap = ap + this.option2APNumber(this.ability.fear);
       }
 
       // Damage Types
@@ -315,6 +315,11 @@ export default {
 
       // Area Effects
       ap = ap + this.option2APNumber(this.ability.areaEffect);
+
+      // Special Cases
+      if (this.option2AP(this.ability.speed) === "x2") {
+        ap = ap * 2;
+      }
       return ap;
     },
     calculateVimCost() {
@@ -446,7 +451,7 @@ export default {
         long: { ap: 4, desc: "60m", type: "range" },
         // speed
         fast: {
-          ap: "x2", // TODO: Deal with this
+          ap: "x2",
           desc: "1 Action",
           type: "speed",
           optionDetails:
@@ -1122,18 +1127,25 @@ export default {
       if (diceCount < 0) {
         diceCount = 0;
       }
+      let rollAdjustmentNumber = 0;
+      // special cases
+      if (this.cog.template === "bruiser") {
+        // bruiser type cogs get +6 on regular damage
+        rollAdjustmentNumber += 6;
+      }
       let rollAdjustment = "";
       if (level === 0) {
         rollAdjustment = "/2";
       }
       if ([2, 3, 5, 7, 10].includes(level)) {
-        rollAdjustment = "+3";
+        rollAdjustmentNumber += 3;
+      } else if ([4, 6, 8, 11, 13].includes(level)) {
+        rollAdjustmentNumber += 6;
+      } else if ([12, 14].includes(level)) {
+        rollAdjustmentNumber += 12;
       }
-      if ([4, 6, 8, 11, 13].includes(level)) {
-        rollAdjustment = "+6";
-      }
-      if ([12, 14].includes(level)) {
-        rollAdjustment = "+12";
+      if (rollAdjustmentNumber > 0) {
+        rollAdjustment += "+" + rollAdjustmentNumber;
       }
       return diceCount + "d6" + rollAdjustment;
     },
