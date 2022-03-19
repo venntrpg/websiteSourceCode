@@ -59,15 +59,17 @@ export default {
         return true;
       }
       // see if it is disabled because we have reached the maximum selections
-      if (
-        this.maxSelections >= 0 &&
-        this.selected.length >= this.maxSelections &&
-        !this.optionSelected(title)
-      ) {
+      if (this.hideOption(title)) {
         return true;
       }
       // look through mutually exclusive lists and disable of another option of one of those lists was already selected
-      if (this.hideOption(title)) {
+      if (
+        this.mutuallyExclusive
+          .filter((list) => list.includes(title))
+          .some((list) =>
+            list.some((item) => item !== title && this.optionSelected(item))
+          )
+      ) {
         return true;
       }
       // look through progressive options and disable if a lower option on the scale is not selected

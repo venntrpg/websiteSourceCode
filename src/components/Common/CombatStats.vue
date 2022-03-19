@@ -433,10 +433,16 @@ export default {
       ];
     },
     singleRowAttributes() {
+      let attrs = ["init", "speed", "armor", "xp", "sp", "maxBulk"];
       if (this.isCog) {
-        return ["acc", "init", "speed", "armor", "level"];
+        attrs = ["acc", "init", "speed", "armor", "level"];
       }
-      return ["init", "speed", "armor", "xp", "sp", "maxBulk"];
+      // Add fields that may only exist on some characters
+      const optionalAttrs = ["radius", "reach"];
+      optionalAttrs
+        .filter((attr) => this.character[attr] !== undefined)
+        .forEach((attr) => attrs.push(attr));
+      return attrs;
     },
     showUpdateDropdown() {
       // We are only able to update elements when the character's id is present
@@ -522,6 +528,10 @@ export default {
         level:
           'Level of the cog. See the <a href="https://vennt.fandom.com/wiki/Course_of_Tactics#The_L_stat" target="_blank" class="link">Wiki entry</a>',
         acc: 'Attacks are generally made by comparing the target\'s Accuracy to the target\'s Vim. <a href="https://vennt.fandom.com/wiki/Accuracy" target="_blank" class="link">Wiki entry</a>',
+        radius:
+          "The Radius of a cog refers to how many hexes outside of it's central hex the cog takes up",
+        reach:
+          'Reach is the distance from which a creature can make melee attacks and manipulate objects. This defaults to 1 hex/meter for human-sized creatures.  <a href="https://vennt.fandom.com/wiki/Reach" target="_blank" class="link">Wiki entry</a>',
       };
       return helpMap[attr];
     },

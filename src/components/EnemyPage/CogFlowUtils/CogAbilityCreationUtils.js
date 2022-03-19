@@ -1,4 +1,5 @@
 import { lvlStr, lvlInt } from "./CogUtils";
+import { bestSelectedTraitsMap, attrLevelAdjustments } from "./CogTraitsUtils";
 
 // effects that require the user to specify how much AP to spend
 const specialCogAbilityEffects = [
@@ -77,6 +78,8 @@ function normalDamageLevel(cog, ability) {
   } else if (ability.speed === "slow") {
     level = level + 1;
   }
+  // TODO: Maybe there is a more efficient / less spagetti code way to do this, but I guess it works for now
+  level += attrLevelAdjustments(bestSelectedTraitsMap(cog), "dmg");
   return level;
 }
 

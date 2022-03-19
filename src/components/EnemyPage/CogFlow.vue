@@ -104,7 +104,7 @@
           first, and the better version replaces the lesser one.
         </p>
         <cog-traits
-          :cog="enemy"
+          :cog="cog"
           :selected="cog.traits"
           :totalTraits="totalTraits"
           @newTraitsList="updateTraits"
@@ -136,6 +136,13 @@ import CogAbilityEditableList from "./CogAbilityEditableList.vue";
 import CombatStats from "../Common/CombatStats.vue";
 import CogTraits from "./CogTraits.vue";
 import { cogFormattedAbility } from "./CogFlowUtils/CogAbilityCreationUtils";
+import {
+  bestSelectedTraitsMap,
+  attrLevelAdjustments,
+  attrAdjustments,
+  attrMultipliers,
+  formatTraits,
+} from "./CogFlowUtils/CogTraitsUtils";
 import { cogTypeAttrVal } from "./CogFlowUtils/CogTypeDescriptionUtils";
 
 const COG_LOCAL_STORAGE = "creation-cog-wip";
@@ -224,9 +231,14 @@ export default {
         cogFormattedAbility(this.cog, ability)
       );
     },
+    bestCogTraitsMap() {
+      return bestSelectedTraitsMap(this.cog);
+    },
     enemy() {
-      const abilities = [...this.formattedCogAbilities];
-      return {
+      const abilities = this.formattedCogAbilities.concat(
+        formatTraits(this.bestCogTraitsMap)
+      );
+      const enemy = {
         name: this.cog.name,
         agi: this.calculateAttribute("agi"),
         cha: this.calculateAttribute("cha"),
@@ -253,14 +265,26 @@ export default {
         acc: this.calculateAcc,
         abilities,
       };
+      // add special fields if they need to be set
+      const specialFields = ["radius", "reach"];
+      specialFields
+        .map((field) => {
+          return { field, val: attrAdjustments(this.bestCogTraitsMap, field) };
+        })
+        .filter((pair) => pair.val !== 0)
+        .forEach((pair) => {
+          enemy[pair.field] = pair.val;
+        });
+      return enemy;
     },
     calculateHP() {
       if (!this.cog.level) {
         return 1;
       }
-      const level = parseInt(this.cog.level);
+      let level = parseInt(this.cog.level);
+      level += attrLevelAdjustments(this.bestCogTraitsMap, "hp");
       let hp = Math.max(level * 5, 1);
-      // allow space for traits to effect things here
+      hp += attrAdjustments(this.bestCogTraitsMap, "hp");
       return hp;
     },
     calculateMP() {
@@ -272,7 +296,7 @@ export default {
       if (this.cog.template === "magician") {
         mp += level;
       }
-      // allow space for traits to effect things here
+      // no traits currently effect MP
       return mp;
     },
     calculateVim() {
@@ -283,6 +307,7 @@ export default {
       if (this.cog.template === "agile") {
         level += 2;
       }
+      level += attrLevelAdjustments(this.bestCogTraitsMap, "vim");
       let vim = Math.max(level * 5, 0);
       // see https://vennt.fandom.com/wiki/Course_of_Foes#Stats
       if (level >= 3) {
@@ -305,7 +330,7 @@ export default {
       } else if (this.cog.template === "fighter") {
         vim += 5;
       }
-      // allow space for traits to effect things here
+      vim += attrAdjustments(this.bestCogTraitsMap, "vim");
       return vim;
     },
     calculateArmor() {
@@ -314,7 +339,7 @@ export default {
         const level = !this.cog.level ? 0 : parseInt(this.cog.level);
         armor += level;
       }
-      // allow space for traits to effect things here
+      armor += attrAdjustments(this.bestCogTraitsMap, "armor");
       return armor;
     },
     calculateInit() {
@@ -343,6 +368,7 @@ export default {
       if (this.cog.template === "agile") {
         level += 2;
       }
+      level += attrLevelAdjustments(this.bestCogTraitsMap, "speed");
       let speed = level + 3;
       if (level >= 2) {
         speed = Math.round((level + 7) / 2);
@@ -350,7 +376,10 @@ export default {
       if (level > 14) {
         speed = level;
       }
-      // allow space for traits to effect things here
+      const traitMultiplier = attrMultipliers(this.bestCogTraitsMap, "speed");
+      if (traitMultiplier !== 0) {
+        speed *= traitMultiplier;
+      }
       return speed;
     },
     calculateAcc() {
@@ -374,7 +403,7 @@ export default {
       if (this.cog.template === "fighter") {
         acc += 20;
       }
-      // allow space for traits to effect things here
+      acc += attrAdjustments(this.bestCogTraitsMap, "acc");
       return acc;
     },
     totalAP() {
@@ -386,6 +415,7 @@ export default {
       if (this.cog.template === "mook") {
         ap = level;
       }
+      ap += attrAdjustments(this.bestCogTraitsMap, "ap");
       return ap;
     },
     usedAP() {
@@ -452,11 +482,13 @@ export default {
       if (!this.cog.level) {
         return 0;
       }
-      const cogTypeVal = cogTypeAttrVal(this.cog.level, this.cog.type, attr);
+      let level = parseInt(this.cog.level);
+      level += attrLevelAdjustments(this.bestCogTraitsMap, attr);
+      const cogTypeVal = cogTypeAttrVal(level, this.cog.type, attr);
       if (cogTypeVal !== undefined) {
         return cogTypeVal;
       }
-      return Math.round(parseInt(this.cog.level) / 2);
+      return Math.round(level / 2);
     },
     createEnemyButton() {
       console.log(this.enemy);
