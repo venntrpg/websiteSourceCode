@@ -93,6 +93,7 @@
         <cog-ability-editable-list
           :cog="enemy"
           :totalAP="totalAP"
+          :usedAP="usedAP"
           :cogAbilities="cog.cogAbilities"
           @updateAbilities="updateCogAbilities"
         />
@@ -134,6 +135,7 @@ import { mapState } from "vuex";
 import CogAbilityEditableList from "./CogAbilityEditableList.vue";
 import CombatStats from "../Common/CombatStats.vue";
 import CogTraits from "./CogTraits.vue";
+import { cogFormattedAbility } from "./CogFlowUtils/CogAbilityCreationUtils";
 import { cogTypeAttrVal } from "./CogFlowUtils/CogTypeDescriptionUtils";
 
 const COG_LOCAL_STORAGE = "creation-cog-wip";
@@ -177,7 +179,12 @@ export default {
       try {
         const cog = JSON.parse(rawCog);
         // TODO: Might want to do this row by row to ensure we don't get values imported incorrectly
-        if (cog.traits === undefined) {
+        if (
+          cog.traits === undefined ||
+          cog.cogAbilities === undefined ||
+          (cog.cogAbilities.length > 0 &&
+            cog.cogAbilities[0].formatted !== undefined)
+        ) {
           // TODO: Remove this. This is a temporary solution to delete previous saved items which are no longer valid
           throw "invalid saved item";
         }
@@ -212,11 +219,13 @@ export default {
         )} Traits.`,
       };
     },
-    enemy() {
-      const abilities = [];
-      this.cog.cogAbilities.forEach((ability) =>
-        abilities.push(ability.formatted)
+    formattedCogAbilities() {
+      return this.cog.cogAbilities.map((ability) =>
+        cogFormattedAbility(this.cog, ability)
       );
+    },
+    enemy() {
+      const abilities = [...this.formattedCogAbilities];
       return {
         name: this.cog.name,
         agi: this.calculateAttribute("agi"),
@@ -378,6 +387,12 @@ export default {
         ap = level;
       }
       return ap;
+    },
+    usedAP() {
+      return this.formattedCogAbilities.reduce(
+        (sum, ability) => sum + ability.ap,
+        0
+      );
     },
     totalTraits() {
       if (!this.cog.level) {

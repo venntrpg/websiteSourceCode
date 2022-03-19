@@ -492,10 +492,7 @@ export default {
     },
     emitCreate() {
       this.$emit("createAbility", {
-        data: {
-          ability: this.ability,
-          formatted: this.formattedAbility,
-        },
+        data: this.ability,
         index: this.index,
       });
       this.resetData();

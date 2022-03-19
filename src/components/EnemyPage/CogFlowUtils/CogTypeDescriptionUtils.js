@@ -101,10 +101,15 @@ function cogTypeMap(lvl) {
 export const cogTypesList = Object.keys(cogTypeMap(""));
 
 export function cogTypeCopy(lvl, option) {
+  // returns undefined if not found
   return cogTypeMap(lvl)[option];
 }
 
 export function cogTypeAttrVal(lvl, option, attr) {
   // returns undefined if not found
-  return cogTypeMap(lvl)[option].attrs[attr];
+  const details = cogTypeCopy(lvl, option);
+  if (details !== undefined) {
+    return details.attrs[attr];
+  }
+  return undefined;
 }

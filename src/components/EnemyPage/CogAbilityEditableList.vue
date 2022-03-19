@@ -3,12 +3,12 @@
     <h3>Ability Creation</h3>
     <div class="alignRow gap labelText">
       Remaining AP (Action Points):
-      <fraction :top="remainingAP" :bottom="totalAP" />
+      <fraction :top="usedAP" :bottom="totalAP" />
     </div>
     <div v-for="(ability, index) in cogAbilities" v-bind:key="index">
       <div class="card padded column mb-8 ability">
         <div class="alignRow split gap">
-          <h3>{{ ability.formatted.name }}</h3>
+          <h3>{{ ability.name }}</h3>
           <div class="alignRow gap">
             <button
               v-on:click="editAbilityButton(index)"
@@ -29,7 +29,7 @@
       <cog-ability-creation
         v-if="editorsOpen[index]"
         :cog="cog"
-        :givenAbility="ability.ability"
+        :givenAbility="ability"
         :index="index"
         @createAbility="addAbility"
         @deleteAbility="deleteAbility"
@@ -52,12 +52,14 @@
 import Fraction from "../Common/CombatStatsComponents/Fraction.vue";
 import ConfirmationModal from "../Common/ConfirmationModal.vue";
 import CogAbilityCreation from "./CogAbilityCreation.vue";
+
 export default {
   components: { Fraction, CogAbilityCreation, ConfirmationModal },
   name: "CogAbilityEditableList",
   props: {
     cog: Object,
     totalAP: Number,
+    usedAP: Number,
     cogAbilities: Array,
   },
   data() {
@@ -65,15 +67,6 @@ export default {
       showNewAbilityPanel: false,
       editorsOpen: {},
     };
-  },
-  computed: {
-    remainingAP() {
-      const totalAPCost = this.cogAbilities.reduce(
-        (sum, ability) => sum + ability.formatted.ap,
-        0
-      );
-      return this.totalAP - totalAPCost;
-    },
   },
   methods: {
     addAbilityButton() {
