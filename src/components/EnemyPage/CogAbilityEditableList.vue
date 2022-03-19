@@ -7,8 +7,6 @@
     </div>
     <div v-for="(ability, index) in cogAbilities" v-bind:key="index">
       <div class="card padded column mb-8 ability">
-        <!-- TODO: Can probably remove list and just leave a header and edit / delete buttons 
-        since abilities should be listed in the side panel soon -->
         <div class="alignRow split gap">
           <h3>{{ ability.formatted.name }}</h3>
           <div class="alignRow gap">
@@ -111,15 +109,6 @@ export default {
 </script>
 
 <style scoped>
-.mt-2 {
-  margin-top: 2px;
-}
-.mt-8 {
-  margin-top: 8px;
-}
-.mb-8 {
-  margin-bottom: 8px;
-}
 .ability {
   /* Padding gets added by header */
   padding-top: 0px;

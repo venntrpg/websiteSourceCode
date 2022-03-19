@@ -13,7 +13,7 @@
       </button>
       <div class="giftCardGroup">
         <button
-          v-for="type in cogTypeList"
+          v-for="type in typeList"
           v-bind:key="type"
           v-on:click="cogTypeButton(type)"
           class="btn noSelect card selectable giftCard"
@@ -39,6 +39,7 @@
 
 <script>
 import CogTypeDescription from "./CogTypeDescription.vue";
+import { cogTypesList } from "./CogFlowUtils/CogTypeDescriptionUtils";
 
 export default {
   name: "CogTypeSelection",
@@ -64,15 +65,8 @@ export default {
     showCogTypeList() {
       return this.showFullList || this.dropDownDisabled;
     },
-    cogTypeList() {
-      return [
-        "arcanae",
-        "automata",
-        "beastFlora",
-        "humanoid",
-        "monster",
-        "undead",
-      ];
+    typeList() {
+      return cogTypesList;
     },
   },
   methods: {

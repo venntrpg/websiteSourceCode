@@ -234,7 +234,7 @@
       v-bind:class="attrButtonClass('cogType')"
     >
       <div class="basicBtnContents attrButtonContents">
-        Type: {{ character.cogType }}
+        Type: {{ cogTypeTitle }}
       </div>
     </button>
     <div
@@ -301,6 +301,7 @@
         </div>
       </div>
     </div>
+    <!-- ABILITIES -->
     <div v-if="showAbilities && character.abilities.length > 0">
       <div class="flex">
         <Bullet :character="character" />
@@ -309,9 +310,20 @@
       <div
         v-for="(ability, index) in character.abilities"
         v-bind:key="index"
-        class="card stat singleStat regtext"
+        class="card column stat singleStat regtext"
       >
+        <!-- TODO: Should probably sort ability list like we do on the character ability list -->
         <display-basic-ability-details :ability="ability" />
+        <!-- TODO: Implement this functionality. We can't use a regular #id in an anchor tag because it just results
+             in changing what page we are looking at
+        <button
+          v-if="isCog && !showUpdateDropdown"
+          v-on:click="jumpToAbility(ability)"
+          class="btn roundedButton"
+        >
+          Jump to ability
+        </button>
+        -->
       </div>
     </div>
     <div class="tall"></div>
@@ -335,6 +347,7 @@ import GiftDescription from "./CombatStatsComponents/GiftDescription.vue";
 import CheckBox from "./CheckBox.vue";
 import CogTypeDescription from "../EnemyPage/CogTypeDescription.vue";
 import DisplayBasicAbilityDetails from "./Abilities/DisplayBasicAbilityDetails.vue";
+import { cogTypeCopy } from "../EnemyPage/CogFlowUtils/CogTypeDescriptionUtils";
 
 export default {
   name: "combatStats",
@@ -428,6 +441,13 @@ export default {
     showUpdateDropdown() {
       // We are only able to update elements when the character's id is present
       return this.character.id !== undefined;
+    },
+    cogTypeTitle() {
+      if (this.isCog) {
+        const copy = cogTypeCopy("", this.character.cogType);
+        return copy.title;
+      }
+      return "";
     },
   },
   methods: {

@@ -57,7 +57,7 @@ export default {
   padding-right: 15px;
   padding-top: 0px;
   padding-bottom: 0px;
-  font-family: Copperplate, "Raleway", sans-serif;
+  font-family: var(--logo-font);
   font-weight: 500;
   font-size: 30pt;
 }

@@ -21,7 +21,7 @@ export default {
   },
   computed: {
     warningClass() {
-      return (this.top > this.bottom || this.bottom < 0) && !this.noWarning
+      return (this.top > this.bottom || this.top < 0) && !this.noWarning
         ? "errorText"
         : "";
     },

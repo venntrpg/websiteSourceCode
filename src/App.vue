@@ -44,7 +44,10 @@ export default {
 body {
   margin: 0 !important;
 
-  font-family: "Raleway", sans-serif;
+  --app-font: "Raleway", sans-serif;
+  --logo-font: Copperplate, "Raleway", sans-serif;
+
+  font-family: var(--app-font);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
@@ -187,11 +190,26 @@ ul {
   font-size: 16pt;
 }
 
+/* Margin Utilities */
+
+.mt-0 {
+  margin-top: 0px;
+}
+.mt-2 {
+  margin-top: 2px;
+}
+.mt-8 {
+  margin-top: 8px;
+}
+.mb-8 {
+  margin-bottom: 8px;
+}
+
 /* Button Styles */
 
 .btn {
   border-style: hidden;
-  font-family: "Raleway", sans-serif;
+  font-family: var(--app-font);
   display: flex;
   cursor: pointer;
   text-decoration: none;
@@ -324,7 +342,7 @@ ul {
 
 .input {
   resize: vertical;
-  font-family: "Raleway", sans-serif;
+  font-family: var(--app-font);
   font-size: 15px;
   line-height: 16px;
   height: 40px;

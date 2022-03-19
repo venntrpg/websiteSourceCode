@@ -24,7 +24,7 @@
     <!--  --------------------- START OF COG CREATION FLOW --------------------- -->
     <div class="page sideBarPage" v-bind:class="getMobileSidebarClass">
       <div class="largePageWidth main" v-responsive="breakpoints">
-        <h1 class="centeredText">CREATE BATTLE COG</h1>
+        <h1 class="centeredText">CREATE COMBAT COG</h1>
         <h2>Step 1: Cog Name</h2>
         <div class="alignRow gap">
           <label for="enemyType" class="nowrap">Cog Name:</label>
@@ -58,49 +58,6 @@
             class="input tiny"
           />
         </div>
-        <!--
-        <h2>Step 3: Choose Number of Copies</h2>
-        <p class="textBlock">
-          By default, Cogs have at least 3 copies or a number of copies equal to
-          the number of players.
-          <span v-if="defaultPCCount !== 0">
-            It appears there are {{ defaultPCCount }} player characters
-            registered to the campaign "{{ campaign.name }}"
-          </span>
-        </p>
-        <div class="alignRow gap">
-          <label for="numberPCs" class="nowrap">
-            Number of player characters:
-          </label>
-          <input
-            type="number"
-            min="1"
-            v-model="cog.numberPCs"
-            :placeholder="defaultPCCount"
-            v-on:blur="backup"
-            id="numberPCs"
-            class="input tiny"
-          />
-        </div>
-        <p class="textBlock">
-          By default, there are {{ defaultCopies }} copies of this enemy.
-          However, you may reduce the copies by 1 to gain an extra 2AP to spend
-          on abilities.
-        </p>
-        <div class="alignRow gap">
-          <label for="numberCopies" class="nowrap">Number of cog copies:</label>
-          <input
-            type="number"
-            min="1"
-            :max="playerCount"
-            v-model="cog.numberCopies"
-            :placeholder="defaultCopies"
-            v-on:blur="backup"
-            id="NumberCopies"
-            class="input tiny"
-          />
-        </div>
-        -->
         <h2>Step 3: Choose Template</h2>
         <p>Each Cog gains 1 Template.</p>
         <radio-button-selection
@@ -177,8 +134,12 @@ import { mapState } from "vuex";
 import CogAbilityEditableList from "./CogAbilityEditableList.vue";
 import CombatStats from "../Common/CombatStats.vue";
 import CogTraits from "./CogTraits.vue";
+import { cogTypeAttrVal } from "./CogFlowUtils/CogTypeDescriptionUtils";
 
 const COG_LOCAL_STORAGE = "creation-cog-wip";
+
+// TODO: Start storing temporary cog data in vue module??
+// Should help with a lot of the info emits I am doing here
 
 export default {
   name: "CogFlow",
@@ -202,8 +163,6 @@ export default {
       cog: {
         name: "",
         level: "",
-        numberPCs: "",
-        numberCopies: "",
         template: "",
         type: "",
         cogAbilities: [],
@@ -234,36 +193,6 @@ export default {
     getMobileSidebarClass() {
       return this.showingStats ? "showStats" : "";
     },
-    /*
-    defaultPCCount() {
-      if (this.campaign && this.campaign.entities && this.campaign.members) {
-        const entities = Object.keys(this.campaign.entities).filter((uuid) =>
-          uuid.startsWith("C")
-        ).length;
-        const players = Object.entries(this.campaign.members).filter(
-          (role) => role === "player"
-        ).length;
-        return Math.max(entities, players);
-      }
-      return 3; // 3 is default
-    },
-    playerCount() {
-      return this.cog.numberPCs
-        ? parseInt(this.cog.numberPCs)
-        : this.defaultPCCount;
-    },
-    defaultCopies() {
-      return Math.max(this.playerCount, 3);
-    },
-    copiesCount() {
-      return Math.max(
-        this.cog.numberCopies
-          ? parseInt(this.cog.numberCopies)
-          : this.defaultCopies,
-        1
-      );
-    },
-    */
     templateOptions() {
       return {
         mook: `<b>Mook:</b> This Cog loses -6 Initiative and has only ${this.lvlStr()} AP (instead of ${this.lvlStr(
@@ -313,7 +242,6 @@ export default {
         cogType: this.cog.type,
         level: this.cog.level,
         acc: this.calculateAcc,
-        // copies: this.copiesCount,
         abilities,
       };
     },
@@ -449,7 +377,6 @@ export default {
       if (this.cog.template === "mook") {
         ap = level;
       }
-      //ap += Math.max(2 * (this.playerCount - this.copiesCount), 0);
       return ap;
     },
     totalTraits() {
@@ -510,29 +437,9 @@ export default {
       if (!this.cog.level) {
         return 0;
       }
-      const negativeMap = {
-        automata: ["cha", "wis", "spi"],
-        beastFlora: ["wis", "tek", "int"],
-        undead: ["cha", "tek", "spi", "int"],
-      };
-      const useLMap = {
-        automata: ["tek"],
-        beastFlora: ["str", "dex", "per", "agi"],
-        monster: ["str", "dex", "per", "agi"],
-      };
-      if (
-        this.cog.type &&
-        negativeMap[this.cog.type] &&
-        negativeMap[this.cog.type].includes(attr)
-      ) {
-        return -2;
-      }
-      if (
-        this.cog.type &&
-        useLMap[this.cog.type] &&
-        useLMap[this.cog.type].includes(attr)
-      ) {
-        return parseInt(this.cog.level); // Equal to L
+      const cogTypeVal = cogTypeAttrVal(this.cog.level, this.cog.type, attr);
+      if (cogTypeVal !== undefined) {
+        return cogTypeVal;
       }
       return Math.round(parseInt(this.cog.level) / 2);
     },
@@ -544,11 +451,11 @@ export default {
       this.cog = {
         name: "",
         level: "",
-        numberPCs: "",
-        numberCopies: "",
         template: "",
         type: "",
         cogAbilities: [],
+        traits: [],
+        weaknesses: [],
       };
     },
   },

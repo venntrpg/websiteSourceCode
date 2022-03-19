@@ -178,14 +178,7 @@ const actions = {
   },
 
   login: ({ commit }, { username, password }) => {
-    console.log("logging in!");
     if (username === undefined || password === undefined) {
-      console.log(
-        "Login: username or password were undefined. Username: " +
-          username +
-          ", Password: " +
-          password
-      );
       return;
     }
     return api.login(username, password).then((response) => {
@@ -206,8 +199,6 @@ const actions = {
   },
 
   logout: ({ commit }) => {
-    console.log("logging out!");
-    // could clear auth here before doing api call
     return api.logout().then((response) => {
       if (response && response.success !== undefined) {
         if (response.success === true) {

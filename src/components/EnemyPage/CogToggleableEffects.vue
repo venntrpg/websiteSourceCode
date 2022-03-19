@@ -1,8 +1,9 @@
 <template>
   <div>
     <div v-for="(body, title) in options" v-bind:key="title">
-      <h3 v-if="body.section">{{ body.section }}</h3>
+      <h3 v-if="body.section && !hideOption(title)">{{ body.section }}</h3>
       <check-box
+        v-if="!hideOption(title)"
         :checked="optionSelected(title)"
         :disabled="optionDisabled(title)"
         :text="'<b>' + title + '</b>: ' + body.text"
@@ -46,6 +47,13 @@ export default {
     optionSelected(title) {
       return this.selected.includes(title);
     },
+    hideOption(title) {
+      return (
+        this.maxSelections >= 0 &&
+        this.selected.length >= this.maxSelections &&
+        !this.optionSelected(title)
+      );
+    },
     optionDisabled(title) {
       if (this.disabled.includes(title)) {
         return true;
@@ -53,19 +61,13 @@ export default {
       // see if it is disabled because we have reached the maximum selections
       if (
         this.maxSelections >= 0 &&
-        this.selected.length > this.maxSelections &&
+        this.selected.length >= this.maxSelections &&
         !this.optionSelected(title)
       ) {
         return true;
       }
       // look through mutually exclusive lists and disable of another option of one of those lists was already selected
-      if (
-        this.mutuallyExclusive
-          .filter((list) => list.includes(title))
-          .some((list) =>
-            list.some((item) => item !== title && this.optionSelected(item))
-          )
-      ) {
+      if (this.hideOption(title)) {
         return true;
       }
       // look through progressive options and disable if a lower option on the scale is not selected
