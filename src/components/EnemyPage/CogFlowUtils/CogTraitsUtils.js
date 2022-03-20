@@ -898,6 +898,7 @@ export function disabledWeaknesses(cog) {
 // actually works on both traits and weaknesses
 export function bestSelectedTraitsMap(cog) {
   const allTraits = { ...traitOptions(cog), ...weaknessOptions(cog) };
+  const bestSelectedTraits = [];
   const selectedTraits = {};
 
   const progressiveOptions = [
@@ -909,10 +910,6 @@ export function bestSelectedTraitsMap(cog) {
   const selectedProgressiveTraits = cogTraits.filter((trait) =>
     progressiveOptions.some((row) => row.includes(trait))
   );
-  const bestSelectedTraits = cogTraits.filter(
-    (trait) => !selectedProgressiveTraits.includes(trait)
-  );
-
   const bestOfRows = {};
   selectedProgressiveTraits.forEach((trait) => {
     const row = progressiveOptions.findIndex((row) => row.includes(trait));
@@ -924,6 +921,11 @@ export function bestSelectedTraitsMap(cog) {
   Object.entries(bestOfRows).forEach((pair) => {
     bestSelectedTraits.push(progressiveOptions[pair[0]][pair[1]]);
   });
+  cogTraits
+    .filter((trait) => !selectedProgressiveTraits.includes(trait))
+    .forEach((trait) => {
+      bestSelectedTraits.push(trait);
+    });
 
   bestSelectedTraits.forEach((trait) => {
     selectedTraits[trait] = allTraits[trait];
