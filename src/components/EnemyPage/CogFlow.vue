@@ -140,7 +140,8 @@
           <h3>Enemy in basic string format</h3>
           <button v-on:click="copyEnemyButton()" class="btn basicBtn">
             <div class="basicBtnContents">
-              <span class="material-icons">content_copy</span>
+              <span class="material-icons space">content_copy</span>
+              Copy
             </div>
           </button>
         </div>
