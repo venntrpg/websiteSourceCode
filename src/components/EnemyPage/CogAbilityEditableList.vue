@@ -2,7 +2,7 @@
   <div>
     <h3>Ability Creation</h3>
     <div class="alignRow gap labelText">
-      Remaining AP (Action Points):
+      Spent AP (Action Points):
       <fraction :top="usedAP" :bottom="totalAP" />
     </div>
     <div v-for="(ability, index) in cogAbilities" v-bind:key="index">
