@@ -1,5 +1,6 @@
 import { lvlStr, lvlInt } from "./CogUtils";
 import { bestSelectedTraitsMap, attrLevelAdjustments } from "./CogTraitsUtils";
+import { COG_ABILITY_TYPE } from "./CogConstants";
 
 // effects that require the user to specify how much AP to spend
 const specialCogAbilityEffects = [
@@ -703,7 +704,7 @@ export function cogFormattedAbility(cog, ability, optionsMap) {
     cost: costMap,
     effect,
     // special cogAbility fields
-    specialAbilityType: "cogAbility",
+    specialAbilityType: COG_ABILITY_TYPE,
     ap,
   };
 }

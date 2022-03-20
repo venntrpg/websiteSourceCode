@@ -434,6 +434,7 @@ export default {
         return true;
       }
       if (
+        (!this.isEdit || this.givenAbility.name !== this.ability.name) &&
         this.cog.cogAbilities.some(
           (ability) => ability.name === this.ability.name
         )

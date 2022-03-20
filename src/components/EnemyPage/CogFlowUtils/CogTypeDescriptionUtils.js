@@ -105,6 +105,14 @@ export function cogTypeCopy(lvl, option) {
   return cogTypeMap(lvl)[option];
 }
 
+export function cogTypeTitle(option) {
+  const details = cogTypeCopy("", option);
+  if (details !== undefined) {
+    return details.title;
+  }
+  return "";
+}
+
 export function cogTypeAttrVal(lvl, option, attr) {
   // returns undefined if not found
   const details = cogTypeCopy(lvl, option);

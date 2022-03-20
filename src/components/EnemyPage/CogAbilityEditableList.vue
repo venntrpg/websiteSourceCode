@@ -94,7 +94,11 @@ export default {
       }
     },
     editAbilityButton(index) {
-      this.editorsOpen[index] = true;
+      if (this.editorsOpen[index] == true) {
+        this.editorsOpen[index] = false;
+      } else {
+        this.editorsOpen[index] = true;
+      }
       this.$forceUpdate(); // not ideal, but seems to fix issue
     },
   },

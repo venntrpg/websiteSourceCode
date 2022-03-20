@@ -1,4 +1,5 @@
 import { lvlStr, lvlInt } from "./CogUtils";
+import { COG_TRAIT_TYPE, COG_WEAKNESS_TYPE } from "./CogConstants";
 
 /**
  * Returns map with trait options
@@ -1007,13 +1008,17 @@ export function formatTraits(cog, traits) {
         ? "\n(Note: any attribute adjustments have already been automatically handled by the website.)"
         : "";
       const effect = trait.text + handledString;
+      const name = pair[0];
+      const type = cog.traits.includes(name)
+        ? COG_TRAIT_TYPE
+        : COG_WEAKNESS_TYPE;
       const ability = {
-        name: pair[0],
+        name,
         effect,
         activation,
         cost,
         // special cogTrait fields
-        specialAbilityType: "cogTrait",
+        specialAbilityType: type,
       };
       return ability;
     });

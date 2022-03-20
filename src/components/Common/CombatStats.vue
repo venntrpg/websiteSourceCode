@@ -347,7 +347,7 @@ import GiftDescription from "./CombatStatsComponents/GiftDescription.vue";
 import CheckBox from "./CheckBox.vue";
 import CogTypeDescription from "../EnemyPage/CogTypeDescription.vue";
 import DisplayBasicAbilityDetails from "./Abilities/DisplayBasicAbilityDetails.vue";
-import { cogTypeCopy } from "../EnemyPage/CogFlowUtils/CogTypeDescriptionUtils";
+import { cogTypeTitle } from "../EnemyPage/CogFlowUtils/CogTypeDescriptionUtils";
 
 export default {
   name: "combatStats",
@@ -450,8 +450,7 @@ export default {
     },
     cogTypeTitle() {
       if (this.isCog) {
-        const copy = cogTypeCopy("", this.character.cogType);
-        return copy.title;
+        return cogTypeTitle(this.character.cogType);
       }
       return "";
     },
