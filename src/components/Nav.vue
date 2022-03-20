@@ -50,6 +50,7 @@ export default {
   justify-content: space-between;
   background-color: var(--purple-500);
   font-size: 18pt;
+  z-index: 6;
 }
 
 .homeLink {

@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="alignRow gap labelText">
-      Spent Traits
-      <fraction :top="selected.length" :bottom="totalTraits" />
+      Remaining Trait Selections:
+      <fraction :top="totalTraits - selected.length" :bottom="totalTraits" />
     </div>
     <cog-toggleable-effects
       :options="options"

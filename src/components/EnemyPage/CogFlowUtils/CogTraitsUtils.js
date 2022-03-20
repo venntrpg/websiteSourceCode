@@ -854,6 +854,7 @@ export const progressiveWeaknessOptions = [
 
 const traitWeaknessExclusionPairs = [
   ["Bonus AP I", "Simple I"],
+  ["Fast I", "Slow I"],
   ["Extra Health I", "Reduced Health I"],
   ["Attribute Damage Resistance I", "Vulnerable to Attribute Damage"],
   ["Magic Resistance I", "Vulnerable to Magic"],

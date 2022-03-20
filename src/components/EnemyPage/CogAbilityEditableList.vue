@@ -2,8 +2,8 @@
   <div>
     <h3>Ability Creation</h3>
     <div class="alignRow gap labelText">
-      Spent AP (Action Points):
-      <fraction :top="usedAP" :bottom="totalAP" />
+      Remaining AP (Action Points):
+      <fraction :top="remainingAP" :bottom="totalAP" />
     </div>
     <div v-for="(ability, index) in cogAbilities" v-bind:key="index">
       <div class="card padded column mb-8 ability">
@@ -29,6 +29,7 @@
       <cog-ability-creation
         v-if="editorsOpen[index]"
         :cog="cog"
+        :remainingAP="remainingAP"
         :givenAbility="ability"
         :index="index"
         @createAbility="addAbility"
@@ -42,6 +43,7 @@
     <cog-ability-creation
       v-if="showNewAbilityPanel"
       :cog="cog"
+      :remainingAP="remainingAP"
       @createAbility="addAbility"
       @deleteAbility="deleteAbility"
     />
@@ -67,6 +69,11 @@ export default {
       showNewAbilityPanel: false,
       editorsOpen: {},
     };
+  },
+  computed: {
+    remainingAP() {
+      return this.totalAP - this.usedAP;
+    },
   },
   methods: {
     addAbilityButton() {

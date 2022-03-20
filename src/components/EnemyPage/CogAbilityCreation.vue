@@ -2,6 +2,19 @@
   <div class="card border padded column">
     <h2 v-if="isEdit">Edit {{ ability.name }}</h2>
     <h2 v-else>New Ability</h2>
+    <div class="stickyHeader">
+      <span>
+        <b>{{ ability.name }}</b>
+        / AP cost:
+        <span class="number" v-bind:class="tooMuchAPWarningClass">{{
+          costAP
+        }}</span>
+        / AP left to spend:
+        <span class="number" v-bind:class="tooMuchAPWarningClass">{{
+          remainingAP
+        }}</span>
+      </span>
+    </div>
     <p>
       Current version:
       <a
@@ -242,6 +255,7 @@ export default {
   name: "CogAbilityCreation",
   props: {
     cog: Object,
+    remainingAP: Number,
     givenAbility: {
       type: Object,
       default: undefined,
@@ -290,6 +304,12 @@ export default {
     },
     costAP() {
       return cogAbilityCostAP(this.ability, this.optionsMap);
+    },
+    tooMuchAPWarningClass() {
+      if (this.isEdit) {
+        return this.remainingAP < 0 ? "errorText" : "";
+      }
+      return this.costAP > this.remainingAP ? "errorText" : "";
     },
     calculateVimCost() {
       return cogCalculateVimCost(this.ability);
@@ -546,3 +566,21 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.stickyHeader {
+  position: sticky;
+  top: var(--nav-height);
+  display: flex;
+  background-color: white;
+  border-radius: 5px;
+  padding: 16px;
+  border: 1px solid var(--gray-400);
+  z-index: 4;
+}
+@media screen and (max-width: 800px) {
+  .stickyHeader {
+    top: var(--total-nav-height);
+  }
+}
+</style>

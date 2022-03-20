@@ -480,6 +480,7 @@ ul {
   align-items: center;
   background-color: var(--purple-700);
   font-size: 18pt;
+  z-index: 5;
 }
 .subNavButton {
   background-color: var(--purple-700);
