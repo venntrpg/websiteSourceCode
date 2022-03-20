@@ -22,6 +22,7 @@ import CogToggleableEffects from "./CogToggleableEffects.vue";
 import {
   traitOptions,
   progressiveTraitOptions,
+  disabledTraits,
 } from "./CogFlowUtils/CogTraitsUtils";
 
 export default {
@@ -43,8 +44,7 @@ export default {
       return progressiveTraitOptions;
     },
     disabledOptions() {
-      // TODO: Block options if their corresponding weakness was selected
-      return [];
+      return disabledTraits(this.cog);
     },
   },
   methods: {

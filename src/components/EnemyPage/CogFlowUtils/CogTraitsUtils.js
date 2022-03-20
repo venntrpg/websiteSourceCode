@@ -677,28 +677,252 @@ export const progressiveTraitOptions = [
   ["Vim Damage Resistance I", "Vim Damage Resistance II"],
 ];
 
+export function weaknessOptions(cog) {
+  const Lstr = lvlStr(cog.level);
+  const doubleLstr = lvlStr(cog.level, "2L", (lvl) => lvl * 2);
+  const tripleLstr = lvlStr(cog.level, "3L", (lvl) => lvl * 3);
+  const quadLstr = lvlStr(cog.level, "4L", (lvl) => lvl * 4);
+  const halfLstr = lvlStr(cog.level, "L/2", (lvl) => Math.round(lvl / 2));
+  return {
+    "Predatory Nature": {
+      text: "This Cog can only attack targets who are not Supported.",
+      abilityDetails: {},
+    },
+    "Simple I": {
+      text: `This Cog has ${halfLstr} fewer AP.`,
+      abilityDetails: {
+        handled: true,
+      },
+      adjustments: {
+        ap: lvlInt(cog.level, (lvl) => Math.round(lvl / 2)),
+      },
+    },
+    "Simple II": {
+      text: `This Cog has ${Lstr} fewer AP.`,
+      abilityDetails: {
+        handled: true,
+      },
+      adjustments: {
+        ap: lvlInt(cog.level),
+      },
+    },
+    "Simple III": {
+      text: `This Cog has only ${halfLstr} AP.`,
+      abilityDetails: {
+        handled: true,
+      },
+      adjustments: {
+        ap: lvlInt(cog.level, (lvl) => lvl + Math.round(lvl / 2)),
+      },
+    },
+    "Slow I": {
+      text: "This Cog has halved Speed.",
+      abilityDetails: {
+        handled: true,
+      },
+      multiplier: {
+        speed: 0.5,
+      },
+    },
+    "Slow II": {
+      text: "This Cog has 0 Speed.",
+      abilityDetails: {
+        handled: true,
+      },
+      multiplier: {
+        speed: 0,
+      },
+    },
+    "Slow Attack": {
+      text: "All of this Cog's abilities and action Traits cost 1 Action more to use.",
+      // WARNING: THIS REQUIRES SPECIAL CODE
+      // Maybe think of a better way of doing this???
+      abilityDetails: {
+        handled: true,
+      },
+    },
+    "Reduced Health I": {
+      text: `This Cog loses ${Lstr} HP. If other weaknesses would reduce their health to 0 or less, they have 1 HP.`,
+      abilityDetails: {
+        handled: true,
+      },
+      adjustments: {
+        hp: lvlInt(cog.level),
+      },
+    },
+    "Reduced Health II": {
+      text: `This Cog loses ${doubleLstr} HP. If other weaknesses would reduce their health to 0 or less, they have 1 HP.`,
+      abilityDetails: {
+        handled: true,
+      },
+      adjustments: {
+        hp: lvlInt(cog.level),
+      },
+    },
+    "Reduced Health III": {
+      text: `This Cog loses ${tripleLstr} HP. If other weaknesses would reduce their health to 0 or less, they have 1 HP.`,
+      abilityDetails: {
+        handled: true,
+      },
+      adjustments: {
+        hp: lvlInt(cog.level),
+      },
+    },
+    "Reduced Health IV": {
+      text: `This Cog loses ${quadLstr} HP. If other weaknesses would reduce their health to 0 or less, they have 1 HP.`,
+      abilityDetails: {
+        handled: true,
+      },
+      adjustments: {
+        hp: lvlInt(cog.level),
+      },
+    },
+    "Vulnerable to Attribute Damage": {
+      text: "Takes 50% more damage from attribute damage, rounded up. This Weakness may be taken more than once.",
+      abilityDetails: {},
+    },
+    "Vulnerable to Magic": {
+      text: "Takes 50% more damage from magical attacks, rounded up. This Weakness may be taken more than once.",
+      abilityDetails: {},
+    },
+    "Vulnerable to Fire": {
+      text: "Takes 50% more damage from fire and burn damage, rounded up. This Weakness may be taken more than once.",
+      abilityDetails: {},
+    },
+    "Vulnerable to Electricity": {
+      text: "Takes 50% more damage from electrical damage, rounded up. This Weakness may be taken more than once.",
+      abilityDetails: {},
+    },
+    "Vulnerable to Bleeding": {
+      text: "Takes 50% more damage from bleed damage, rounded up. This Weakness may be taken more than once.",
+      abilityDetails: {},
+    },
+    "Vulnerable to Slashing": {
+      text: "Takes 50% more damage from slashing attacks, rounded up. This Weakness may be taken more than once.",
+      abilityDetails: {},
+    },
+    "Vulnerable to Piercing": {
+      text: "Takes 50% more damage from piercing attacks, rounded up. This Weakness may be taken more than once.",
+      abilityDetails: {},
+    },
+    "Vulnerable to Bludgeoning": {
+      text: "Takes 50% more damage from bludgeoning attacks, rounded up. This Weakness may be taken more than once.",
+      abilityDetails: {},
+    },
+    "Vulnerable to Paralysis": {
+      text: "Takes 50% more damage from paralysis damage, rounded up. This Weakness may be taken more than once.",
+      abilityDetails: {},
+    },
+    "Vulnerable to Stun": {
+      text: "Takes 50% more damage from stun damage, rounded up. This Weakness may be taken more than once.",
+      abilityDetails: {},
+    },
+    "Vulnerable to Vim Damage": {
+      text: "Takes 50% more damage from Vim damage, rounded up. This Weakness may be taken more than once.",
+      abilityDetails: {},
+    },
+    "Blinded by Bright Light": {
+      text: "When exposed to bright light, this Cog is blinded.",
+      abilityDetails: {},
+    },
+    "Weakened by Light": {
+      text: "This Cog rolls 1d6 less for all damage types in dim light or 2d6 less for all damage types in bright light.",
+      abilityDetails: {},
+    },
+    "Flees When Injured": {
+      text: "When this Cog has half of their health remaining, they attempt to flee.",
+      abilityDetails: {},
+    },
+    "Flees When Alone": {
+      text: "When this Cog has no allies remaining, they attempt to flee. This Weakness may be taken more than once; when taken X times, the Cog flees when there are only X allies remaining, including itself.",
+      abilityDetails: {},
+    },
+  };
+}
+
+export const progressiveWeaknessOptions = [
+  ["Simple I", "Simple II", "Simple III"],
+  ["Slow I", "Slow II"],
+  [
+    "Reduced Health I",
+    "Reduced Health II",
+    "Reduced Health III",
+    "Reduced Health IV",
+  ],
+];
+
+const traitWeaknessExclusionPairs = [
+  ["Bonus AP I", "Simple I"],
+  ["Extra Health I", "Reduced Health I"],
+  ["Attribute Damage Resistance I", "Vulnerable to Attribute Damage"],
+  ["Magic Resistance I", "Vulnerable to Magic"],
+  ["Fire Resistance I", "Vulnerable to Fire"],
+  ["Electrical Resistance I", "Vulnerable to Electricity"],
+  ["Slashing Resistance I", "Vulnerable to Slashing"],
+  ["Bludgeoning Resistance I", "Vulnerable to Bludgeoning"],
+  ["Piercing Resistance I", "Vulnerable to Piercing"],
+  ["Paralysis Resistance I", "Vulnerable to Paralysis"],
+  ["Stun Resistance I", "Vulnerable to Stun"],
+  ["Vim Damage Resistance I", "Vulnerable to Vim Damage"],
+];
+
+export function traitAndWeaknessNames(cog) {
+  return [
+    ...Object.keys(traitOptions(cog)),
+    ...Object.keys(weaknessOptions(cog)),
+  ];
+}
+
+export function disabledTraits(cog) {
+  const exclusionMap = {};
+  traitWeaknessExclusionPairs.forEach((pair) => {
+    exclusionMap[pair[1]] = pair[0];
+  });
+
+  return cog.weaknesses
+    .filter((weakness) => exclusionMap[weakness] !== undefined)
+    .map((weakness) => exclusionMap[weakness]);
+}
+
+export function disabledWeaknesses(cog) {
+  const exclusionMap = {};
+  traitWeaknessExclusionPairs.forEach((pair) => {
+    exclusionMap[pair[0]] = pair[1];
+  });
+
+  return cog.traits
+    .filter((trait) => exclusionMap[trait] !== undefined)
+    .map((trait) => exclusionMap[trait]);
+}
+
+// actually works on both traits and weaknesses
 export function bestSelectedTraitsMap(cog) {
-  const allTraits = traitOptions(cog);
+  const allTraits = { ...traitOptions(cog), ...weaknessOptions(cog) };
   const selectedTraits = {};
 
-  const selectedProgressiveTraits = cog.traits.filter((trait) =>
-    progressiveTraitOptions.some((row) => row.includes(trait))
-  );
+  const progressiveOptions = [
+    ...progressiveTraitOptions,
+    ...progressiveWeaknessOptions,
+  ];
+  const cogTraits = [...cog.traits, ...cog.weaknesses];
 
-  const bestSelectedTraits = cog.traits.filter(
+  const selectedProgressiveTraits = cogTraits.filter((trait) =>
+    progressiveOptions.some((row) => row.includes(trait))
+  );
+  const bestSelectedTraits = cogTraits.filter(
     (trait) => !selectedProgressiveTraits.includes(trait)
   );
 
   const bestOfRows = {};
   selectedProgressiveTraits.forEach((trait) => {
-    const row = progressiveTraitOptions.findIndex((row) => row.includes(trait));
-    const col = progressiveTraitOptions[row].indexOf(trait);
+    const row = progressiveOptions.findIndex((row) => row.includes(trait));
+    const col = progressiveOptions[row].indexOf(trait);
     if (bestOfRows[row] === undefined || bestOfRows[row] < col) {
       bestOfRows[row] = col;
     }
   });
   Object.entries(bestOfRows).forEach((pair) => {
-    bestSelectedTraits.push(progressiveTraitOptions[pair[0]][pair[1]]);
+    bestSelectedTraits.push(progressiveOptions[pair[0]][pair[1]]);
   });
 
   bestSelectedTraits.forEach((trait) => {
@@ -725,10 +949,18 @@ export function attrAdjustments(traits, attr) {
 }
 
 export function attrMultipliers(traits, attr) {
-  return sumOfTraitMap(traits, "multiplier", attr);
+  return Object.values(traits).reduce((sum, trait) => {
+    if (
+      trait.multiplier !== undefined &&
+      trait.multiplier[attr] !== undefined
+    ) {
+      return sum * trait.multiplier[attr];
+    }
+    return sum;
+  }, 1);
 }
 
-export function formatTraits(traits) {
+export function formatTraits(cog, traits) {
   return Object.entries(traits)
     .filter((pair) => pair[1].abilityDetails !== undefined)
     .map((pair) => {
@@ -739,11 +971,16 @@ export function formatTraits(traits) {
         const activationList = Object.entries(trait.abilityDetails.cost).map(
           (activationPair) => {
             const type = activationPair[0];
-            const val = activationPair[1];
-            const pluralStr = val > 1 ? "s" : "";
+            let val = activationPair[1];
+            let pluralStr = val > 1 ? "s" : "";
             let label = type;
             switch (type) {
               case "A":
+                // fun hardcoded edge case here for now - oh well
+                if (cog.weaknesses.includes("Slow Attack")) {
+                  val += 1;
+                  pluralStr = "s";
+                }
                 label = "Action" + pluralStr;
                 break;
               case "R":

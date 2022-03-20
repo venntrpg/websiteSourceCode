@@ -164,6 +164,8 @@ export function cogAbilitiesOptionsMap(cog, ability) {
   const specialDmgDoubleL = lvlStr(specialEffectDmgLevel, "2L", (lvl) =>
     Math.max(lvl * 2, 0)
   );
+  // fun hardcoded edge case here for now - oh well
+  const actionSpeedAdjustment = cog.weaknesses.includes("Slow Attack") ? 1 : 0;
   // actual map
   return {
     // range
@@ -173,15 +175,19 @@ export function cogAbilitiesOptionsMap(cog, ability) {
     // speed
     fast: {
       ap: "x2",
-      desc: "1 Action",
+      desc: `${1 + actionSpeedAdjustment} Action`,
       type: "speed",
       optionDetails:
         "Added Effects: The Cog's Level is treated as 3 lower for the purpose of all damage.",
     },
-    regular: { ap: 3, desc: "2 Actions", type: "speed" },
+    regular: {
+      ap: 3,
+      desc: `${2 + actionSpeedAdjustment} Actions`,
+      type: "speed",
+    },
     slow: {
       ap: 0,
-      desc: "3 Actions",
+      desc: `${3 + actionSpeedAdjustment} Actions`,
       type: "speed",
       optionDetails:
         "The Cog's Level is treated as 1 higher for the purpose of normal damage.",
@@ -643,11 +649,6 @@ export function cogFormattedAbility(cog, ability, optionsMap) {
     // if optionsMap is not precalculated, we will calculate it here
     optionsMap = cogAbilitiesOptionsMap(cog, ability);
   }
-  // calculate name string
-  let name = ability.name;
-  if (name === undefined || name === "") {
-    name = `Attack ${cog.abilities.length}`;
-  }
   // calculate activation costs
   const activationList = [optionsMap[ability.speed].desc];
   const costMap = { A: parseInt(optionsMap[ability.speed].desc) };
@@ -695,7 +696,7 @@ export function cogFormattedAbility(cog, ability, optionsMap) {
   // AP cost
   const ap = cogAbilityCostAP(ability, optionsMap);
   return {
-    name,
+    name: ability.name,
     purchase: `${ap} AP`,
     range: optionsMap[ability.range].desc,
     activation,

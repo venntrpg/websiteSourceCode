@@ -230,6 +230,7 @@ import {
   cogResistantCheckRequired,
   cogTypeOptionsMap,
 } from "./CogFlowUtils/CogAbilityCreationUtils";
+import { traitAndWeaknessNames } from "./CogFlowUtils/CogTraitsUtils";
 export default {
   components: {
     RadioButtonSelection,
@@ -279,6 +280,8 @@ export default {
     // copy prop value if it was set
     if (this.isEdit) {
       this.ability = this.givenAbility;
+    } else {
+      this.ability.name = `Attack ${this.cog.cogAbilities.length}`;
     }
   },
   computed: {
@@ -425,6 +428,21 @@ export default {
           isNaN(this.ability.specialEffectsCosts[effect])
         )
       ) {
+        return true;
+      }
+      if (this.ability.name === undefined || this.ability.name === "") {
+        return true;
+      }
+      if (
+        this.cog.cogAbilities.some(
+          (ability) => ability.name === this.ability.name
+        )
+      ) {
+        // no duplicate names
+        return true;
+      }
+      if (traitAndWeaknessNames(this.cog).includes(this.ability.name)) {
+        // no duplicate names even with other traits and weaknesses
         return true;
       }
       return false;

@@ -205,6 +205,10 @@ ul {
   margin-bottom: 8px;
 }
 
+.wide {
+  width: 100%;
+}
+
 /* Button Styles */
 
 .btn {

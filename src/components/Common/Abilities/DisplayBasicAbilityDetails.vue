@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wide">
     <h2>{{ ability.name }}</h2>
     <div v-if="ability.path" class="bottomMargin">
       <i>{{ ability.path }}</i>

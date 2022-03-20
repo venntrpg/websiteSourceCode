@@ -91,7 +91,7 @@
           of L AP each, or one worth L AP and two worth L/2 AP each.
         </p>
         <cog-ability-editable-list
-          :cog="enemy"
+          :cog="cog"
           :totalAP="totalAP"
           :usedAP="usedAP"
           :cogAbilities="cog.cogAbilities"
@@ -114,13 +114,27 @@
           A Cog starts with 1 Weakness. For each additional Weakness taken, gain
           1 Trait. A Cog cannot have more than {{ lvlStr() }} Weaknesses.
         </p>
+        <cog-weaknesses
+          :cog="cog"
+          :selected="cog.weaknesses"
+          @newWeaknessesList="updateWeaknesses"
+        />
         <h2>Step 8: Create Enemy</h2>
-        <button v-on:click="createEnemyButton" class="btn roundedButton">
-          Create Enemy
-        </button>
-        <button v-on:click="deleteEnemy" class="btn roundedButton clear">
-          Delete Enemy
-        </button>
+        <div class="alignRow split">
+          <confirmation-modal
+            :buttonText="'Create Enemy'"
+            :confStr="'Create'"
+            :details="'Are you sure you are done editing this enemy? Once the enemy is saved to the server, most fields will be editable.'"
+            @mainButton="createEnemyButton"
+          />
+          <confirmation-modal
+            :buttonText="'Delete Enemy'"
+            :buttonClass="'clear'"
+            :confStr="'Delete'"
+            :details="'Are you sure you want to delete this enemy? It will not be saved!'"
+            @mainButton="deleteEnemy"
+          />
+        </div>
         <div class="tall"></div>
       </div>
     </div>
@@ -128,13 +142,14 @@
 </template>
 
 <script>
-import RadioButtonSelection from "../Common/RadioButtonSelection.vue";
-import CogTypeSelection from "./CogTypeSelection.vue";
 import { ResponsiveDirective } from "vue-responsive-components";
 import { mapState } from "vuex";
+import RadioButtonSelection from "../Common/RadioButtonSelection.vue";
+import CogTypeSelection from "./CogTypeSelection.vue";
 import CogAbilityEditableList from "./CogAbilityEditableList.vue";
 import CombatStats from "../Common/CombatStats.vue";
 import CogTraits from "./CogTraits.vue";
+import ConfirmationModal from "../Common/ConfirmationModal.vue";
 import { cogFormattedAbility } from "./CogFlowUtils/CogAbilityCreationUtils";
 import {
   bestSelectedTraitsMap,
@@ -144,6 +159,7 @@ import {
   formatTraits,
 } from "./CogFlowUtils/CogTraitsUtils";
 import { cogTypeAttrVal } from "./CogFlowUtils/CogTypeDescriptionUtils";
+import CogWeaknesses from "./CogWeaknesses.vue";
 
 const COG_LOCAL_STORAGE = "creation-cog-wip";
 
@@ -158,6 +174,8 @@ export default {
     CogAbilityEditableList,
     CombatStats,
     CogTraits,
+    ConfirmationModal,
+    CogWeaknesses,
   },
   directives: {
     responsive: ResponsiveDirective,
@@ -236,7 +254,7 @@ export default {
     },
     enemy() {
       const abilities = this.formattedCogAbilities.concat(
-        formatTraits(this.bestCogTraitsMap)
+        formatTraits(this.cog, this.bestCogTraitsMap)
       );
       const enemy = {
         name: this.cog.name,
@@ -285,6 +303,10 @@ export default {
       level += attrLevelAdjustments(this.bestCogTraitsMap, "hp");
       let hp = Math.max(level * 5, 1);
       hp += attrAdjustments(this.bestCogTraitsMap, "hp");
+      if (hp < 1) {
+        // hp cannot be less than 1
+        hp = 1;
+      }
       return hp;
     },
     calculateMP() {
@@ -376,10 +398,7 @@ export default {
       if (level > 14) {
         speed = level;
       }
-      const traitMultiplier = attrMultipliers(this.bestCogTraitsMap, "speed");
-      if (traitMultiplier !== 0) {
-        speed *= traitMultiplier;
-      }
+      speed *= attrMultipliers(this.bestCogTraitsMap, "speed");
       return speed;
     },
     calculateAcc() {
