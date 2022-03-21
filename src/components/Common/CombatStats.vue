@@ -769,44 +769,6 @@ export default {
   align-items: center;
 }
 
-.help {
-  fill: var(--gray-700);
-}
-
-.toolTip {
-  display: none;
-  position: absolute;
-  margin-top: 100px;
-  margin-left: -8px;
-  max-width: 220px;
-  background-color: var(--gray-900);
-  color: white;
-  font-size: 13pt;
-  border-radius: 5px;
-  padding: 8px;
-  z-index: 2;
-}
-
-.toolTip.wide {
-  max-width: 360px;
-}
-
-/* Tool tip functionality */
-.toolTip:hover,
-.help:hover + .toolTip {
-  display: block;
-}
-
-.toolTipLink {
-  color: white;
-}
-.toolTipLink:hover {
-  color: var(--red-300);
-}
-.toolTipLink:active {
-  color: var(--red-500);
-}
-
 .attrsRow {
   display: flex;
   justify-content: space-between;
@@ -814,7 +776,7 @@ export default {
 }
 .attrButton {
   width: 100%;
-  background-color: white;
+  background-color: var(--background-highlight);
   border-radius: 5px;
   margin-top: 4px;
   margin-bottom: 4px;

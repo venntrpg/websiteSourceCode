@@ -39,13 +39,14 @@ export default {
 /* Roboto Mono is for dice etc */
 @import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Roboto:wght@300;400;500&display=swap");
 
-/* STYLES */
+/* ---------------------------------- STYLES  ----------------------------------*/
 
 body {
   margin: 0 !important;
 
   --app-font: "Raleway", sans-serif;
   --logo-font: Copperplate, "Raleway", sans-serif;
+  --number-font: "roboto", monospace;
 
   font-family: var(--app-font);
   -webkit-font-smoothing: antialiased;
@@ -60,11 +61,18 @@ body {
   --purple-700: #353549;
   --purple-800: #2b2a3a;
   --purple-900: #201f2b;
+  --purple-925: #181820;
+  --purple-950: #0f0f14;
 
   --red-300: #f49c9a;
+  --red-400: #f18483;
   --red-500: #ef6f6c;
   --red-600: #ec5855;
   --red-700: #ea423e;
+
+  --dark-red-600: #d66260;
+  --dark-red-700: #b0514f;
+  --dark-red-800: #703432;
 
   --yellow-300: #eec972;
   --yellow-500: #e6af2e;
@@ -72,14 +80,64 @@ body {
 
   --gray-900: #303030;
   --gray-800: #2a2a2a;
+  --gray-750: #3c3d3f;
   --gray-700: #4d4e50;
+  --gray-650: #636466;
   --gray-600: #818181;
+  --gray-550: #949191;
   --gray-500: #afafb0;
   --gray-400: #d1d1d1;
   --gray-300: #efefef;
   --gray-250: #f4f4f4;
   --gray-200: #f7f7f7;
   --gray-100: #fbfbfb;
+
+  /* THEME SETTINGS */
+
+  --background: var(--gray-250);
+  --background-highlight: white;
+  --background-high-contrast: var(--gray-900);
+
+  --nav-background: var(--purple-500);
+  --nav-button-hover: var(--purple-600);
+  --nav-button-active: var(--purple-700);
+  --sub-nav-background: var(--purple-700);
+  --sub-nav-button-hover: var(--purple-800);
+  --sub-nav-button-active: var(--purple-900);
+  --home-button-hover: var(--yellow-300);
+  --home-button-active: var(--yellow-500);
+
+  --main-button: var(--red-500);
+  --main-button-disabled: var(--red-300);
+  --main-button-hover: var(--red-600);
+  --main-button-active: var(--red-700);
+  --secondary-button: var(--purple-400);
+  --secondary-button-disabled: var(--purple-300);
+  --secondary-button-hover: var(--purple-600);
+  --secondary-button-active: var(--purple-700);
+  --basic-button-disabled: var(--gray-500);
+  --basic-button-hover: var(--gray-300);
+  --basic-button-active: var(--gray-400);
+
+  --text: black;
+  --text-error: var(--red-600);
+  --link-hover: var(--red-500);
+  --link-active: var(--red-700);
+  --text-muted: var(--gray-800);
+  --text-contrast: white;
+  --link-contrast-hover: var(--red-300);
+  --link-contrast-active: var(--red-500);
+  --logo-color: var(--yellow-500);
+
+  --border: var(--gray-400);
+  --border-hover: var(--gray-500);
+  --border-focus: var(--yellow-600);
+  --border-error: var(--red-300);
+  --border-error-hover: var(--red-500);
+  --border-error-focus: var(--red-700);
+  --border-contrast: var(--gray-700);
+
+  --table-contrast: var(--gray-200);
 
   /* HEIGHTS / WIDTHS */
   --nav-height: 42px;
@@ -89,13 +147,51 @@ body {
   --sub-nav-page-height: calc(100vh - var(--total-nav-height));
   --sidebar-width: 400px;
 
-  background-color: var(--gray-250);
+  background-color: var(--background);
+  color: var(--text);
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    --background: var(--purple-950);
+    --background-highlight: var(--purple-900);
+
+    --nav-background: var(--purple-600);
+    --nav-button-hover: var(--purple-700);
+    --nav-button-active: var(--purple-800);
+    --sub-nav-background: var(--purple-800);
+    --sub-nav-button-hover: var(--purple-900);
+    --sub-nav-button-active: var(--purple-925);
+
+    --text: var(--gray-250);
+    --text-muted: var(--gray-550);
+    --logo-color: var(--yellow-600);
+
+    --main-button: var(--dark-red-600);
+    --main-button-hover: var(--dark-red-700);
+    --main-button-active: var(--dark-red-800);
+    --secondary-button: var(--purple-500);
+    --secondary-button-disabled: var(--purple-400);
+    --secondary-button-hover: var(--purple-600);
+    --secondary-button-active: var(--purple-700);
+    --basic-button-disabled: var(--gray-700);
+    --basic-button-hover: var(--purple-800);
+    --basic-button-active: var(--purple-700);
+
+    --border: var(--gray-750);
+    --border-hover: var(--gray-650);
+    --border-error: var(--red-500);
+    --border-error-hover: var(--red-600);
+    --border-contrast: var(--gray-800);
+
+    --table-contrast: var(--purple-925);
+  }
 }
 
 #app {
   /* Background Styles */
   min-height: var(--page-height);
-  background-color: var(--gray-250);
+  background-color: var(--background);
 }
 
 /* Page Descriptors */
@@ -137,18 +233,18 @@ h1 {
 }
 
 .number {
-  font-family: "roboto", monospace;
+  font-family: var(--number-font);
   font-weight: 400;
 }
 
 .link {
-  color: black;
+  color: var(--text);
 }
 .link:hover {
-  color: var(--red-500);
+  color: var(--link-hover);
 }
 .link:active {
-  color: var(--red-700);
+  color: var(--link-active);
 }
 .link.stealth {
   text-decoration: none;
@@ -183,7 +279,7 @@ ul {
 }
 
 .errorText {
-  color: var(--red-600);
+  color: var(--text-error);
 }
 
 .labelText {
@@ -214,6 +310,7 @@ ul {
 .btn {
   border-style: hidden;
   font-family: var(--app-font);
+  color: var(--text);
   display: flex;
   cursor: pointer;
   text-decoration: none;
@@ -229,8 +326,8 @@ ul {
 }
 
 .roundedButton {
-  background-color: var(--red-500);
-  border: solid 2px var(--red-500);
+  background-color: var(--main-button);
+  border: solid 2px var(--main-button);
   border-radius: 20px;
   padding-top: 2px;
   padding-bottom: 2px;
@@ -238,55 +335,56 @@ ul {
   padding-right: 10px;
   font-weight: 500;
   font-size: 18pt;
-  color: white;
+  color: var(--text-contrast);
   justify-content: center;
   height: 29px;
 }
 .roundedButton:disabled {
-  background-color: var(--red-300);
-  border: solid 2px var(--red-300);
+  background-color: var(--main-button-disabled);
+  border: solid 2px var(--main-button-disabled);
 }
 .roundedButton:hover:not(:disabled) {
-  background-color: var(--red-600);
-  border: solid 2px var(--red-600);
+  background-color: var(--main-button-hover);
+  border: solid 2px var(--main-button-hover);
 }
 .roundedButton:active:not(:disabled) {
-  background-color: var(--red-700);
-  border: solid 2px var(--red-700);
+  background-color: var(--main-button-active);
+  border: solid 2px var(--main-button-active);
 }
 .roundedButton.clear {
-  color: var(--red-500);
+  color: var(--main-button);
   background-color: transparent;
 }
-.roundedButton.clear.disabled {
+.roundedButton.clear:disabled {
   opacity: 0.65;
+  color: var(--main-button-disabled);
   background-color: transparent;
 }
 .roundedButton.clear:hover:not(:disabled) {
-  background-color: var(--red-500);
-  border: solid 2px var(--red-500);
-  color: white;
+  background-color: var(--main-button-hover);
+  border: solid 2px var(--main-button-hover);
+  color: var(--text-contrast);
 }
 .roundedButton.clear:active:not(:disabled) {
-  background-color: var(--red-700);
-  border: solid 2px var(--red-700);
-  color: white;
+  background-color: var(--main-button-active);
+  border: solid 2px var(--main-button-active);
+  color: var(--text-contrast);
 }
 .roundedButton.purple {
-  background-color: var(--purple-400);
-  border: solid 2px var(--purple-400);
+  background-color: var(--secondary-button);
+  border: solid 2px var(--secondary-button);
 }
 .roundedButton.purple:disabled {
-  background-color: var(--purple-300);
-  border: solid 2px var(--purple-300);
+  background-color: var(--secondary-button-disabled);
+  border: solid 2px var(--secondary-button-disabled);
 }
 .roundedButton.purple:hover:not(:disabled) {
-  background-color: var(--purple-600);
-  border: solid 2px var(--purple-600);
+  background-color: var(--secondary-button-hover);
+  border: solid 2px var(--secondary-button-hover);
 }
 .roundedButton.purple:active:not(:disabled) {
-  background-color: var(--purple-700);
-  border: solid 2px var(--purple-700);
+  background-color: var(--secondary-button-active);
+  border: solid 2px var(--secondary-button-active);
 }
 .roundedButton.wide {
   width: calc(100% - 24px);
@@ -295,21 +393,19 @@ ul {
 .basicBtn {
   background-color: transparent;
   border-radius: 10px;
-  fill: black;
-  color: black;
+  color: var(--text);
 }
 .basicBtn:disabled {
-  fill: var(--gray-500);
-  color: var(--gray-500);
+  color: var(--basic-button-disabled);
 }
 .basicBtn:hover:not(:disabled) {
-  background-color: var(--gray-300);
+  background-color: var(--basic-button-hover);
 }
 .basicBtn:active:not(:disabled) {
-  background-color: var(--gray-400);
+  background-color: var(--basic-button-active);
 }
 .basicBtn.link {
-  color: black;
+  color: var(--text);
 }
 .basicBtnContents {
   display: flex;
@@ -327,10 +423,10 @@ ul {
   font-size: 30px;
 }
 .basicBtn .material-icons.selected {
-  color: var(--red-500);
+  color: var(--main-button);
 }
 .basicBtn:disabled .material-icons.selected {
-  color: var(--gray-500);
+  color: var(--basic-button-disabled);
 }
 .material-icons.space {
   margin-right: 8px;
@@ -352,29 +448,29 @@ ul {
   height: 40px;
   width: 100%;
   border-radius: 5px;
-  color: black;
+  color: var(--text);
   padding: 12px 10px;
-  background-color: white;
-  border: 1px solid var(--gray-400);
+  background-color: var(--background-highlight);
+  border: 1px solid var(--border);
   outline: none;
   box-shadow: none;
   appearance: none;
   box-sizing: border-box;
 }
 .input:hover {
-  border: solid 1px var(--gray-500);
+  border: solid 1px var(--border-hover);
 }
 .input:focus {
-  border: solid 1px var(--yellow-600);
+  border: solid 1px var(--border-focus);
 }
 .input.invalid {
-  border: solid 1px var(--red-300);
+  border: solid 1px var(--border-error);
 }
 .input.invalid:hover {
-  border: solid 1px var(--red-500);
+  border: solid 1px var(--border-error-hover);
 }
 .input.invalid:focus {
-  border: solid 1px var(--red-700);
+  border: solid 1px var(--border-error-focus);
 }
 .input.wide {
   width: 100%;
@@ -394,20 +490,20 @@ ul {
 
 .card {
   display: flex;
-  background-color: white;
+  background-color: var(--background-highlight);
   border-radius: 5px;
 }
 .card.padded {
   padding: 16px;
 }
 .card.border {
-  border: 1px solid var(--gray-400);
+  border: 1px solid var(--border);
 }
 .card.column {
   flex-direction: column;
 }
 .card.selectable {
-  border: 1px solid white;
+  border: 1px solid var(--background-highlight);
 }
 .card.selectable:hover {
   border: 1px solid var(--yellow-300);
@@ -419,7 +515,7 @@ ul {
 .seperator {
   height: 2px;
   width: 100%;
-  background-color: var(--gray-400);
+  background-color: var(--border);
 }
 .seperator.thin {
   height: 1px;
@@ -444,10 +540,62 @@ ul {
 }
 
 .tableItems {
-  background-color: white;
+  background-color: var(--background-highlight);
 }
 .tableItems:nth-child(even) {
-  background-color: var(--gray-200);
+  background-color: var(--table-contrast);
+}
+
+/* A little bit janky way to delay animation */
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+
+  80% {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Tool tip functionality */
+.toolTip {
+  display: none;
+  position: absolute;
+  margin-top: 40px;
+  margin-left: -24px;
+  max-width: 220px;
+  background-color: var(--background-high-contrast);
+  color: var(--text-contrast);
+  font-size: 13pt;
+  border-radius: 5px;
+  padding: 8px;
+  z-index: 5;
+}
+
+.toolTip.wide {
+  max-width: 360px;
+}
+
+.toolTip:hover,
+.toolTipTrigger:hover > .toolTip {
+  display: block;
+  opacity: 1;
+  animation-duration: 2s;
+  animation-name: appear;
+}
+
+.toolTip a {
+  color: var(--text-contrast);
+}
+.toolTip a:hover {
+  color: var(--link-contrast-hover);
+}
+.toolTip a:active {
+  color: var(--link-contrast-active);
 }
 
 /* Nav Styles - useful for subnav styles */
@@ -456,17 +604,17 @@ ul {
   text-decoration: none;
   padding-left: 10px;
   padding-right: 10px;
-  background-color: var(--purple-500);
-  color: white;
+  background-color: var(--nav-background);
+  color: var(--text-contrast);
   font-weight: 500;
   font-size: 18pt;
   line-height: normal;
 }
 .navButton:hover {
-  background-color: var(--purple-600);
+  background-color: var(--nav-button-hover);
 }
 .navButton:active {
-  background-color: var(--purple-700);
+  background-color: var(--nav-button-active);
 }
 
 .subNav {
@@ -478,19 +626,19 @@ ul {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--purple-700);
+  background-color: var(--sub-nav-background);
   font-size: 18pt;
   z-index: 5;
 }
 .subNavButton {
-  background-color: var(--purple-700);
+  background-color: var(--sub-nav-background);
   height: 32px;
 }
 .subNavButton:hover {
-  background-color: var(--purple-800);
+  background-color: var(--sub-nav-button-hover);
 }
 .subNavButton:active {
-  background-color: var(--purple-900);
+  background-color: var(--sub-nav-button-active);
 }
 
 /* Left Sidebar Styles */

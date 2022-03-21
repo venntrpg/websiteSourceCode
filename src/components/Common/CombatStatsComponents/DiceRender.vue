@@ -73,7 +73,7 @@ export default {
 }
 
 .diceElement {
-  font-family: "roboto", monospace;
+  font-family: var(--number-font);
   font-weight: 500;
   font-size: 22pt;
   width: 40px;
@@ -104,7 +104,7 @@ export default {
 }
 
 .total {
-  font-family: "roboto", monospace;
+  font-family: var(--number-font);
   font-weight: 500;
   font-size: 22pt;
   height: 40px;

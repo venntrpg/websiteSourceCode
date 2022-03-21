@@ -138,11 +138,15 @@
         <div class="tall"></div>
         <div class="alignRow split">
           <h3>Enemy in basic string format</h3>
-          <button v-on:click="copyEnemyButton()" class="btn basicBtn">
+          <button
+            v-on:click="copyEnemyButton()"
+            class="btn basicBtn toolTipTrigger"
+          >
             <div class="basicBtnContents">
               <span class="material-icons space">content_copy</span>
               Copy
             </div>
+            <div class="toolTip">Copy text version of Cog</div>
           </button>
         </div>
         <div class="card border padded column">
@@ -465,7 +469,6 @@ export default {
       if (this.cog.template === "mook") {
         init -= 6;
       }
-      // allow space for traits to effect things here
       return init;
     },
     calculateSpeed() {

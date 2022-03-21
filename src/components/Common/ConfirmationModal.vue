@@ -114,7 +114,7 @@ export default {
   width: 500px;
   margin: 8px;
   margin-top: 80px;
-  border: 1px solid var(--gray-700);
+  border: 1px solid var(--border-contrast);
 }
 
 .dialogue-content {

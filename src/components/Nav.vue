@@ -48,7 +48,7 @@ export default {
   height: var(--nav-height);
   display: flex;
   justify-content: space-between;
-  background-color: var(--purple-500);
+  background-color: var(--nav-background);
   font-size: 18pt;
   z-index: 6;
 }
@@ -63,12 +63,12 @@ export default {
   font-size: 30pt;
 }
 .homeLink:hover {
-  color: var(--yellow-300);
-  background-color: var(--purple-500);
+  color: var(--home-button-hover);
+  background-color: var(--nav-background);
 }
 .homeLink:active {
-  color: var(--yellow-500);
-  background-color: var(--purple-500);
+  color: var(--home-button-active);
+  background-color: var(--nav-background);
 }
 
 .right {

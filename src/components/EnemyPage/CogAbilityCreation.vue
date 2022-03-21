@@ -572,10 +572,10 @@ export default {
   position: sticky;
   top: var(--nav-height);
   display: flex;
-  background-color: white;
+  background-color: var(--background-highlight);
   border-radius: 5px;
   padding: 16px;
-  border: 1px solid var(--gray-400);
+  border: 1px solid var(--border);
   z-index: 4;
 }
 @media screen and (max-width: 800px) {

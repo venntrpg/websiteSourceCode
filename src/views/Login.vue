@@ -34,7 +34,7 @@
         LOG IN
       </button>
       <div class="topMargin">
-        <div class="errorMessage">{{ getErrorMessage }}</div>
+        <div class="errorText">{{ getErrorMessage }}</div>
       </div>
     </div>
     <div v-else class="smallPageWidth">You are already signed in. Log out?</div>
@@ -87,8 +87,7 @@ export default {
   margin-top: 4px;
 }
 
-.errorMessage {
+.errorText {
   font-size: 10pt;
-  color: var(--red-700);
 }
 </style>

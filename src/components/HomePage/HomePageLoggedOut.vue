@@ -20,7 +20,7 @@
 .logo {
   font-size: 100pt;
   font-weight: 300;
-  color: var(--yellow-500);
+  color: var(--logo-color);
 }
 
 .btn {

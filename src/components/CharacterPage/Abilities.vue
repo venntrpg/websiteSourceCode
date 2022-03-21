@@ -233,7 +233,7 @@ export default {
 .searchTitle {
   margin: 4px;
   font-size: 11pt;
-  color: var(--gray-800);
+  color: var(--text-muted);
 }
 .searchScrollable {
   max-height: 260px;
