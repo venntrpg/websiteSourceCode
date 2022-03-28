@@ -25,6 +25,16 @@
     <div class="page sideBarPage" v-bind:class="getMobileSidebarClass">
       <div class="largePageWidth main" v-responsive="breakpoints">
         <h1 class="centeredText">CREATE COMBAT COG</h1>
+        <p>
+          Current version:
+          <a
+            href="https://vennt.fandom.com/wiki/Course_of_Foes?oldid=4416"
+            target="_blank"
+            class="link"
+          >
+            Revision as of 18:39, 13 March 2022
+          </a>
+        </p>
         <h2>Step 1: Cog Name</h2>
         <div class="alignRow gap">
           <label for="enemyType" class="nowrap">Cog Name:</label>

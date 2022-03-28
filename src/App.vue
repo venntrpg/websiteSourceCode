@@ -297,11 +297,26 @@ ul {
 .mt-8 {
   margin-top: 8px;
 }
+.mt-16 {
+  margin-top: 16px;
+}
+.mt-24 {
+  margin-top: 24px;
+}
+.mb-0 {
+  margin-bottom: 0px;
+}
+.mb-2 {
+  margin-bottom: 2px;
+}
 .mb-8 {
   margin-bottom: 8px;
 }
 .mb-16 {
   margin-bottom: 16px;
+}
+.mb-24 {
+  margin-bottom: 24px;
 }
 
 .wide {
@@ -599,6 +614,19 @@ ul {
 }
 .toolTip a:active {
   color: var(--link-contrast-active);
+}
+
+/* Sticky header component */
+
+.stickyHeader {
+  position: sticky;
+  top: var(--nav-height);
+  display: flex;
+  background-color: var(--background-highlight);
+  border-radius: 5px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  z-index: 4;
 }
 
 /* Nav Styles - useful for subnav styles */

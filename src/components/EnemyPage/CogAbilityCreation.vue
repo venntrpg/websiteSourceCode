@@ -22,7 +22,7 @@
         target="_blank"
         class="link"
       >
-        Revision as of 17:02, 27 February 2022
+        Revision as of 23:02, 7 March 2022
       </a>
     </p>
     <div class="alignRow gap">
@@ -568,16 +568,6 @@ export default {
 </script>
 
 <style scoped>
-.stickyHeader {
-  position: sticky;
-  top: var(--nav-height);
-  display: flex;
-  background-color: var(--background-highlight);
-  border-radius: 5px;
-  padding: 16px;
-  border: 1px solid var(--border);
-  z-index: 4;
-}
 @media screen and (max-width: 800px) {
   .stickyHeader {
     top: var(--total-nav-height);

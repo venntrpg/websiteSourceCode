@@ -31,20 +31,30 @@
     >
       <div class="largePageWidth main" v-responsive="breakpoints">
         <h1 class="centeredText">CREATE NEW CHARACTER</h1>
+        <p class="textBlock">
+          Current version:
+          <a
+            href="https://vennt.fandom.com/wiki/Character_Creation?oldid=4426"
+            target="_blank"
+            class="link"
+          >
+            Revision as of 16:44, 15 March 2022
+          </a>
+        </p>
+        <!-- ----- STEP 1 ----- -->
         <h2>Step 1: Choose a name</h2>
-        <p>
+        <p class="textBlock">
           This follows the guide on the
           <a
             href="https://vennt.fandom.com/wiki/Character_Creation"
             target="_blank"
             class="link"
           >
-            character creation wiki page
-          </a>
-          .
+            character creation wiki page</a
+          >.
         </p>
         <label for="new-name">
-          <p>
+          <p class="textBlock">
             Choose a name for your character. You can always come back to this
             step later. Or, press the button to generate a random name for now.
           </p>
@@ -68,8 +78,9 @@
             </div>
           </button>
         </div>
+        <!-- ----- STEP 2 ----- -->
         <h2>Step 2: Create your backstory</h2>
-        <p>
+        <p class="textBlock">
           For now, this process must be completed in a seperate document. Follow
           <a
             href="https://vennt.fandom.com/wiki/Backstory"
@@ -81,184 +92,205 @@
           for help with coming up a character concept and describing your
           backstory.
         </p>
-        <h2>Step 3: Develop your Flux</h2>
-        <!-- TODO: intergrate this into the site better. -->
-        <p>
-          Once you have developed your backstory, your
+        <!-- ----- STEP 3 ----- -->
+        <h2>Step 3: Choose a Gift</h2>
+        <p class="textBlock">
+          <i>
+            Most legends are born gifted in some way. Mozart was gifted in
+            music, Achilles was gifted in combat, and Merlin was gifted in
+            magic. There are nine gifts available to choose from as a hero of
+            Amnis, each one providing unique boons to your character.
+          </i>
+        </p>
+        <GiftSelection :gift="create.gift" @giftUpdated="giftUpdated" />
+        <!-- ----- STEP 4 ----- -->
+        <h2>Step 4: Attribute scores</h2>
+        <p>In this step, you select your base attributes.</p>
+        <div class="card column padded mb-24">
+          <p class="textBlock mt-0">
+            1. Select three attributes you used most as a child.
+          </p>
+          <AttributeSelection
+            :attributes="validAttributes"
+            :selected="create.childAttrs"
+            :maxChoices="3"
+            @selectedUpdated="childAttrsUpdated"
+          />
+        </div>
+        <div class="card column padded mb-24">
+          <p class="textBlock mt-0">
+            2. Select three attributes you used most in the last six years.
+          </p>
+          <AttributeSelection
+            :attributes="validAttributes"
+            :selected="create.adultAttrs"
+            :maxChoices="3"
+            @selectedUpdated="adultAttrsUpdated"
+          />
+        </div>
+        <div class="card column padded mb-24">
+          <p class="textBlock mt-0">3. Choose one:</p>
+          <RadioButtonSelection
+            :options="getAdditionalAttrChoiceOptions"
+            :selected="create.additionalAttrChoice"
+            @selectedUpdated="additionalAttrChoiceUpdated"
+          />
+          <AttributeSelection
+            :attributes="validAttributes"
+            :selected="create.additionalAttrs"
+            :maxChoices="maxAdditionalAttrsChoices"
+            :disabledChoices="blockAdditionalAttrsChoices"
+            @selectedUpdated="additionalAttrsUpdated"
+          />
+        </div>
+        <div class="card column padded mb-24">
+          <p class="textBlock mt-0">
+            4. Subtract 1 from one Attribute that is currently at 0, if one
+            exists. You may pick any Attribute from amongst those at 0, but if
+            your character is...
+          </p>
+          <ul>
+            <li>Inattentive... ...You might want to pick PER.</li>
+            <li>A luddite... ...You might want to pick TEK.</li>
+            <li>Clumsy... ...You might want to pick DEX.</li>
+            <li>Ignorant... ...You might want to pick INT.</li>
+            <li>Impatient... ...You might want to pick WIS.</li>
+            <li>Sluggish... ...You might want to pick AGI.</li>
+            <li>Apathetic... ...You might want to pick SPI.</li>
+            <li>Weak... ...You might want to pick STR.</li>
+            <li>Repulsive... ...You might want to pick CHA.</li>
+          </ul>
+          <AttributeSelection
+            :attributes="validAttributes"
+            :selected="create.badAttrs"
+            :maxChoices="1"
+            :disabledChoices="blockBadAttrsChoices"
+            @selectedUpdated="badAttrsUpdated"
+          />
+        </div>
+        <div class="card column padded mb-24">
+          <p class="textBlock mt-0">
+            5. Select an attribute that corresponds to your first grate. This
+            will subtract 1 from the selected attribute. (Optional, requires the
+            <a
+              href="https://vennt.fandom.com/wiki/Course_of_Flux"
+              target="_blank"
+              class="link"
+              >Course of Flux</a
+            >)
+          </p>
+          <AttributeSelection
+            :attributes="validAttributes"
+            :selected="create.grate1"
+            :maxChoices="1"
+            @selectedUpdated="grate1Updated"
+          />
+          <div class="seperator mt-16 mb-16"></div>
+          <p class="textBlock mt-0">
+            Select an attribute that corresponds to your third grate. This will
+            add 1 to the selected attribute. (Optional, requires the
+            <a
+              href="https://vennt.fandom.com/wiki/Course_of_Flux"
+              target="_blank"
+              class="link"
+              >Course of Flux</a
+            >)
+          </p>
+          <AttributeSelection
+            :attributes="validAttributes"
+            :selected="create.grate3"
+            :maxChoices="1"
+            @selectedUpdated="grate3Updated"
+          />
+        </div>
+        <!-- ----- STEP 5 ----- -->
+        <h2>Step 5: Decide your Quests</h2>
+        <p class="textBlock">
+          Set 1-3
           <a
-            href="https://vennt.fandom.com/wiki/Flux"
+            href="https://vennt.fandom.com/wiki/Quests"
             target="_blank"
             class="link"
           >
-            Flux</a
+            Quests
+          </a>
+          for your character. For help inventing a character concept, see
+          <a
+            href="https://vennt.fandom.com/wiki/Character_Concept_Help"
+            target="_blank"
+            class="link"
           >
-          represents who you are right now: your personality, your ambitions,
-          and so on.
+            this page</a
+          >. Note: this data cannot be stored here, so you should keep this in
+          your Google Sheet.
         </p>
-        <ol>
-          <li>
-            Create 1-3
-            <a
-              href="https://vennt.fandom.com/wiki/Tides"
-              target="_blank"
-              class="link"
-            >
-              Tides
-            </a>
-          </li>
-          <li>
-            Create 1-3
-            <a
-              href="https://vennt.fandom.com/wiki/Grates"
-              target="_blank"
-              class="link"
-            >
-              Grates
-            </a>
-          </li>
-          <li>
-            Create 1-3
-            <a
-              href="https://vennt.fandom.com/wiki/Quests"
-              target="_blank"
-              class="link"
-            >
-              Quests
-            </a>
-          </li>
-        </ol>
-        <h2>Step 4: Choose a Gift</h2>
-        <div>
-          <p>
-            <i>
-              Most legends are born gifted in some way. Mozart was gifted in
-              music, Achilles was gifted in combat, and Merlin was gifted in
-              magic. There are nine gifts available to choose from as a hero of
-              Amnis, each one providing unique boons to your character.
-            </i>
-          </p>
+        <!-- ----- STEP 6 ----- -->
+        <h2>Step 6: Beginner Boons</h2>
+        <p class="textBlock">
+          This section helps you figure out what equipment you have on you.
+        </p>
+        <div class="card column padded mb-24">
+          <p class="textBlock mt-0">1. What do you keep at your side?</p>
+          <RadioButtonSelection
+            :options="getSideEquipmentOptions"
+            :selected="create.sideItem"
+            @selectedUpdated="sideItemUpdated"
+          />
+          <div v-if="showRememberOptions">
+            <p>Select "Something to Remember" benefit:</p>
+            <RadioButtonSelection
+              :options="getRememberOptions"
+              :selected="create.rememberItem"
+              @selectedUpdated="rememberItemUpdated"
+            />
+          </div>
         </div>
-        <GiftSelection :gift="create.gift" @giftUpdated="giftUpdated" />
-        <h2>Step 5: Attribute scores</h2>
-        <p>In this step, you select your base attributes.</p>
-        <p>
-          Select three attributes you used most as a child. If this would cause
-          any of your Attributes to go over 3, pick the second-most relevant
-          Attribute, and increase that by one instead.
-        </p>
-        <AttributeSelection
-          :attributes="validAttributes"
-          :selected="create.childAttrs"
-          :maxChoices="3"
-          :disabledChoices="blockChildAttrsChoices"
-          @selectedUpdated="childAttrsUpdated"
-          class="bottomMargin"
-        />
-        <p>
-          Select three attributes you used most in the last six years. If this
-          would cause any of your Attributes to go over 3, pick the second-most
-          relevant Attribute, and increase that by one instead.
-        </p>
-        <AttributeSelection
-          :attributes="validAttributes"
-          :selected="create.adultAttrs"
-          :maxChoices="3"
-          :disabledChoices="blockAdultAttrsChoices"
-          @selectedUpdated="adultAttrsUpdated"
-          class="bottomMargin"
-        />
-        <p>
-          Select one attribute that is currently at 0. If you have no Attributes
-          at 0, skip this step. You may pick any Attribute from amongst those at
-          0, but if your character is...
-        </p>
-        <ul>
-          <li>Inattentive... ...You might want to pick PER.</li>
-          <li>A luddite... ...You might want to pick TEK.</li>
-          <li>Clumsy... ...You might want to pick DEX.</li>
-          <li>Ignorant... ...You might want to pick INT.</li>
-          <li>Impatient... ...You might want to pick WIS.</li>
-          <li>Sluggish... ...You might want to pick AGI.</li>
-          <li>Apathetic... ...You might want to pick SPI.</li>
-          <li>Weak... ...You might want to pick STR.</li>
-          <li>Repulsive... ...You might want to pick CHA.</li>
-        </ul>
-        <AttributeSelection
-          :attributes="validAttributes"
-          :selected="create.badAttrs"
-          :maxChoices="1"
-          :disabledChoices="blockBadAttrsChoices"
-          @selectedUpdated="badAttrsUpdated"
-        />
-        <p>
-          Select an attribute that corresponds to your first grate. This will
-          subtract 1 from the selected attribute. (Optional)
-        </p>
-        <AttributeSelection
-          :attributes="validAttributes"
-          :selected="create.grate1"
-          :maxChoices="1"
-          @selectedUpdated="grate1Updated"
-        />
-        <p>
-          Select an attribute that corresponds to your third grate. This will
-          add 1 to the selected attribute. (Optional)
-        </p>
-        <AttributeSelection
-          :attributes="validAttributes"
-          :selected="create.grate3"
-          :maxChoices="1"
-          @selectedUpdated="grate3Updated"
-        />
-        <h2>Step 6: Beginner’s equipment</h2>
-        <p>This section helps you figure out what equipment you have on you.</p>
-        <p>1. What do you keep at your side?</p>
-        <RadioButtonSelection
-          :options="getSideEquipmentOptions"
-          :selected="create.sideItem"
-          @selectedUpdated="sideItemUpdated"
-          class="bottomMargin"
-        />
-        <p>2. Describe your outfit.</p>
-        <p>
-          This is your starting Item Container. If you buy another item
-          container, it replaces this one.
-        </p>
-        <RadioButtonSelection
-          :options="getOutfitOptions"
-          :selected="create.outfit"
-          @selectedUpdated="outfitUpdated"
-          class="bottomMargin"
-        />
-        <p>3. What did you bring with you?</p>
-        <p>
-          Note: Actually adding these items to your inventory hasn’t been
-          implemented yet here, you will need to add them manually on the
-          Character page
-        </p>
-        <RadioButtonSelection
-          :options="getItemSetOptions"
-          :selected="create.itemSet"
-          @selectedUpdated="itemSetUpdated"
-        />
+        <div class="card column padded mb-24">
+          <p class="textBlock mt-0">2. Describe your outfit.</p>
+          <p class="textBlock">
+            This is your starting Item Container. If you buy another item
+            container, it replaces this one.
+          </p>
+          <RadioButtonSelection
+            :options="getOutfitOptions"
+            :selected="create.outfit"
+            @selectedUpdated="outfitUpdated"
+          />
+        </div>
+        <div class="card column padded">
+          <p class="textBlock mt-0">3. What did you bring with you?</p>
+          <p class="textBlock">
+            Note: Actually adding these items to your inventory hasn’t been
+            implemented yet here, you will need to add them manually on the
+            Character page
+          </p>
+          <RadioButtonSelection
+            :options="getItemSetOptions"
+            :selected="create.itemSet"
+            @selectedUpdated="itemSetUpdated"
+          />
+        </div>
+        <!-- ----- STEP 7 ----- -->
         <h2>Step 7: XP and Abilities</h2>
-        <p>Are you new to adventuring?</p>
-        <RadioButtonSelection
-          :options="getInexperiencedOptions"
-          :selected="getInexperiencedOption"
-          @selectedUpdated="experienceUpdated"
-          class="bottomMargin"
-        />
-        <p>
+        <div class="card column padded">
+          <p class="textBlock mt-0">Are you new to adventuring?</p>
+          <RadioButtonSelection
+            :options="getInexperiencedOptions"
+            :selected="getInexperiencedOption"
+            @selectedUpdated="experienceUpdated"
+          />
+        </div>
+        <p class="textBlock">
           For now, you need to go to the Character page to select abilities and
           buy / sell items
         </p>
+        <!-- ----- STEP 8 ----- -->
         <h2>Step 8: Finish the character</h2>
-        <p>
+        <p class="textBlock">
           Click the "Create Character" button to officially create the
           character.
         </p>
-        <p>
+        <p class="textBlock">
           Click the "Clear Character" button to delete this character and start
           again.
         </p>
@@ -320,9 +352,12 @@ export default {
         childAttrs: [],
         adultAttrs: [],
         badAttrs: [],
+        additionalAttrChoice: "",
+        additionalAttrs: [],
         grate1: [],
         grate3: [],
         sideItem: "",
+        rememberItem: "",
         outfit: "",
         itemSet: "",
         inexperienced: true,
@@ -378,14 +413,14 @@ export default {
       let sum = 0;
       sum += this.create.inexperienced ? 1000 : 2500;
       if (this.create.sideItem === "read") {
-        sum += 75;
+        sum += 100;
       }
       return sum;
     },
     calculateSP() {
       let sum = 0;
       if (["useful", "eat"].includes(this.create.sideItem)) {
-        sum += 30;
+        sum += 50;
       }
       if (this.create.outfit === "fashionable") {
         sum += 100;
@@ -448,6 +483,7 @@ export default {
         maxBulk: this.calculateMaxBulk,
       };
     },
+    /*
     blockChildAttrsChoices() {
       return this.validAttributes.filter(
         (attr) =>
@@ -464,34 +500,83 @@ export default {
           this.create.badAttrs.includes(attr)
       );
     },
+    */
+    blockAdditionalAttrsChoices() {
+      switch (this.create.additionalAttrChoice) {
+        case "one":
+          return this.validAttributes.filter(
+            // block if attribute has only been selected by one of the previous options
+            (attr) =>
+              this.create.gift === attr ||
+              this.create.childAttrs.includes(attr) ===
+                this.create.adultAttrs.includes(attr)
+          );
+        case "zero":
+          // block if any attribute modifiers have already been selected
+          return this.validAttributes.filter(
+            (attr) =>
+              this.create.gift === attr ||
+              this.create.childAttrs.includes(attr) ||
+              this.create.adultAttrs.includes(attr)
+          );
+      }
+      // don't block any choices
+      return [];
+    },
+    maxAdditionalAttrsChoices() {
+      switch (this.create.additionalAttrChoice) {
+        case "any":
+          return 1;
+        case "one":
+          return 2;
+        case "zero":
+          return 3;
+      }
+      return 0;
+    },
     blockBadAttrsChoices() {
       return this.validAttributes.filter(
         (attr) =>
           this.create.gift === attr ||
           this.create.childAttrs.includes(attr) ||
-          this.create.adultAttrs.includes(attr)
+          this.create.adultAttrs.includes(attr) ||
+          this.create.additionalAttrs.includes(attr)
       );
+    },
+    getAdditionalAttrChoiceOptions() {
+      return {
+        any: "Add 1 to one Attribute of your choice",
+        one: "Add 1 to two Attributes at 1",
+        zero: "Add 1 to three Attributes at 0",
+      };
     },
     getSideEquipmentOptions() {
       return {
-        painful:
-          "<b>Something painful:</b> Gain +1 Strength. Add a Brutal weapon to your inventory",
         sharp:
-          "<b>Something sharp:</b> Gain +1 Dexterity. Add a Blade weapon to your inventory",
-        quick:
-          "<b>Something quick:</b> Gain +1 Perception. Add a Sidearm weapon to your inventory",
+          "<b>Something sharp:</b> Gain +1 Dexterity and two more Blade weapons.",
+        remember:
+          "<b>Something to remember:</b> Gain +1 Spirit OR +1 Charisma.",
         useful:
-          "<b>Something useful:</b> Gain +1 Wisdom and 30 sp to spend on Equipment.",
-        eat: "<b>Something to eat:</b> Gain +1 Strength and 30 sp to spend on Consumables.",
-        read: "<b>Something to read:</b> Gain +1 Intelligence and 75 XP.",
+          "<b>Something useful:</b> Gain +1 Wisdom and 50 sp to spend on Equipment.",
+        eat: "<b>Something to eat:</b> Gain +1 Strength and 50 sp to spend on Consumables.",
+        read: "<b>Something to read:</b> Gain +1 Intelligence and 100 XP.",
+      };
+    },
+    showRememberOptions() {
+      return this.create.sideItem === "remember";
+    },
+    getRememberOptions() {
+      return {
+        spi: "<b>Spirit:</b> Gain +1 Spirit.",
+        cha: "<b>Charisma:</b> Gain +1 Charisma.",
       };
     },
     getOutfitOptions() {
       return {
         fashionable:
-          "<b>Fashionable:</b> Gain +1 Charisma and 100sp. You have a carrying capacity of 5 Bulk.",
+          "<b>Fashionable:</b> Gain +1 Charisma and 100sp. Your fashionable outfit has a carrying capacity of 5 Bulk.",
         functional:
-          "<b>Functional:</b> Gain +1 Agility. You have a carrying capacity of 15 Bulk.",
+          "<b>Functional:</b> Gain +1 Agility. Your functional outfit has a carrying capacity of 15 Bulk.",
       };
     },
     getItemSetOptions() {
@@ -541,12 +626,15 @@ export default {
     },
     giftUpdated(newGift) {
       this.create.gift = newGift;
+      /*
+      // These rules are no longer followed
       this.create.childAttrs = this.create.childAttrs.filter(
         (attr) => attr !== newGift
       );
       this.create.adultAttrs = this.create.adultAttrs.filter(
         (attr) => attr !== newGift
       );
+      */
       this.create.badAttrs = this.create.badAttrs.filter(
         (attr) => attr !== newGift
       );
@@ -554,10 +642,34 @@ export default {
     },
     childAttrsUpdated(newList) {
       this.create.childAttrs = newList;
+      this.create.additionalAttrs = this.create.additionalAttrs.filter(
+        (attr) => !newList.includes(attr)
+      );
+      this.create.badAttrs = this.create.badAttrs.filter(
+        (attr) => !newList.includes(attr)
+      );
       this.backupCreate();
     },
     adultAttrsUpdated(newList) {
       this.create.adultAttrs = newList;
+      this.create.additionalAttrs = this.create.additionalAttrs.filter(
+        (attr) => !newList.includes(attr)
+      );
+      this.create.badAttrs = this.create.badAttrs.filter(
+        (attr) => !newList.includes(attr)
+      );
+      this.backupCreate();
+    },
+    additionalAttrChoiceUpdated(newItem) {
+      this.create.additionalAttrChoice = newItem;
+      this.create.additionalAttrs = []; // reset selected options to prevent invalid choices
+      this.backupCreate();
+    },
+    additionalAttrsUpdated(newList) {
+      this.create.additionalAttrs = newList;
+      this.create.badAttrs = this.create.badAttrs.filter(
+        (attr) => !newList.includes(attr)
+      );
       this.backupCreate();
     },
     badAttrsUpdated(newList) {
@@ -574,6 +686,10 @@ export default {
     },
     sideItemUpdated(newItem) {
       this.create.sideItem = newItem;
+      this.backupCreate();
+    },
+    rememberItemUpdated(newItem) {
+      this.create.rememberItem = newItem;
       this.backupCreate();
     },
     outfitUpdated(newOutfit) {
@@ -607,6 +723,9 @@ export default {
       if (this.create.adultAttrs.includes(attr)) {
         sum++;
       }
+      if (this.create.additionalAttrs.includes(attr)) {
+        sum++;
+      }
       if (this.create.badAttrs.includes(attr)) {
         sum--;
       }
@@ -626,6 +745,9 @@ export default {
         read: "int",
       };
       if (sideItemMap[this.create.sideItem] === attr) {
+        sum++;
+      }
+      if (this.showRememberOptions && this.create.rememberItem === attr) {
         sum++;
       }
       // add attribute according to outfit
@@ -663,11 +785,7 @@ export default {
 };
 </script>
 
-<style scoped lang="postcss">
-.topMargin {
-  margin-top: 12px;
-}
-
+<style scoped>
 .nameInput {
   max-width: 300px;
   margin-right: 10px;

@@ -13,7 +13,7 @@
             :to="getLink('cog')"
             class="btn roundedButton wide topMargin"
           >
-            Enemy Cog Creation
+            Combat Cog Creation
           </router-link>
           <router-link
             :to="getLink('new')"
