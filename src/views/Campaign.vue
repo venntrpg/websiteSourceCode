@@ -61,20 +61,25 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch("getCampaign", this.campaignId);
+    this.$store.dispatch("campaign/getCampaign", this.campaignId);
     if (this.characterPage) {
       if (
         this.characters !== {} &&
         this.characters[this.characterId] !== undefined
       ) {
-        this.$store.commit("setCharacter", this.characters[this.characterId]);
+        this.$store.commit(
+          "character/setCharacter",
+          this.characters[this.characterId]
+        );
       } else {
-        this.$store.dispatch("getCharacter", this.characterId);
+        this.$store.dispatch("character/getCharacter", this.characterId);
       }
     }
   },
   computed: {
-    ...mapState(["isLoggedIn", "campaign", "characters", "character"]),
+    ...mapState(["isLoggedIn"]),
+    ...mapState("campaign", ["campaign"]),
+    ...mapState("character", ["characters", "character"]),
     optionsPage() {
       return this.characterId === "";
     },

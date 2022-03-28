@@ -23,7 +23,7 @@ import { mapState } from "vuex";
 export default {
   name: "itemDetail",
   computed: {
-    ...mapState(["character"]),
+    ...mapState("character", ["character"]),
     item() {
       if (this.character.items === undefined) {
         return undefined;
@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     removeItemButton() {
-      this.$store.dispatch("removeItem", {
+      this.$store.dispatch("character/removeItem", {
         id: this.character.id,
         itemId: this.item.id,
         redirectToInventory: true,

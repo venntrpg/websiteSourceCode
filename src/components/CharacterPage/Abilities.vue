@@ -111,11 +111,10 @@ export default {
     };
   },
   computed: {
-    ...mapState([
+    ...mapState("character", [
       "character",
       "searchAbility",
       "searchAbilitySuggestions",
-      "pendingApis",
     ]),
     lookupButtonDisabled() {
       return this.abilityField === "" && this.abilityField === this.lastSearch;
@@ -183,21 +182,13 @@ export default {
     abilitySearch() {
       // would be cool if this automatically looked up input, but we need to be careful not to run into rate limiting issues
       if (this.abilityField !== "" && this.lastSearch !== this.abilityField) {
-        // this timeout logic check is duplicated in the store api for now
-        const timeout = this.pendingApis.lookupAbility;
-        if (
-          timeout !== undefined &&
-          (timeout === false || timeout > Date.now())
-        ) {
-          return;
-        }
         this.lastSearch = this.abilityField;
-        this.$store.dispatch("lookupAbility", this.abilityField);
+        this.$store.dispatch("character/lookupAbility", this.abilityField);
       }
     },
     addAbility() {
       if (this.abilityField) {
-        this.$store.dispatch("addAbility", {
+        this.$store.dispatch("character/addAbility", {
           id: this.character.id,
           name: this.abilityField,
         });
@@ -265,6 +256,7 @@ export default {
 /* Deep selector effects children */
 .abilityEffect >>> p,
 .abilityEffect >>> ul {
+  /* reduce margin so we can condense text a bit more */
   margin-top: 0px;
   margin-bottom: 5px;
 }

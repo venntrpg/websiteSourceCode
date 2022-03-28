@@ -283,7 +283,7 @@ export default {
       };
       this.clearCharacter();
       //console.log(createCharacter);
-      this.$store.dispatch("createCharacter", {
+      this.$store.dispatch("character/createCharacter", {
         character: createCharacter,
         redirectToCharacter: true,
       });

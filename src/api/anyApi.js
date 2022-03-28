@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // This generally works as a work around for cors and is therefore insecure.
-// DON'T PASS ANY USER INFORMATION THROUGH THIS PROXY
+// DO NOT PASS ANY USER INFORMATION THROUGH THIS PROXY
 // See https://allorigins.win/ for more info
 
 const instance = axios.create({

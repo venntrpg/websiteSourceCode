@@ -27,7 +27,8 @@ import { mapState } from "vuex";
 export default {
   name: "CampaignOptions",
   computed: {
-    ...mapState(["username", "campaign"]),
+    ...mapState(["username"]),
+    ...mapState("campaign", ["campaign"]),
     isGm() {
       return (
         this.campaign &&

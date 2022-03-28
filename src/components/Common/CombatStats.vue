@@ -582,7 +582,7 @@ export default {
       if (!maxVal || this.character[attr] >= maxVal) {
         return;
       }
-      this.$store.dispatch("setAttribute", {
+      this.$store.dispatch("character/setAttribute", {
         id: this.character.id,
         attr: attr,
         val: maxVal,
@@ -612,7 +612,7 @@ export default {
     adjustAttrFromField(attr) {
       const val = this.validateField(attr);
       if (val !== false) {
-        this.$store.dispatch("setAttribute", {
+        this.$store.dispatch("character/setAttribute", {
           id: this.character.id,
           attr: attr,
           val: val,
@@ -647,7 +647,7 @@ export default {
     adjustAttrFromAdjustField(attr) {
       const val = this.validateAdjustField(attr);
       if (val !== false) {
-        this.$store.dispatch("setAttribute", {
+        this.$store.dispatch("character/setAttribute", {
           id: this.character.id,
           attr: attr,
           val: val,
@@ -670,7 +670,7 @@ export default {
     adjustAttrButton(attr, increment) {
       const adjustment = increment ? 1 : -1;
       const newVal = this.character[attr] + adjustment;
-      this.$store.dispatch("setAttribute", {
+      this.$store.dispatch("character/setAttribute", {
         id: this.character.id,
         attr: attr,
         val: newVal,
@@ -680,25 +680,25 @@ export default {
         if (attr === "str") {
           const newHp = Math.max(this.character.maxHp + adjustment * 3, 0);
           const newVim = Math.max(this.character.maxVim + adjustment * 3, 0);
-          this.$store.dispatch("setAttribute", {
+          this.$store.dispatch("character/setAttribute", {
             id: this.character.id,
             attr: "maxHp",
             val: newHp,
           });
-          this.$store.dispatch("setAttribute", {
+          this.$store.dispatch("character/setAttribute", {
             id: this.character.id,
             attr: "maxVim",
             val: newVim,
           });
           if (this.character.hp > newHp) {
-            this.$store.dispatch("setAttribute", {
+            this.$store.dispatch("character/setAttribute", {
               id: this.character.id,
               attr: "hp",
               val: newHp,
             });
           }
           if (this.character.vim > newVim) {
-            this.$store.dispatch("setAttribute", {
+            this.$store.dispatch("character/setAttribute", {
               id: this.character.id,
               attr: "vim",
               val: newVim,
@@ -708,13 +708,13 @@ export default {
         // MP
         if (attr === "wis") {
           const newMp = Math.max(this.character.maxMp + adjustment * 3, 0);
-          this.$store.dispatch("setAttribute", {
+          this.$store.dispatch("character/setAttribute", {
             id: this.character.id,
             attr: "maxMp",
             val: newMp,
           });
           if (this.character.mp > newMp) {
-            this.$store.dispatch("setAttribute", {
+            this.$store.dispatch("character/setAttribute", {
               id: this.character.id,
               attr: "mp",
               val: newMp,
@@ -724,7 +724,7 @@ export default {
         // SPEED
         if (attr === "agi") {
           const newSpeed = Math.max(this.character.speed + adjustment, 0);
-          this.$store.dispatch("setAttribute", {
+          this.$store.dispatch("character/setAttribute", {
             id: this.character.id,
             attr: "speed",
             val: newSpeed,
@@ -733,7 +733,7 @@ export default {
         // INIT
         if (attr === "agi" || attr === "dex") {
           const newInit = Math.max(this.character.init + adjustment, 0);
-          this.$store.dispatch("setAttribute", {
+          this.$store.dispatch("character/setAttribute", {
             id: this.character.id,
             attr: "init",
             val: newInit,

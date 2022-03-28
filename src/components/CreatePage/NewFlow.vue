@@ -344,10 +344,10 @@ export default {
   },
   mounted() {
     // call silly api for getting random names
-    this.$store.dispatch("getRandomNames");
+    this.$store.dispatch("other/getRandomNames");
   },
   computed: {
-    ...mapState(["randomNames", "randomNamesDisabled"]),
+    ...mapState("other", ["randomNames", "randomNamesDisabled"]),
     getHiddenSidebarClass() {
       return this.create.name === "" ? "hidden" : "";
     },
@@ -531,12 +531,12 @@ export default {
     randomNameButton() {
       if (this.randomNames.length < 3) {
         // need to get more random names
-        this.$store.dispatch("getRandomNames");
+        this.$store.dispatch("other/getRandomNames");
       }
       if (this.randomNames.length > 0) {
         // pop item off front of array
         this.create.name = this.randomNames[0];
-        this.$store.commit("shiftRandomNames");
+        this.$store.commit("other/shiftRandomNames");
       }
     },
     giftUpdated(newGift) {
@@ -647,10 +647,10 @@ export default {
         return;
       }
       const character = this.createCharacter;
-      this.clearCharacter();
+      // this.clearCharacter();
       console.log(character);
       // need to send this, then once confirmed, send weapon if they selected one, then once cofirmed, we should redirect to the character page
-      this.$store.dispatch("createCharacter", {
+      this.$store.dispatch("character/createCharacter", {
         character: character,
         redirectToCharacter: true,
       });

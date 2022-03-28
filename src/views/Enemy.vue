@@ -66,12 +66,13 @@ export default {
         this.$router.push({ name: "Home" });
       }
       if (!this.campaign || this.campaign.id !== this.campaignId) {
-        this.$store.dispatch("getCampaign", this.campaignId);
+        this.$store.dispatch("campaign/getCampaign", this.campaignId);
       }
     }
   },
   computed: {
-    ...mapState(["isLoggedIn", "campaign"]),
+    ...mapState(["isLoggedIn"]),
+    ...mapState("campaign", ["campaign"]),
     isNewSection() {
       return this.$route.params.section === NEW_SECTION;
     },

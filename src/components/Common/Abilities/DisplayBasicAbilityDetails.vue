@@ -1,16 +1,16 @@
 <template>
   <div class="wide">
     <h2>{{ ability.name }}</h2>
-    <div v-if="ability.path" class="bottomMargin">
+    <div v-if="ability.path" class="mb-16">
       <i>{{ ability.path }}</i>
     </div>
-    <div v-if="ability.activation" class="bottomMargin">
+    <div v-if="ability.activation" class="mb-16">
       <b>Activation:</b> {{ ability.activation }}
     </div>
-    <div v-if="ability.range" class="bottomMargin">
+    <div v-if="ability.range" class="mb-16">
       <b>Range:</b> {{ ability.range }}
     </div>
-    <div v-if="ability.effect" class="bottomMargin">
+    <div v-if="ability.effect" class="mb-16">
       <p><b>Effect:</b></p>
       <p v-if="ability.flavor" class="textBlock">
         <i>{{ ability.flavor }}</i>
@@ -30,9 +30,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.bottomMargin {
-  margin-bottom: 16px;
-}
-</style>

@@ -1,30 +1,5 @@
 import backendApi from "@/api/backendApi";
-import anyApi from "@/api/anyApi";
-
-function getAuth() {
-  const auth = localStorage.getItem("auth");
-  if (auth === null) {
-    throw new Error("Not logged in");
-  }
-  return auth;
-}
-
-function convertAttribute(attr) {
-  switch (attr) {
-    case "maxHp":
-      return "MAX_HP";
-    case "maxMp":
-      return "MAX_MP";
-    case "maxVim":
-      return "MAX_VIM";
-    case "maxHero":
-      return "MAX_HERO";
-    case "maxBulk":
-      return "MAX_BULK";
-    default:
-      return attr.toUpperCase();
-  }
-}
+import { getAuth, localAttr2Server } from "@/api/apiUtil";
 
 // ------------------------- ACCOUNT APIS ------------------------- //
 
@@ -131,7 +106,7 @@ const setAttribute = (id, attr, val) => {
       params: {
         auth_token: getAuth(),
         id,
-        attr: convertAttribute(attr),
+        attr: localAttr2Server(attr),
         value: val,
       },
     })
@@ -164,6 +139,75 @@ const addAbility = (id, name) => {
         auth_token: getAuth(),
         id,
         name,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+const removeAbility = (id, name) => {
+  return backendApi
+    .get("remove_abillty", {
+      params: {
+        auth_token: getAuth(),
+        id,
+        name,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+const refreshAbility = (id, name) => {
+  return backendApi
+    .get("refresh_abillty", {
+      params: {
+        auth_token: getAuth(),
+        id,
+        name,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+const updateAbilityComment = (id, name, comment) => {
+  return backendApi
+    .get("update_ability_comment", {
+      params: {
+        auth_token: getAuth(),
+        id,
+        name,
+        comment,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+const createCustomAbility = (id, ability) => {
+  return backendApi
+    .post("create_ability", JSON.stringify(ability), {
+      params: {
+        auth_token: getAuth(),
+        id,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+const updateAbility = (id, ability) => {
+  return backendApi
+    .post("update_ability", JSON.stringify(ability), {
+      params: {
+        auth_token: getAuth(),
+        id,
       },
     })
     .then((response) => {
@@ -319,33 +363,6 @@ const setCampaignRole = (campaignId, username, role) => {
     });
 };
 
-// ------------------------- OTHER / RANDOM APIS ------------------------- //
-
-const getRandomNames = () => {
-  // The proxy will cache a response, so we use a random number
-  const number = Math.floor(Math.random() * 45) + 5;
-  const url = `http://names.drycodes.com/${number}?nameOptions=boy_names,girl_names&separator=space`;
-  return anyApi
-    .get("/get", {
-      params: {
-        url,
-      },
-    })
-    .then((response) => {
-      if (response.data.contents) {
-        try {
-          const ret = JSON.parse(response.data.contents);
-          if (ret && ret.length > 0) {
-            return ret;
-          }
-        } catch (e) {
-          return response.data;
-        }
-      }
-      return response.data;
-    });
-};
-
 export default {
   signup,
   login,
@@ -356,6 +373,11 @@ export default {
   setAttribute,
   lookupAbility,
   addAbility,
+  removeAbility,
+  refreshAbility,
+  updateAbilityComment,
+  createCustomAbility,
+  updateAbility,
   addItem,
   removeItem,
   createCampaign,
@@ -366,5 +388,4 @@ export default {
   acceptCampaignInvite,
   declineCampaignInvite,
   setCampaignRole,
-  getRandomNames,
 };

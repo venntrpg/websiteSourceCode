@@ -246,7 +246,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["campaign"]),
+    ...mapState("campaign", ["campaign"]),
     getMobileSidebarClass() {
       return this.showingStats ? "showStats" : "";
     },

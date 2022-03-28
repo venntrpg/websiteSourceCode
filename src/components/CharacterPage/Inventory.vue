@@ -104,7 +104,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["character"]),
+    ...mapState("character", ["character"]),
     addItemButtonDisabled() {
       return (
         this.itemName === "" ||
@@ -148,7 +148,7 @@ export default {
           bulk: parseInt(this.itemBulk),
           desc: this.itemDesc,
         };
-        this.$store.dispatch("addItem", {
+        this.$store.dispatch("character/addItem", {
           id: this.character.id,
           item: item,
           refreshCharacter: true,

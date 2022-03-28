@@ -69,12 +69,13 @@ export default {
     };
   },
   mounted() {
-    this.$store.dispatch("listCharacters");
-    this.$store.dispatch("listCampaigns");
-    this.$store.dispatch("listCampaignInvites");
+    this.$store.dispatch("character/listCharacters");
+    this.$store.dispatch("campaign/listCampaigns");
+    this.$store.dispatch("campaign/listCampaignInvites");
   },
   computed: {
-    ...mapState(["characters", "campaigns", "campaignInvites"]),
+    ...mapState("campaign", ["campaigns", "campaignInvites"]),
+    ...mapState("character", ["characters"]),
     newCampaignButtonDisabled() {
       return this.campaignName === "";
     },
@@ -87,7 +88,7 @@ export default {
     },
     newCampaignButton() {
       if (!this.newCampaignButtonDisabled) {
-        this.$store.dispatch("createCampaign", {
+        this.$store.dispatch("campaign/createCampaign", {
           name: this.campaignName,
           redirectToCampaign: true,
         });

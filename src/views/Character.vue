@@ -91,13 +91,14 @@ export default {
   },
   mounted() {
     if (this.characters !== {} && this.characters[this.id] !== undefined) {
-      this.$store.commit("setCharacter", this.characters[this.id]);
+      this.$store.commit("character/setCharacter", this.characters[this.id]);
     } else {
-      this.$store.dispatch("getCharacter", this.id);
+      this.$store.dispatch("character/getCharacter", this.id);
     }
   },
   computed: {
-    ...mapState(["isLoggedIn", "characters", "character"]),
+    ...mapState(["isLoggedIn"]),
+    ...mapState("character", ["characters", "character"]),
     stats() {
       return SECTION_STATS;
     },

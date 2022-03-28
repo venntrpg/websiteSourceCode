@@ -5,28 +5,28 @@
       <button
         v-if="showUseAbilityButton"
         :disabled="!canUseAbility"
-        class="btn roundedButton wide bottomMargin"
+        class="btn roundedButton wide mb-16"
       >
         Use ability
       </button>
       <h3>Additional Details</h3>
-      <div class="bottomMargin">
+      <div class="mb-16">
         <b>Cost:</b> {{ ability.purchase }}
         <i v-if="actualCost">(Actual cost: {{ actualCost }} XP)</i>
       </div>
-      <div v-if="ability.expedited" class="bottomMargin">
+      <div v-if="ability.expedited" class="mb-16">
         <b>Expedited for:</b> {{ ability.expedited }}
       </div>
-      <div v-if="ability.unlocks" class="bottomMargin">
+      <div v-if="ability.unlocks" class="mb-16">
         <b>Unlocks:</b> {{ ability.unlocks }}
       </div>
-      <div v-if="ability.partial_unlocks" class="bottomMargin">
+      <div v-if="ability.partial_unlocks" class="mb-16">
         <b>Partially Unlocked:</b> {{ ability.partial_unlocks }}
       </div>
-      <div v-if="ability.prereq" class="bottomMargin">
+      <div v-if="ability.prereq" class="mb-16">
         <b>Prerequisite:</b> {{ ability.prereq }}
       </div>
-      <div v-if="ability.not_required" class="bottomMargin">
+      <div v-if="ability.not_required" class="mb-16">
         This ability is not required for the Path Completion Bonus.
       </div>
     </div>
@@ -44,7 +44,7 @@ export default {
   name: "abilityDetail",
   components: { DisplayBasicAbilityDetails },
   computed: {
-    ...mapState(["character"]),
+    ...mapState("character", ["character"]),
     ability() {
       if (this.character.abilities === undefined) {
         return undefined;
@@ -84,9 +84,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.bottomMargin {
-  margin-bottom: 16px;
-}
-</style>

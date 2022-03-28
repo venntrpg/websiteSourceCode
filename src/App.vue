@@ -178,7 +178,7 @@ body {
     --basic-button-hover: var(--purple-800);
     --basic-button-active: var(--purple-700);
 
-    --border: var(--gray-750);
+    --border: var(--gray-750); /* Could maybe be 700 for better visiblity */
     --border-hover: var(--gray-650);
     --border-error: var(--red-500);
     --border-error-hover: var(--red-600);
@@ -299,6 +299,9 @@ ul {
 }
 .mb-8 {
   margin-bottom: 8px;
+}
+.mb-16 {
+  margin-bottom: 16px;
 }
 
 .wide {
