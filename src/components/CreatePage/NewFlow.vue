@@ -259,11 +259,6 @@
         </div>
         <div class="card column padded">
           <p class="textBlock mt-0">3. What did you bring with you?</p>
-          <p class="textBlock">
-            Note: Actually adding these items to your inventory hasn’t been
-            implemented yet here, you will need to add them manually on the
-            Character page
-          </p>
           <RadioButtonSelection
             :options="getItemSetOptions"
             :selected="create.itemSet"
