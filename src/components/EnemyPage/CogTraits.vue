@@ -1,8 +1,10 @@
 <template>
   <div>
-    <div class="alignRow gap labelText">
-      Remaining Trait Selections:
-      <fraction :top="totalTraits - selected.length" :bottom="totalTraits" />
+    <div class="stickyHeader thin">
+      <div class="alignRow gap labelText">
+        Remaining Trait Selections:
+        <fraction :top="totalTraits - selected.length" :bottom="totalTraits" />
+      </div>
     </div>
     <cog-toggleable-effects
       :options="options"
@@ -54,3 +56,11 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+@media screen and (max-width: 800px) {
+  .stickyHeader {
+    top: var(--total-nav-height);
+  }
+}
+</style>

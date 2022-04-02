@@ -303,6 +303,9 @@ ul {
 .mt-24 {
   margin-top: 24px;
 }
+.mt-64 {
+  margin-top: 64px;
+}
 .mb-0 {
   margin-bottom: 0px;
 }
@@ -317,6 +320,9 @@ ul {
 }
 .mb-24 {
   margin-bottom: 24px;
+}
+.mb-64 {
+  margin-bottom: 64px;
 }
 
 .wide {
@@ -643,6 +649,10 @@ ul {
   padding: 16px;
   border: 1px solid var(--border);
   z-index: 4;
+}
+.stickyHeader.thin {
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 /* Nav Styles - useful for subnav styles */

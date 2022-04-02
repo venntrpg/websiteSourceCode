@@ -424,11 +424,11 @@ export default {
     },
     combatStatsRows() {
       if (this.isEnemy) {
-        return [["hp"], ["mp", "vim"]];
+        return [["hp"], ["vim", "mp"]];
       }
       return [
-        ["hp", "mp"],
-        ["vim", "hero"],
+        ["hp", "vim"],
+        ["mp", "hero"],
       ];
     },
     attributeRows() {

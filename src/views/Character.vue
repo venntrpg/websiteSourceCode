@@ -21,6 +21,12 @@
         >
           INVENTORY
         </router-link>
+        <router-link
+          :to="{ name: 'Character', params: { id, section: settings } }"
+          class="btn navButton subNavButton"
+        >
+          SETTINGS
+        </router-link>
       </div>
     </div>
     <!--  --------------------- SIDE BAR --------------------- -->
@@ -35,6 +41,7 @@
       <div class="largePageWidth main" v-responsive="breakpoints">
         <inventory v-if="inventoryPage" />
         <item-shop v-else-if="shopPage" />
+        <character-settings v-else-if="settingsPage" />
         <combat-stats v-else-if="statsPage" :character="character" />
         <abilities v-else />
       </div>
@@ -51,10 +58,12 @@ import RightSideBar from "../components/CharacterPage/RightSideBar.vue";
 import Abilities from "../components/CharacterPage/Abilities.vue";
 import Inventory from "../components/CharacterPage/Inventory.vue";
 import ItemShop from "../components/CharacterPage/ItemShop.vue";
+import CharacterSettings from "../components/CharacterPage/CharacterSettings.vue";
 
 const SECTION_STATS = "stats";
 const SECTION_ABILITIES = "abilities";
 const SECTION_INVENTORY = "inventory";
+const SECTION_SETTINGS = "settings";
 const SECTION_SHOP = "shop";
 
 export default {
@@ -65,6 +74,7 @@ export default {
     Abilities,
     Inventory,
     ItemShop,
+    CharacterSettings,
   },
   directives: {
     responsive: ResponsiveDirective,
@@ -112,8 +122,8 @@ export default {
     inventory() {
       return SECTION_INVENTORY;
     },
-    shop() {
-      return SECTION_SHOP;
+    settings() {
+      return SECTION_SETTINGS;
     },
     statsPage() {
       // really only makes sense for mobile
@@ -127,6 +137,9 @@ export default {
     },
     shopPage() {
       return this.$route.params.section === SECTION_SHOP;
+    },
+    settingsPage() {
+      return this.$route.params.section === SECTION_SETTINGS;
     },
     showRightSideBar() {
       return (this.abilitiesPage || this.inventoryPage) &&

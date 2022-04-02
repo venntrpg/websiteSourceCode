@@ -145,24 +145,7 @@
             @mainButton="deleteEnemy"
           />
         </div>
-        <div class="tall"></div>
-        <div class="alignRow split">
-          <h3>Enemy in basic string format</h3>
-          <button
-            v-on:click="copyEnemyButton()"
-            class="btn basicBtn toolTipTrigger"
-          >
-            <div class="basicBtnContents">
-              <span class="material-icons space">content_copy</span>
-              Copy
-            </div>
-            <div class="toolTip">Copy text version of Cog</div>
-          </button>
-        </div>
-        <div class="card border padded column">
-          <code v-html="enemyText2HTML"></code>
-        </div>
-        <div class="tall"></div>
+        <copyable-character :character="enemy" class="mt-64 mb-64" />
       </div>
     </div>
   </div>
@@ -178,6 +161,7 @@ import CombatStats from "../Common/CombatStats.vue";
 import CogTraits from "./CogTraits.vue";
 import ConfirmationModal from "../Common/ConfirmationModal.vue";
 import CogWeaknesses from "./CogWeaknesses.vue";
+import CopyableCharacter from "../Common/CopyableCharacter.vue";
 import { cogFormattedAbility } from "./CogFlowUtils/CogAbilityCreationUtils";
 import {
   bestSelectedTraitsMap,
@@ -186,15 +170,8 @@ import {
   attrMultipliers,
   formatTraits,
 } from "./CogFlowUtils/CogTraitsUtils";
-import {
-  cogTypeAttrVal,
-  cogTypeTitle,
-} from "./CogFlowUtils/CogTypeDescriptionUtils";
-import {
-  COG_ABILITY_TYPE,
-  COG_TRAIT_TYPE,
-  COG_WEAKNESS_TYPE,
-} from "./CogFlowUtils/CogConstants";
+import { cogTypeAttrVal } from "./CogFlowUtils/CogTypeDescriptionUtils";
+import { attributes } from "../../store/constants";
 
 const COG_LOCAL_STORAGE = "creation-cog-wip";
 
@@ -211,6 +188,7 @@ export default {
     CogTraits,
     ConfirmationModal,
     CogWeaknesses,
+    CopyableCharacter,
   },
   directives: {
     responsive: ResponsiveDirective,
@@ -287,9 +265,6 @@ export default {
     bestCogTraitsMap() {
       return bestSelectedTraitsMap(this.cog);
     },
-    attrTypes() {
-      return ["agi", "cha", "dex", "int", "per", "spi", "str", "tek", "wis"];
-    },
     enemy() {
       const abilities = this.formattedCogAbilities.concat(
         formatTraits(this.cog, this.bestCogTraitsMap)
@@ -313,7 +288,7 @@ export default {
         abilities,
       };
       // add attributes
-      this.attrTypes.forEach((attr) => {
+      attributes.forEach((attr) => {
         enemy[attr] = this.calculateAttribute(attr);
       });
       // add special fields if they need to be set
@@ -332,73 +307,6 @@ export default {
           enemy[pair.field] = val;
         });
       return enemy;
-    },
-    enemy2Text() {
-      // works off only this.enemy fields - could be exported into util JS file
-      const template =
-        this.enemy.template.length > 0
-          ? this.enemy.template.charAt(0).toUpperCase() +
-            this.enemy.template.slice(1)
-          : "";
-      let enemyText = `${this.enemy.name}\nLevel ${
-        this.enemy.level
-      } ${template} ${cogTypeTitle(this.enemy.cogType)}\nInit: ${
-        this.enemy.init
-      }\nHP: ${this.enemy.hp}\nVim: ${this.enemy.vim}\nSpeed: ${
-        this.enemy.speed
-      }`;
-      if (this.enemy.armor > 0) {
-        enemyText += `\nArmor: ${this.enemy.armor}`;
-      }
-
-      enemyText += "\n";
-      this.attrTypes.forEach((attr) => {
-        enemyText += `${attr.toUpperCase()}: ${this.enemy[attr]}  `;
-      });
-
-      const formatAbility = (ability) => {
-        let abilityStr = `${ability.name}\nActivation: ${ability.activation}\n`;
-        if (ability.range !== undefined) {
-          abilityStr += `Range: ${ability.range}\n`;
-        }
-        abilityStr += ability.effect + "\n\n";
-        return abilityStr;
-      };
-
-      const abilities = this.enemy.abilities.filter(
-        (ability) => ability.special_ability_type === COG_ABILITY_TYPE
-      );
-      if (abilities.length > 0) {
-        enemyText += "\n\n\nAbilites:\n";
-        abilities.forEach((ability) => {
-          enemyText += formatAbility(ability);
-        });
-      }
-
-      const traits = this.enemy.abilities.filter(
-        (ability) => ability.special_ability_type === COG_TRAIT_TYPE
-      );
-      if (traits.length > 0) {
-        enemyText += "\n\nTraits:\n";
-        traits.forEach((ability) => {
-          enemyText += formatAbility(ability);
-        });
-      }
-
-      const weaknesses = this.enemy.abilities.filter(
-        (ability) => ability.special_ability_type === COG_WEAKNESS_TYPE
-      );
-      if (weaknesses.length > 0) {
-        enemyText += "\n\nWeaknesses:\n";
-        weaknesses.forEach((ability) => {
-          enemyText += formatAbility(ability);
-        });
-      }
-
-      return enemyText;
-    },
-    enemyText2HTML() {
-      return this.enemy2Text.replaceAll("\n", "<br>");
     },
     calculateHP() {
       if (!this.cog.level) {
@@ -636,9 +544,6 @@ export default {
         traits: [],
         weaknesses: [],
       };
-    },
-    copyEnemyButton() {
-      navigator.clipboard.writeText(this.enemy2Text);
     },
   },
 };

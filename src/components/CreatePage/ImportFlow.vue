@@ -130,15 +130,6 @@
         id="import-sp"
         class="input inputMargin"
       />
-      <label for="import-max-bulk">Carrying Capacity Bulk:</label>
-      <input
-        type="number"
-        placeholder="0"
-        v-model="character.maxBulk"
-        v-on:blur="backupImport"
-        id="import-max-bulk"
-        class="input inputMargin"
-      />
       <p>You can import items and abilities after you create the character.</p>
       <h2>Import your Character</h2>
       <p>
@@ -164,6 +155,7 @@
 <script>
 import RadioButtonSelection from "../Common/RadioButtonSelection.vue";
 import ConfirmSelectionButton from "../Common/ConfirmSelectionButton.vue";
+import { attributes } from "../../store/constants";
 
 const CHAR_LOCAL_STORAGE = "creation-import-wip";
 
@@ -197,7 +189,6 @@ export default {
         speed: "",
         xp: "",
         sp: "",
-        maxBulk: "",
       },
     };
   },
@@ -230,7 +221,7 @@ export default {
       };
     },
     validAttributes() {
-      return ["per", "tek", "agi", "dex", "int", "spi", "str", "wis", "cha"];
+      return attributes;
     },
   },
   methods: {
@@ -279,7 +270,6 @@ export default {
         speed: this.parseNumber(this.character.speed),
         xp: this.parseNumber(this.character.xp),
         sp: this.parseNumber(this.character.sp),
-        maxBulk: this.parseNumber(this.character.maxBulk),
       };
       this.clearCharacter();
       //console.log(createCharacter);

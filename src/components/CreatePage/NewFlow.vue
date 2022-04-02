@@ -323,6 +323,7 @@ import GiftSelection from "./GiftSelection.vue";
 import RadioButtonSelection from "../Common/RadioButtonSelection.vue";
 import ConfirmationModal from "../Common/ConfirmationModal.vue";
 import { keys2Items } from "../Common/Util/ItemUtils";
+import { attributes } from "../../store/constants";
 
 // Constants
 const CHAR_LOCAL_STORAGE = "creation-new-wip";
@@ -391,7 +392,7 @@ export default {
       return this.showingStats ? "showStats" : "";
     },
     validAttributes() {
-      return ["per", "tek", "agi", "dex", "int", "spi", "str", "wis", "cha"];
+      return attributes;
     },
     // formulas come from https://vennt.fandom.com/wiki/Character_Creation
     calculateHP() {
