@@ -1,5 +1,9 @@
 import backendApi from "@/api/backendApi";
-import { getAuth, localAttr2Server } from "@/api/apiUtil";
+import {
+  getAuth,
+  localAttr2Server,
+  localCharacter2Server,
+} from "@/api/apiUtil";
 
 // ------------------------- ACCOUNT APIS ------------------------- //
 
@@ -36,37 +40,28 @@ const logout = () => {
 
 // https://github.com/joshmiller17/vennt-server#create-a-character
 const createCharacter = (character) => {
+  const serverCharacter = localCharacter2Server(character);
   return backendApi
-    .get("/create_character", {
+    .post("/create_character", JSON.stringify(serverCharacter), {
       params: {
         auth_token: getAuth(),
-        name: character.name,
-        gift: character.gift,
-        AGI: character.agi,
-        CHA: character.cha,
-        DEX: character.dex,
-        INT: character.int,
-        PER: character.per,
-        SPI: character.spi,
-        STR: character.str,
-        TEK: character.tek,
-        WIS: character.wis,
-        HP: character.hp,
-        MAX_HP: character.maxHp,
-        MP: character.mp,
-        MAX_MP: character.maxMp,
-        VIM: character.vim,
-        MAX_VIM: character.maxVim,
-        HERO: character.hero,
-        MAX_HERO: character.maxHero,
-        MAX_BULK: character.maxBulk,
-        ARMOUR: character.armour,
-        INIT: character.init,
-        SPEED: character.speed,
-        XP: character.xp,
-        SP: character.sp,
       },
     })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+const createEnemy = (enemy, campaign) => {
+  const serverEnemy = localCharacter2Server(enemy);
+  const params = {
+    auth_token: getAuth(),
+  };
+  if (campaign) {
+    params.campaign_id = campaign;
+  }
+  return backendApi
+    .post("/create_enemy", JSON.stringify(serverEnemy), { params })
     .then((response) => {
       return response.data;
     });
@@ -202,12 +197,13 @@ const createCustomAbility = (id, ability) => {
     });
 };
 
-const updateAbility = (id, ability) => {
+const updateAbility = (id, name, ability) => {
   return backendApi
     .post("update_ability", JSON.stringify(ability), {
       params: {
         auth_token: getAuth(),
         id,
+        name,
       },
     })
     .then((response) => {
@@ -219,19 +215,22 @@ const updateAbility = (id, ability) => {
 
 // https://github.com/joshmiller17/vennt-server#lookup-ability
 const addItem = (id, item) => {
-  return backendApi
-    .get("add_item", {
-      params: {
-        auth_token: getAuth(),
-        id,
-        name: item.name,
-        bulk: item.bulk,
-        desc: item.desc,
-      },
-    })
-    .then((response) => {
-      return response.data;
-    });
+  const params = {
+    auth_token: getAuth(),
+    id,
+    name: item.name,
+    bulk: item.bulk,
+    desc: item.desc,
+  };
+  if ("type" in item) {
+    params.type = item.type;
+  }
+  if ("courses" in item) {
+    params.courses = item.courses;
+  }
+  return backendApi.get("add_item", { params }).then((response) => {
+    return response.data;
+  });
 };
 
 // https://github.com/joshmiller17/vennt-server#add-ability
@@ -368,6 +367,7 @@ export default {
   login,
   logout,
   createCharacter,
+  createEnemy,
   listCharacters,
   getCharacter,
   setAttribute,

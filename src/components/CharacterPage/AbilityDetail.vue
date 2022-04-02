@@ -14,21 +14,84 @@
         <b>Cost:</b> {{ ability.purchase }}
         <i v-if="actualCost">(Actual cost: {{ actualCost }} XP)</i>
       </div>
-      <div v-if="ability.expedited" class="mb-16">
+      <div v-if="ability.expedited" class="mt-16">
         <b>Expedited for:</b> {{ ability.expedited }}
       </div>
-      <div v-if="ability.unlocks" class="mb-16">
+      <div v-if="ability.unlocks" class="mt-16">
         <b>Unlocks:</b> {{ ability.unlocks }}
       </div>
-      <div v-if="ability.partial_unlocks" class="mb-16">
+      <div v-if="ability.partial_unlocks" class="mt-16">
         <b>Partially Unlocked:</b> {{ ability.partial_unlocks }}
       </div>
-      <div v-if="ability.prereq" class="mb-16">
+      <div v-if="ability.prereq" class="mt-16">
         <b>Prerequisite:</b> {{ ability.prereq }}
       </div>
-      <div v-if="ability.not_required" class="mb-16">
+      <div v-if="ability.not_required" class="mt-16">
         This ability is not required for the Path Completion Bonus.
       </div>
+      <div class="alignRow gap">
+        <div><b>Comment:</b></div>
+        <button
+          v-on:click="commentButton()"
+          class="btn basicBtn toolTipTrigger"
+        >
+          <div class="basicBtnContents">
+            <span class="material-icons">chat</span>
+          </div>
+          <div class="toolTip wide commentToolTip">
+            Add a personal message to this ability. Useful for tracking details,
+            like how often you've used it during combat, or anything else you
+            might want to track.
+          </div>
+        </button>
+      </div>
+      <div v-if="!editComment && ability.comment">
+        <p class="textBlock">{{ ability.comment }}</p>
+      </div>
+      <div v-if="editComment">
+        <textarea
+          placeholder="Comment"
+          v-model="ability.comment"
+          class="input textInput"
+        ></textarea>
+        <button v-on:click="saveComment()" class="btn roundedButton">
+          Save
+        </button>
+      </div>
+      <div class="seperator mt-24 mb-24"></div>
+      <button v-on:click="settingsButton()" class="btn basicBtn">
+        <div class="basicBtnContents">
+          <span class="material-icons space">settings</span>
+          Ability Settings
+        </div>
+      </button>
+      <div v-if="showSettings" class="card column padded">
+        <div v-if="!ability.special_ability_type">
+          <h3>Refresh Ability</h3>
+          <p class="textBlock">
+            Is this ability outdated from the same ability in the wiki? This
+            button will refresh the ability to match the wiki again. WARNING: if
+            the ability does not exist on the wiki, this ability will be
+            deleted!
+          </p>
+          <button v-on:click="refreshButton()" class="btn basicBtn">
+            <div class="basicBtnContents">
+              <span class="material-icons space">refresh</span>
+              Refresh Ability
+            </div>
+          </button>
+          <div class="seperator mt-24 mb-24"></div>
+        </div>
+        <h3>Delete Ability</h3>
+        <p class="textBlock">No longer want this ability? Delete it here.</p>
+        <button v-on:click="deleteButton()" class="btn basicBtn">
+          <div class="basicBtnContents">
+            <span class="material-icons space">delete</span>
+            Delete Ability
+          </div>
+        </button>
+      </div>
+      <div class="tall"></div>
     </div>
     <div v-else-if="character !== undefined">
       Could not find this ability ¯\_(ツ)_/¯
@@ -43,6 +106,13 @@ import DisplayBasicAbilityDetails from "../Common/Abilities/DisplayBasicAbilityD
 export default {
   name: "abilityDetail",
   components: { DisplayBasicAbilityDetails },
+  data() {
+    return {
+      editComment: false,
+      comment: "",
+      showSettings: false,
+    };
+  },
   computed: {
     ...mapState("character", ["character"]),
     ability() {
@@ -82,5 +152,40 @@ export default {
       return false;
     },
   },
+  methods: {
+    commentButton() {
+      this.editComment = !this.editComment;
+    },
+    saveComment() {
+      this.$store.dispatch("character/updateAbilityComment", {
+        id: this.character.id,
+        name: this.ability.name,
+        comment: this.ability.comment,
+      });
+      this.editComment = false;
+    },
+    settingsButton() {
+      this.showSettings = !this.showSettings;
+    },
+    refreshButton() {
+      this.$store.dispatch("character/refreshAbility", {
+        id: this.character.id,
+        name: this.ability.name,
+      });
+      this.showSettings = false;
+    },
+    deleteButton() {
+      this.$store.dispatch("character/removeAbility", {
+        id: this.character.id,
+        name: this.ability.name,
+      });
+    },
+  },
 };
 </script>
+
+<style scoped>
+.commentToolTip {
+  margin-top: -96px;
+}
+</style>

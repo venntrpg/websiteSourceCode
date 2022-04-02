@@ -704,7 +704,7 @@ export function cogFormattedAbility(cog, ability, optionsMap) {
     cost: costMap,
     effect,
     // special cogAbility fields
-    specialAbilityType: COG_ABILITY_TYPE,
+    special_ability_type: COG_ABILITY_TYPE,
     ap,
   };
 }

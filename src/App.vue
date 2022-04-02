@@ -557,6 +557,22 @@ ul {
   justify-content: end;
 }
 
+/* Custom tables */
+
+.tableHeader {
+  margin-right: 46px;
+}
+.tableHeader .headerFont {
+  font-size: 15pt !important;
+}
+.tableData {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  font-size: 12pt;
+  text-align: left;
+  flex-grow: 1;
+}
 .tableItems {
   background-color: var(--background-highlight);
 }

@@ -3,14 +3,10 @@
     <h1>Inventory</h1>
     <div class="alignRow bulkLabel">
       Current Carrying Capacity:
-      <fraction
-        :top="bulkSum"
-        :bottom="character.maxBulk"
-        class="bulkFraction"
-      />
+      <fraction :top="bulkSum" :bottom="bulkCapacity" class="bulkFraction" />
     </div>
     <div v-if="consolidatedItems.length > 0" class="card column">
-      <div class="alignRow item header">
+      <div class="alignRow tableData tableHeader">
         <div class="itemName headerFont">
           <b>Item</b>
         </div>
@@ -27,9 +23,9 @@
         v-bind:key="index"
         class="alignRow tableItems"
       >
-        <div class="item">
+        <div class="tableData">
           <div class="itemName">{{ item.name }}</div>
-          <div class="itemCount">{{ item.count }}</div>
+          <div class="itemCount number">{{ item.ids.length }}</div>
           <div class="itemDesc">{{ item.desc }}</div>
         </div>
         <router-link
@@ -45,7 +41,16 @@
         </router-link>
       </div>
     </div>
-    <h2>Add unique Item</h2>
+    <router-link
+      :to="{ name: 'Character', params: { id: character.id, section: 'shop' } }"
+      class="btn basicBtn link mt-24"
+    >
+      <div class="basicBtnContents">
+        <span class="material-icons space">store</span>
+        Buy items
+      </div>
+    </router-link>
+    <h2>Add custom Item</h2>
     <div class="contentRow">
       <label for="item-name" class="label">Item name:</label>
       <input
@@ -90,7 +95,7 @@
 // TODO: I would like to add a shop link so you can just buy common items without
 // needing to insert all of the details individually
 
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import Fraction from "../Common/CombatStatsComponents/Fraction.vue";
 
 export default {
@@ -105,6 +110,7 @@ export default {
   },
   computed: {
     ...mapState("character", ["character"]),
+    ...mapGetters("character", ["consolidatedItems"]),
     addItemButtonDisabled() {
       return (
         this.itemName === "" ||
@@ -113,31 +119,21 @@ export default {
         this.itemDesc === ""
       );
     },
+    bulkCapacity() {
+      if (this.character.items === undefined) {
+        return 0;
+      }
+      return this.character.items
+        .filter((item) => item.type !== undefined && item.type === "container")
+        .reduce((sum, item) => sum + item.bulk, 0);
+    },
     bulkSum() {
       if (this.character.items === undefined) {
         return 0;
       }
-      return this.character.items.reduce((sum, item) => sum + item.bulk, 0);
-    },
-    consolidatedItems() {
-      if (this.character.items === undefined) {
-        return [];
-      }
-      const itemList = [];
-      for (const item of this.character.items) {
-        const index = itemList.findIndex(
-          (i) =>
-            i.name === item.name && i.bulk === item.bulk && i.desc === item.desc
-        );
-        if (index === -1) {
-          item.count = 1;
-          itemList.push(item);
-        } else {
-          const foundItem = itemList[index];
-          foundItem.count++;
-        }
-      }
-      return itemList;
+      return this.character.items
+        .filter((item) => item.type === undefined || item.type !== "container")
+        .reduce((sum, item) => sum + item.bulk, 0);
     },
   },
   methods: {
@@ -183,31 +179,16 @@ export default {
   width: 200px;
 }
 
-.header {
-  margin-right: 46px;
-}
-
-.item {
-  display: flex;
-  align-items: center;
-  padding: 8px;
-  font-size: 14pt;
-  text-align: left;
-  flex-grow: 1;
-}
 .itemName {
   width: 20%;
+  font-size: 14pt;
 }
 .itemCount {
   width: 10%;
+  font-size: 14pt;
 }
 .itemDesc {
   width: 70%;
-  font-size: 12pt;
-}
-
-.headerFont {
-  font-size: 15pt;
 }
 
 .main.bp750 .itemName {

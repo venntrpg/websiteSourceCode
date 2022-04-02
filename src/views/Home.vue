@@ -1,7 +1,7 @@
 <template>
   <div class="page">
-    <HomePageLoggedOut v-if="!isLoggedIn" />
-    <HomePageLoggedIn v-else />
+    <home-page-logged-out v-if="!isLoggedIn" />
+    <home-page-logged-in v-else />
   </div>
 </template>
 

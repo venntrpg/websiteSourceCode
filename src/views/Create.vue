@@ -1,7 +1,7 @@
 <template>
   <div>
-    <NewFlow v-if="isNewSection" />
-    <ImportFlow v-else-if="isImportSection" />
+    <new-flow v-if="isNewSection" />
+    <import-flow v-else-if="isImportSection" />
     <div v-else class="page">
       <div class="mediumPageWidth selectFlowContainer">
         <div class="selectFlow">

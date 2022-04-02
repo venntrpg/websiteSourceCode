@@ -2,12 +2,20 @@ import api from "@/api/api";
 import router from "@/router/index";
 import { serverCharacter2Local } from "@/api/apiUtil";
 import { checkResponse } from "../storeUtil";
+import { consolidateItemList } from "../../components/Common/Util/ItemUtils";
 
 const state = {
   characters: {},
   character: {},
   searchAbility: "",
   searchAbilitySuggestions: [],
+  searchAbilityError: "",
+};
+
+const getters = {
+  consolidatedItems: (state) => {
+    return consolidateItemList(state.character.items);
+  },
 };
 
 const mutations = {
@@ -29,18 +37,36 @@ const mutations = {
   setSearchAbilitySuggestions(state, suggestions) {
     state.searchAbilitySuggestions = suggestions;
   },
+  setSearchAbilityError(state, error) {
+    state.searchAbilityError = error;
+  },
 };
 
 const actions = {
   // ------------------------- CHARACTER APIS ------------------------- //
 
-  // eslint-disable-next-line no-unused-vars
   createCharacter: ({ commit }, { character, redirectToCharacter }) => {
     return api.createCharacter(character).then((response) => {
-      // TODO: Also commit items / weapons here!
       if (checkResponse(response)) {
         localStorage.removeItem("creation-new-wip");
+        character.id = response.id;
+        commit("setCharacter", character);
         if (redirectToCharacter) {
+          router.push({ name: "Character", params: { id: response.id } });
+        }
+      }
+    });
+  },
+
+  createEnemy: ({ commit }, { enemy, campaign, redirectToCharacter }) => {
+    return api.createEnemy(enemy, campaign).then((response) => {
+      if (checkResponse(response)) {
+        localStorage.removeItem("creation-cog-wip");
+        enemy.id = response.id;
+        commit("setCharacter", enemy);
+        if (campaign) {
+          router.push({ name: "Campaign", params: { campaignId: campaign } });
+        } else if (redirectToCharacter) {
           router.push({ name: "Character", params: { id: response.id } });
         }
       }
@@ -63,6 +89,7 @@ const actions = {
     return api.getCharacter(id).then((response) => {
       if (checkResponse(response) && response.value) {
         commit("setCharacter", serverCharacter2Local(response.value));
+        commit("setSearchAbility", "");
       }
     });
   },
@@ -91,6 +118,7 @@ const actions = {
       if (checkResponse(response) && response.value) {
         commit("setSearchAbility", response.value);
         commit("setSearchAbilitySuggestions", []);
+        commit("setSearchAbilityError", "");
       } else {
         if (
           response.info &&
@@ -98,6 +126,10 @@ const actions = {
           response.matches
         ) {
           commit("setSearchAbilitySuggestions", response.matches);
+          commit("setSearchAbilityError", "");
+        } else if (response.info && response.info.includes("No such ability")) {
+          commit("setSearchAbilitySuggestions", []);
+          commit("setSearchAbilityError", response.info);
         }
         commit("setSearchAbility", "");
       }
@@ -111,6 +143,55 @@ const actions = {
 
   addAbility: ({ dispatch }, { id, name }) => {
     return api.addAbility(id, name).then((response) => {
+      if (checkResponse(response)) {
+        // regrab character info with new ability set
+        dispatch("getCharacter", id);
+      }
+    });
+  },
+
+  removeAbility: ({ dispatch }, { id, name }) => {
+    return api.removeAbility(id, name).then((response) => {
+      if (checkResponse(response)) {
+        // regrab character info with new ability set
+        dispatch("getCharacter", id);
+        router.push({
+          name: "Character",
+          params: { id: response.id, section: "abilities" },
+        });
+      }
+    });
+  },
+
+  refreshAbility: ({ dispatch }, { id, name }) => {
+    return api.refreshAbility(id, name).then((response) => {
+      if (checkResponse(response)) {
+        // regrab character info with new ability set
+        dispatch("getCharacter", id);
+      }
+    });
+  },
+
+  updateAbilityComment: ({ dispatch }, { id, name, comment }) => {
+    return api.updateAbilityComment(id, name, comment).then((response) => {
+      if (checkResponse(response)) {
+        // regrab character info with new ability set
+        dispatch("getCharacter", id);
+      }
+    });
+  },
+
+  createCustomAbility: ({ dispatch }, { id, ability }) => {
+    return api.createCustomAbility(id, ability).then((response) => {
+      if (checkResponse(response)) {
+        // regrab character info with new ability set
+        dispatch("getCharacter", id);
+      }
+    });
+  },
+
+  updateAbility: ({ dispatch }, { id, name, ability }) => {
+    return api.updateAbility(id, name, ability).then((response) => {
       if (checkResponse(response)) {
         // regrab character info with new ability set
         dispatch("getCharacter", id);
@@ -147,6 +228,7 @@ const actions = {
 
 const module = {
   state,
+  getters,
   mutations,
   actions,
   namespaced: true,

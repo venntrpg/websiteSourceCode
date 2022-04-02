@@ -6,7 +6,7 @@
     <div class="seperator"></div>
     <!-- COMBAT STATS -->
     <div class="flex">
-      <Bullet :character="character" />
+      <bullet :character="character" />
       <h2>Combat Stats</h2>
     </div>
     <div>
@@ -21,7 +21,7 @@
           >
             <div class="basicBtnContents attrButtonContents">
               <span class="fractionLabel">{{ getAttrDisplayName(attr) }}:</span>
-              <Fraction
+              <fraction
                 :top="character[attr]"
                 :bottom="getAttrMaxValue(attr)"
               />
@@ -74,7 +74,10 @@
                     class="input"
                   />
                 </div>
-                <div v-if="getAttrMaxValue(attr)" class="alignRow">
+                <div
+                  v-if="getAttrMaxValue(attr) !== undefined"
+                  class="alignRow"
+                >
                   <label v-bind:for="attr + '-max'" class="incrementLabel">
                     Maximum {{ getAttrDisplayName(attr) }}:
                   </label>
@@ -98,7 +101,7 @@
     </div>
     <!-- ATTRIBUTES -->
     <div class="flex">
-      <Bullet :character="character" />
+      <bullet :character="character" />
       <h2>Attributes</h2>
     </div>
     <div v-for="(attrRow, index) in attributeRows" v-bind:key="index">
@@ -187,12 +190,14 @@
                 </div>
                 <button
                   v-on:click="adjustAttrButton(attr, true)"
+                  v-bind:disabled="attrIncrementButtonDisabled(attr)"
                   class="btn roundedButton wide noSelect"
                 >
                   +1
                 </button>
                 <button
                   v-on:click="adjustAttrButton(attr, false)"
+                  v-bind:disabled="attrDecrementButtonDisabled(attr)"
                   class="btn roundedButton wide noSelect"
                 >
                   -1
@@ -206,7 +211,7 @@
     <div class="tall"></div>
     <!-- CUSTOM SINGLE LINE STATS -->
     <button
-      v-if="character.gift"
+      v-if="!isEnemy && character.gift"
       v-on:click="attrButton('gift')"
       class="btn basicBtn attrButton noSelect singleStat"
       v-bind:class="attrButtonClass('gift')"
@@ -224,11 +229,11 @@
         <gift-description :gift="character.gift" :showTitle="false" />
       </div>
     </div>
-    <div v-if="isCog && character.template" class="card stat singleStat">
+    <div v-if="isEnemy && character.template" class="card stat singleStat">
       Template: {{ character.template }}
     </div>
     <button
-      v-if="isCog && character.cogType"
+      v-if="isEnemy && character.cogType"
       v-on:click="attrButton('cogType')"
       class="btn basicBtn attrButton noSelect singleStat"
       v-bind:class="attrButtonClass('cogType')"
@@ -302,29 +307,16 @@
       </div>
     </div>
     <!-- ABILITIES -->
-    <div v-if="showAbilities && character.abilities.length > 0">
-      <div class="flex">
-        <Bullet :character="character" />
-        <h2>Abilities</h2>
-      </div>
-      <div
-        v-for="(ability, index) in character.abilities"
-        v-bind:key="index"
-        class="card column stat singleStat regtext"
-      >
-        <!-- TODO: Should probably sort ability list like we do on the character ability list -->
-        <display-basic-ability-details :ability="ability" />
-        <!-- TODO: Implement this functionality. We can't use a regular #id in an anchor tag because it just results
-             in changing what page we are looking at
-        <button
-          v-if="isCog && !showUpdateDropdown"
-          v-on:click="jumpToAbility(ability)"
-          class="btn roundedButton"
-        >
-          Jump to ability
-        </button>
-        -->
-      </div>
+    <div
+      v-if="
+        showAbilities && character.abilities && character.abilities.length > 0
+      "
+    >
+      <abilities-section :character="character" />
+    </div>
+    <!-- ITEMS -->
+    <div v-if="showItems && character.items && character.items.length > 0">
+      <items-section :character="character" />
     </div>
     <div class="tall"></div>
   </div>
@@ -346,8 +338,12 @@ import Fraction from "./CombatStatsComponents/Fraction.vue";
 import GiftDescription from "./CombatStatsComponents/GiftDescription.vue";
 import CheckBox from "./CheckBox.vue";
 import CogTypeDescription from "../EnemyPage/CogTypeDescription.vue";
-import DisplayBasicAbilityDetails from "./Abilities/DisplayBasicAbilityDetails.vue";
 import { cogTypeTitle } from "../EnemyPage/CogFlowUtils/CogTypeDescriptionUtils";
+import AbilitiesSection from "./CombatStatsComponents/AbilitiesSection.vue";
+import ItemsSection from "./CombatStatsComponents/ItemsSection.vue";
+
+// The maximum value an attribute can be
+const ATTRIBUTE_CAP = 9;
 
 export default {
   name: "combatStats",
@@ -364,6 +360,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    showItems: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     Bullet,
@@ -372,7 +372,8 @@ export default {
     GiftDescription,
     CheckBox,
     CogTypeDescription,
-    DisplayBasicAbilityDetails,
+    AbilitiesSection,
+    ItemsSection,
   },
   data() {
     return {
@@ -416,8 +417,13 @@ export default {
     };
   },
   computed: {
+    isEnemy() {
+      return (
+        this.isCog || (this.character.id && this.character.id.startsWith("E"))
+      );
+    },
     combatStatsRows() {
-      if (this.isCog) {
+      if (this.isEnemy) {
         return [["hp"], ["mp", "vim"]];
       }
       return [
@@ -433,8 +439,8 @@ export default {
       ];
     },
     singleRowAttributes() {
-      let attrs = ["init", "speed", "armor", "xp", "sp", "maxBulk"];
-      if (this.isCog) {
+      let attrs = ["init", "speed", "armor", "xp", "sp"];
+      if (this.isEnemy) {
         attrs = ["acc", "init", "speed", "armor", "level"];
       }
       // Add fields that may only exist on some characters
@@ -449,7 +455,7 @@ export default {
       return this.character.id !== undefined;
     },
     cogTypeTitle() {
-      if (this.isCog) {
+      if (this.isEnemy) {
         return cogTypeTitle(this.character.cogType);
       }
       return "";
@@ -677,6 +683,12 @@ export default {
       this.latestRoll[attr] = new DiceRoll(rollStr);
       this.adjustAttrButton("hero", false);
     },
+    attrIncrementButtonDisabled(attr) {
+      return this.character[attr] >= ATTRIBUTE_CAP;
+    },
+    attrDecrementButtonDisabled(attr) {
+      return this.character[attr] <= -1 * ATTRIBUTE_CAP;
+    },
     adjustAttrButton(attr, increment) {
       const adjustment = increment ? 1 : -1;
       const newVal = this.character[attr] + adjustment;
@@ -768,10 +780,6 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding: 10px 8px 10px 8px;
-}
-
-.stat.regtext {
-  font-size: inherit;
 }
 
 .flex {

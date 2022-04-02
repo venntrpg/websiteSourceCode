@@ -11,13 +11,15 @@
     <div v-if="isOwner">
       <p>Invite new people</p>
     </div>
-    <div class="tall"></div>
-    <router-link
-      :to="{ name: 'Enemy', query: { campaign: campaign.id } }"
-      class="btn basicBtn link"
-    >
-      <div class="basicBtnContents">Create Enemy for this campaign</div>
-    </router-link>
+    <div v-if="isGm">
+      <div class="tall"></div>
+      <router-link
+        :to="{ name: 'Enemy', query: { campaign: campaign.id } }"
+        class="btn basicBtn link"
+      >
+        <div class="basicBtnContents">Create Enemy for this campaign</div>
+      </router-link>
+    </div>
   </div>
 </template>
 

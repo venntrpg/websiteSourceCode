@@ -9,13 +9,13 @@
         class="btn basicBtn link"
       >
         <div class="basicBtnContents">
-          <Bullet :character="character" />
+          <bullet :character="character" />
           {{ character.name }} - Level: {{ level(character.xp) }}
         </div>
       </router-link>
       <router-link to="/create" class="btn basicBtn link">
         <div class="basicBtnContents">
-          <Bullet />
+          <bullet />
           Create or Import a new character
         </div>
       </router-link>
@@ -29,7 +29,7 @@
         class="btn basicBtn link"
       >
         <div class="basicBtnContents">
-          <Bullet />
+          <bullet />
           {{ campaign.name }}
         </div>
       </router-link>
@@ -51,6 +51,12 @@
         Make New Campaign
       </button>
     </div>
+    <router-link to="/enemy" class="btn basicBtn link mt-24">
+      <div class="basicBtnContents">
+        <bullet />
+        Create an enemy Cog
+      </div>
+    </router-link>
   </div>
 </template>
 

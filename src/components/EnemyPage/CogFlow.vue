@@ -324,7 +324,12 @@ export default {
         })
         .filter((pair) => pair.val !== 0)
         .forEach((pair) => {
-          enemy[pair.field] = pair.val;
+          let val = pair.val;
+          if (pair.field === "reach") {
+            // default reach is 1
+            val++;
+          }
+          enemy[pair.field] = val;
         });
       return enemy;
     },
@@ -361,7 +366,7 @@ export default {
       };
 
       const abilities = this.enemy.abilities.filter(
-        (ability) => ability.specialAbilityType === COG_ABILITY_TYPE
+        (ability) => ability.special_ability_type === COG_ABILITY_TYPE
       );
       if (abilities.length > 0) {
         enemyText += "\n\n\nAbilites:\n";
@@ -371,7 +376,7 @@ export default {
       }
 
       const traits = this.enemy.abilities.filter(
-        (ability) => ability.specialAbilityType === COG_TRAIT_TYPE
+        (ability) => ability.special_ability_type === COG_TRAIT_TYPE
       );
       if (traits.length > 0) {
         enemyText += "\n\nTraits:\n";
@@ -381,7 +386,7 @@ export default {
       }
 
       const weaknesses = this.enemy.abilities.filter(
-        (ability) => ability.specialAbilityType === COG_WEAKNESS_TYPE
+        (ability) => ability.special_ability_type === COG_WEAKNESS_TYPE
       );
       if (weaknesses.length > 0) {
         enemyText += "\n\nWeaknesses:\n";
@@ -609,7 +614,16 @@ export default {
       return Math.round(level / 2);
     },
     createEnemyButton() {
-      console.log(this.enemy);
+      if (this.enemy.name === "") {
+        // should probably print an error message on the page or something ¯\_(ツ)_/¯
+        return;
+      }
+
+      this.$store.dispatch("character/createEnemy", {
+        enemy: this.enemy,
+        campaign: this.campaign && this.campaign.id ? this.campaign.id : false,
+        redirectToCharacter: true,
+      });
     },
     deleteEnemy() {
       localStorage.removeItem(COG_LOCAL_STORAGE);

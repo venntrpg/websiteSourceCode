@@ -32,6 +32,12 @@ const attrsToServerNames = {
   hero: { server: "HERO", type: "n" },
   maxHero: { server: "MAX_HERO", type: "n" },
   maxBulk: { server: "MAX_BULK", type: "n" },
+  template: { server: "TEMPLATE" },
+  cogType: { server: "COG_TYPE" },
+  level: { server: "LEVEL", type: "n" },
+  acc: { server: "ACC", type: "n" },
+  radius: { server: "RADIUS", type: "n" },
+  reach: { server: "REACH", type: "n" },
   init: { server: "INIT", type: "n" },
   speed: { server: "SPEED", type: "n" },
   xp: { server: "XP", type: "n" },
@@ -77,6 +83,16 @@ export function serverCharacter2Local(character) {
         result[map.local] = val;
       }
     }
+  });
+  return result;
+}
+
+export function localCharacter2Server(character) {
+  const result = {};
+  Object.entries(character).forEach((pair) => {
+    const map = attrsToServerNames[pair[0]];
+    const attr = map !== undefined ? map.server : pair[0].toUpperCase();
+    result[attr] = pair[1];
   });
   return result;
 }

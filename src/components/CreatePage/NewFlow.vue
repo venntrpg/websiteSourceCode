@@ -22,7 +22,7 @@
       class="sideBar"
       v-bind:class="[getHiddenSidebarClass, getMobileSidebarClass]"
     >
-      <CombatStats :character="createCharacter" />
+      <CombatStats :character="createCharacter" :showItems="true" />
     </div>
     <!--  --------------------- START OF CHARACTER CREATION FLOW --------------------- -->
     <div
@@ -315,13 +315,14 @@
 </template>
 
 <script>
+import { ResponsiveDirective } from "vue-responsive-components";
+import { mapState } from "vuex";
 import AttributeSelection from "./AttributeSelection.vue";
 import CombatStats from "../Common/CombatStats.vue";
 import GiftSelection from "./GiftSelection.vue";
 import RadioButtonSelection from "../Common/RadioButtonSelection.vue";
 import ConfirmationModal from "../Common/ConfirmationModal.vue";
-import { ResponsiveDirective } from "vue-responsive-components";
-import { mapState } from "vuex";
+import { keys2Items } from "../Common/Util/ItemUtils";
 
 // Constants
 const CHAR_LOCAL_STORAGE = "creation-new-wip";
@@ -427,13 +428,86 @@ export default {
       }
       return sum;
     },
-    calculateMaxBulk() {
+    calculateItems() {
+      const items = [];
       if (this.create.outfit === "fashionable") {
-        return 5;
+        items.push("Fashionable Outfit");
       } else if (this.create.outfit === "functional") {
-        return 15;
+        items.push("Functional Outfit");
       }
-      return 0;
+
+      switch (this.create.itemSet) {
+        case "chef":
+          items.push(
+            "Rations",
+            "Rations",
+            "Rations",
+            "Tasty Water",
+            "Tasty Water",
+            "Tasty Water",
+            "Frying Pan",
+            "Cooking Kit"
+          );
+          break;
+        case "dungeoneer":
+          items.push(
+            "Flare Rocket",
+            "Lockpick set",
+            "Flint and Steel",
+            "Rope",
+            "Sounding Stones",
+            "Lux Ward",
+            "Lantern"
+          );
+          break;
+        case "merchant":
+          items.push(
+            "Elixir of Energy*",
+            "Rope",
+            "Writing Kit",
+            "Lantern",
+            // TODO: let user choose between coffee and alcohol
+            "Coffee",
+            "Coffee",
+            "Coffee"
+          );
+          break;
+        case "medic":
+          items.push(
+            "Bandages",
+            "Bandages",
+            "Bandages",
+            "Healing Salve",
+            "Healing Salve",
+            "Godfire",
+            "Sour Blessing",
+            "Elixir of Life*"
+          );
+          break;
+        case "scientist":
+          items.push(
+            "Lux Ward",
+            "Elixir of Focus*",
+            "Compass",
+            "Writing Kit",
+            "Lantern, Bullseye"
+          );
+          break;
+        case "traveler":
+          items.push(
+            "Bedroll",
+            "Lux Ward",
+            "Spyglass",
+            "Rations",
+            "Rations",
+            "Rations",
+            "Rations",
+            "Rations",
+            "Rations"
+          );
+          break;
+      }
+      return keys2Items(items);
     },
     getGiftName() {
       const nameMap = {
@@ -480,7 +554,7 @@ export default {
         speed: this.calculateSpeed,
         xp: this.calculateXP,
         sp: this.calculateSP,
-        maxBulk: this.calculateMaxBulk,
+        items: this.calculateItems,
       };
     },
     /*
@@ -590,7 +664,7 @@ export default {
           "<b>Medic:</b> 3 Bandages, 2 Healing Salves, 1 Godfire, 1 Sour Blessing, 1 Elixir of Life",
         scientist:
           "<b>Scientist:</b> 1 Lux Ward, 1 Elixir of Focus, 1 Compass, 1 Writing Kit, 1 Bullseye Lantern",
-        Traveler:
+        traveler:
           "<b>Traveler:</b> 1 Bedroll, 1 Lux Ward, 1 Spyglass, 6 Rations",
       };
     },
@@ -769,9 +843,7 @@ export default {
         return;
       }
       const character = this.createCharacter;
-      // this.clearCharacter();
-      console.log(character);
-      // need to send this, then once confirmed, send weapon if they selected one, then once cofirmed, we should redirect to the character page
+      // console.log(character);
       this.$store.dispatch("character/createCharacter", {
         character: character,
         redirectToCharacter: true,

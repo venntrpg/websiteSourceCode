@@ -1,16 +1,16 @@
 <template>
   <div>
     <div v-bind:class="getHiddenSidebarClass" class="sideBar">
-      <CombatStats :character="character" v-if="characterPage" />
+      <combat-stats :character="character" v-if="characterPage" />
       <div v-else>
         GM page side panel? Who knows what this will be used for!?
       </div>
     </div>
     <div v-bind:class="getHiddenSidebarClass" class="page sideBarPage">
       <div class="largePageWidth main">
-        <PlayerView v-if="characterPage" />
+        <player-view v-if="characterPage" />
         <GMView v-else-if="gmPage" />
-        <CampaignOptions v-else :campaignName="campaignName" />
+        <campaign-options v-else :campaignName="campaignName" />
       </div>
     </div>
   </div>

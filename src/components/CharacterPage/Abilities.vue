@@ -1,12 +1,12 @@
 <template>
   <div>
     <h1>Abilities</h1>
-    <div class="alignRow xpLabel">
+    <div v-if="!isEnemy" class="alignRow xpLabel">
       Current XP:
       <fraction :top="usedXP" :bottom="character.xp" class="xpFraction" />
     </div>
     <div v-if="sortedAbilities.length > 0" class="card column">
-      <div class="alignRow ability header">
+      <div class="alignRow tableData tableHeader">
         <div class="abilityName headerFont">
           <b>Ability</b>
         </div>
@@ -23,7 +23,7 @@
         v-bind:key="index"
         class="alignRow tableItems"
       >
-        <div class="ability">
+        <div class="tableData">
           <div class="abilityName">{{ ability.name }}</div>
           <div class="abilityActivation">{{ ability.activation }}</div>
           <parse-ability-effect :ability="ability" class="abilityEffect" />
@@ -45,47 +45,56 @@
         </router-link>
       </div>
     </div>
-    <label for="abiltiy-search"><h2>Add New Abilities</h2></label>
-    <div class="inputRow">
-      <input
-        placeholder="Search Ability"
-        v-on:keyup.enter="abilitySearch()"
-        v-model="abilityField"
-        id="abiltiy-search"
-        class="input abilityInput"
-      />
-      <button
-        v-on:click="abilitySearch()"
-        :disabled="lookupButtonDisabled"
-        class="btn roundedButton addAbilityButton clear"
-      >
-        Lookup
-      </button>
-      <button
-        v-on:click="addAbility()"
-        :disabled="abilityButtonDisabled"
-        class="btn roundedButton addAbilityButton"
-      >
-        Add ability
-      </button>
-    </div>
-    <div v-if="showSearchSuggestions" class="card border column">
-      <div class="searchTitle">Search suggestions:</div>
-      <div class="searchScrollable">
+    <div v-if="!isEnemy">
+      <label for="abiltiy-search"><h2>Add New Abilities</h2></label>
+      <div class="alignRow gap">
+        <input
+          placeholder="Search Ability"
+          v-on:keyup.enter="abilitySearch()"
+          v-model="abilityField"
+          id="abiltiy-search"
+          class="input abilityInput"
+        />
         <button
-          v-for="suggestion in searchAbilitySuggestions"
-          v-bind:key="suggestion"
-          v-on:click="searchSuggestionButton(suggestion)"
-          class="btn basicBtn noSelect wide"
+          v-on:click="abilitySearch()"
+          :disabled="lookupButtonDisabled"
+          class="btn basicBtn"
         >
           <div class="basicBtnContents">
-            {{ suggestion }}
+            <span class="material-icons space">search</span>
+            Search
           </div>
         </button>
       </div>
-    </div>
-    <div v-if="showSearchResult">
-      <p v-html="searchResultHtml"></p>
+      <div v-if="showSearchSuggestions" class="card border padded column">
+        <div class="searchTitle">Search suggestions:</div>
+        <div class="searchScrollable">
+          <button
+            v-for="suggestion in searchAbilitySuggestions"
+            v-bind:key="suggestion"
+            v-on:click="searchSuggestionButton(suggestion)"
+            class="btn basicBtn noSelect wide"
+          >
+            <div class="basicBtnContents">
+              {{ suggestion }}
+            </div>
+          </button>
+        </div>
+      </div>
+      <div v-else-if="showSearchResult" class="card border padded column">
+        <h4 class="mt-0">Found Result:</h4>
+        <p v-html="searchResultHtml"></p>
+        <button
+          v-on:click="addAbility()"
+          :disabled="abilityButtonDisabled"
+          class="btn roundedButton addAbilityButton"
+        >
+          Add ability
+        </button>
+      </div>
+      <div v-else-if="searchAbilityError !== ''" class="errorText mt-8">
+        {{ searchAbilityError }}
+      </div>
     </div>
     <div class="tall"></div>
   </div>
@@ -115,7 +124,11 @@ export default {
       "character",
       "searchAbility",
       "searchAbilitySuggestions",
+      "searchAbilityError",
     ]),
+    isEnemy() {
+      return this.character.id && this.character.id.startsWith("E");
+    },
     lookupButtonDisabled() {
       return this.abilityField === "" && this.abilityField === this.lastSearch;
     },
@@ -231,18 +244,6 @@ export default {
   overflow-y: auto;
 }
 
-.header {
-  margin-right: 46px;
-}
-
-.ability {
-  display: flex;
-  align-items: center;
-  padding: 8px;
-  font-size: 12pt;
-  text-align: left;
-  flex-grow: 1;
-}
 .abilityName {
   width: 20%;
   font-size: 14pt;
@@ -253,16 +254,17 @@ export default {
 .abilityEffect {
   width: 65%;
 }
+
 /* Deep selector effects children */
+.abilityEffect >>> p:first-child {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
 .abilityEffect >>> p,
 .abilityEffect >>> ul {
   /* reduce margin so we can condense text a bit more */
-  margin-top: 0px;
-  margin-bottom: 5px;
-}
-
-.headerFont {
-  font-size: 15pt;
+  margin-top: 5px;
+  margin-bottom: 0px;
 }
 
 .main.bp750 .abilityName {
@@ -275,12 +277,6 @@ export default {
   display: none;
 }
 
-.inputRow {
-  display: flex;
-}
-.main.bp500 .inputRow {
-  display: block;
-}
 .main.bp500 .abilityInput {
   max-width: 100%;
 }

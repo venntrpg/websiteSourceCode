@@ -25,17 +25,18 @@
     </div>
     <!--  --------------------- SIDE BAR --------------------- -->
     <div class="sideBar">
-      <CombatStats :character="character" />
+      <combat-stats :character="character" :showItems="shopPage" />
     </div>
     <div v-bind:class="showRightSideBar" class="sideBar right">
-      <RightSideBar />
+      <right-side-bar />
     </div>
     <!--  --------------------- PAGE SUB ROUTER --------------------- -->
     <div v-bind:class="showRightSideBar" class="page sideBarPage">
       <div class="largePageWidth main" v-responsive="breakpoints">
-        <Inventory v-if="inventoryPage" />
-        <CombatStats v-else-if="statsPage" :character="character" />
-        <Abilities v-else />
+        <inventory v-if="inventoryPage" />
+        <item-shop v-else-if="shopPage" />
+        <combat-stats v-else-if="statsPage" :character="character" />
+        <abilities v-else />
       </div>
     </div>
   </div>
@@ -49,10 +50,12 @@ import CombatStats from "../components/Common/CombatStats.vue";
 import RightSideBar from "../components/CharacterPage/RightSideBar.vue";
 import Abilities from "../components/CharacterPage/Abilities.vue";
 import Inventory from "../components/CharacterPage/Inventory.vue";
+import ItemShop from "../components/CharacterPage/ItemShop.vue";
 
 const SECTION_STATS = "stats";
 const SECTION_ABILITIES = "abilities";
 const SECTION_INVENTORY = "inventory";
+const SECTION_SHOP = "shop";
 
 export default {
   name: "Character",
@@ -61,6 +64,7 @@ export default {
     RightSideBar,
     Abilities,
     Inventory,
+    ItemShop,
   },
   directives: {
     responsive: ResponsiveDirective,
@@ -108,6 +112,9 @@ export default {
     inventory() {
       return SECTION_INVENTORY;
     },
+    shop() {
+      return SECTION_SHOP;
+    },
     statsPage() {
       // really only makes sense for mobile
       return this.$route.params.section === SECTION_STATS;
@@ -117,6 +124,9 @@ export default {
     },
     inventoryPage() {
       return this.$route.params.section === SECTION_INVENTORY;
+    },
+    shopPage() {
+      return this.$route.params.section === SECTION_SHOP;
     },
     showRightSideBar() {
       return (this.abilitiesPage || this.inventoryPage) &&

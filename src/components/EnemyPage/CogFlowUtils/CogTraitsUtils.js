@@ -90,7 +90,7 @@ export function traitOptions(cog) {
       },
       adjustments: {
         radius: 0.5,
-        reach: 2,
+        reach: 1,
       },
     },
     "Large II": {
@@ -109,7 +109,7 @@ export function traitOptions(cog) {
       },
       adjustments: {
         radius: 1,
-        reach: 3,
+        reach: 2,
       },
     },
     "Large III": {
@@ -128,7 +128,7 @@ export function traitOptions(cog) {
       },
       adjustments: {
         radius: 2,
-        reach: 4,
+        reach: 3,
       },
     },
     "Second Phase": {
@@ -1019,7 +1019,7 @@ export function formatTraits(cog, traits) {
         activation,
         cost,
         // special cogTrait fields
-        specialAbilityType: type,
+        special_ability_type: type,
       };
       return ability;
     });
