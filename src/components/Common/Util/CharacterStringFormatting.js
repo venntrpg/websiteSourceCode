@@ -42,11 +42,16 @@ function formatAbility(ability) {
 export function convertCharacter(character) {
   let characterText = `${character.name}\nLevel ${Math.floor(
     character.xp / 1000
-  )}\nInit: ${character.init}\nHP: ${character.maxHp}\nVim: ${
-    character.maxVim
-  }\nMP: ${character.maxMp}\nSpeed: ${character.speed}`;
+  )} (${character.xp} XP)`;
+  if (character.gift) {
+    characterText += `\nGift: ${character.gift}`;
+  }
+  characterText += `\nInit: ${character.init}\nHP: ${character.maxHp}\nVim: ${character.maxVim}\nMP: ${character.maxMp}\nSpeed: ${character.speed}`;
   if (character.armor > 0) {
     characterText += `\nArmor: ${character.armor}`;
+  }
+  if (character.sp > 0) {
+    characterText += `\nSP: ${character.sp}`;
   }
 
   characterText += formatBasicAttributes(character);
