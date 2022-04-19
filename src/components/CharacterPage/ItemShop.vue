@@ -40,6 +40,12 @@
         :text="'Spend SP on item purchase'"
         @toggled="toggleSpendOnPurchase"
       />
+      <div class="seperator"></div>
+      <check-box
+        :checked="hideExpensive"
+        :text="'Hide items that are too expensive for you'"
+        @toggled="toggleHideExpensive"
+      />
     </div>
     <div v-for="(items, section) in sectionsMap" v-bind:key="section">
       <h2>{{ section }}</h2>
@@ -103,6 +109,7 @@ export default {
       showConsumables: false,
       showContainers: false,
       spendOnPurchase: true,
+      hideExpensive: false,
     };
   },
   computed: {
@@ -132,11 +139,15 @@ export default {
       }
       const sections = {};
       itemList
-        .filter(
-          (item) =>
+        .filter((item) => {
+          if (this.hideExpensive && this.buyButtonDisabled(item)) {
+            return false;
+          }
+          return (
             item.name.toLowerCase().includes(this.activeSearchTerm) &&
             typeFilters.includes(item.type)
-        )
+          );
+        })
         .forEach((item) => {
           if (item.section in sections) {
             sections[item.section].push(item);
@@ -166,6 +177,9 @@ export default {
     },
     toggleSpendOnPurchase() {
       this.spendOnPurchase = !this.spendOnPurchase;
+    },
+    toggleHideExpensive() {
+      this.hideExpensive = !this.hideExpensive;
     },
     buyButtonDisabled(item) {
       return (

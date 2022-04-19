@@ -1,32 +1,63 @@
 <template>
-  <div class="subNavPage">
+  <div id="character-page" class="subNavPage">
     <!--  --------------------- SUB NAV --------------------- -->
     <div class="subNav scroll">
-      <div class="subNavGroup">
+      <div class="alignRow">
         <router-link
           :to="{ name: 'Character', params: { id, section: stats } }"
+          title="Character stats"
           class="btn navButton subNavButton statLink"
         >
-          STATS
+          <span class="material-icons">bar_chart</span>
         </router-link>
         <router-link
           :to="{ name: 'Character', params: { id, section: abilities } }"
+          title="Abilities (a)"
           class="btn navButton subNavButton"
         >
-          ABILITIES
+          <span class="material-icons">hiking</span>
         </router-link>
         <router-link
           :to="{ name: 'Character', params: { id, section: inventory } }"
+          title="Inventory (i)"
           class="btn navButton subNavButton"
         >
-          INVENTORY
+          <span class="material-icons">shopping_bag</span>
         </router-link>
         <router-link
           :to="{ name: 'Character', params: { id, section: settings } }"
+          title="Character Settings (h)"
           class="btn navButton subNavButton"
         >
-          SETTINGS
+          <span class="material-icons">settings</span>
         </router-link>
+      </div>
+      <div class="alignRow">
+        <button
+          v-on:click="toggleNotes()"
+          title="Show Character notes (n)"
+          class="btn navButton subNavButton"
+        >
+          <span class="material-icons">edit_note</span>
+        </button>
+        <div v-if="fullScreenAvailable" v-bind:key="fullscreenUpdateKey">
+          <button
+            v-if="isFullsceen()"
+            v-on:click="tryFullscreen()"
+            title="Enter fullscreen mode (f)"
+            class="btn navButton subNavButton"
+          >
+            <span class="material-icons">fullscreen</span>
+          </button>
+          <button
+            v-else
+            v-on:click="tryFullscreen()"
+            title="Exit fullscreen mode (f)"
+            class="btn navButton subNavButton"
+          >
+            <span class="material-icons">fullscreen_exit</span>
+          </button>
+        </div>
       </div>
     </div>
     <!--  --------------------- SIDE BAR --------------------- -->
@@ -46,6 +77,7 @@
         <abilities v-else />
       </div>
     </div>
+    <notes v-if="showNotes" @toggleNotes="toggleNotes" />
   </div>
 </template>
 
@@ -59,6 +91,7 @@ import Abilities from "../components/CharacterPage/Abilities.vue";
 import Inventory from "../components/CharacterPage/Inventory.vue";
 import ItemShop from "../components/CharacterPage/ItemShop.vue";
 import CharacterSettings from "../components/CharacterPage/CharacterSettings.vue";
+import Notes from "../components/CharacterPage/Notes.vue";
 
 const SECTION_STATS = "stats";
 const SECTION_ABILITIES = "abilities";
@@ -75,6 +108,7 @@ export default {
     Inventory,
     ItemShop,
     CharacterSettings,
+    Notes,
   },
   directives: {
     responsive: ResponsiveDirective,
@@ -86,6 +120,8 @@ export default {
         bp500: (el) => el.width < 500,
       },
       id: "",
+      showNotes: false,
+      fullscreenUpdateKey: 0,
     };
   },
   beforeMount() {
@@ -109,6 +145,12 @@ export default {
     } else {
       this.$store.dispatch("character/getCharacter", this.id);
     }
+  },
+  created() {
+    window.addEventListener("keypress", this.keyMapper);
+  },
+  destroyed() {
+    window.removeEventListener("keypress", this.keyMapper);
   },
   computed: {
     ...mapState(["isLoggedIn"]),
@@ -147,18 +189,76 @@ export default {
         ? "rightVisible"
         : "";
     },
+    fullScreenAvailable() {
+      return document.fullscreenEnabled;
+    },
+  },
+  methods: {
+    isFullsceen() {
+      return document.fullscreenElement === null;
+    },
+    updateFullscreenKey() {
+      this.fullscreenUpdateKey = this.fullscreenUpdateKey + 1;
+    },
+    keyMapper(e) {
+      const src = e.srcElement.localName;
+      if (["button", "input", "textarea"].includes(src)) {
+        // do not override key inputs from regular text inputs
+        return;
+      }
+      switch (e.code) {
+        case "KeyF":
+          this.tryFullscreen();
+          break;
+        case "KeyN":
+          this.toggleNotes();
+          break;
+        case "KeyA":
+          this.$router.push({
+            name: "Character",
+            params: { id: this.id, section: SECTION_ABILITIES },
+          });
+          break;
+        case "KeyI":
+          this.$router.push({
+            name: "Character",
+            params: { id: this.id, section: SECTION_INVENTORY },
+          });
+          break;
+        case "KeyH":
+          this.$router.push({
+            name: "Character",
+            params: { id: this.id, section: SECTION_SETTINGS },
+          });
+          break;
+        case "KeyS":
+          this.$router.push({
+            name: "Character",
+            params: { id: this.id, section: SECTION_SHOP },
+          });
+          break;
+      }
+    },
+    tryFullscreen() {
+      if (this.fullScreenAvailable) {
+        if (this.isFullsceen()) {
+          document
+            .getElementById("character-page")
+            .requestFullscreen()
+            .then(() => this.updateFullscreenKey());
+        } else {
+          document.exitFullscreen().then(() => this.updateFullscreenKey());
+        }
+      }
+    },
+    toggleNotes() {
+      this.showNotes = !this.showNotes;
+    },
   },
 };
 </script>
 
 <style scoped>
-.subNav.scroll {
-  overflow-x: auto;
-}
-.subNavGroup {
-  display: flex;
-  align-items: center;
-}
 .statLink {
   display: none;
 }

@@ -40,6 +40,9 @@ function formatAbility(ability) {
 }
 
 export function convertCharacter(character) {
+  if (Object.keys(character).length === 0) {
+    return "";
+  }
   let characterText = `${character.name}\nLevel ${Math.floor(
     character.xp / 1000
   )} (${character.xp} XP)`;
@@ -73,6 +76,9 @@ export function convertCharacter(character) {
 }
 
 export function convertCombatCogFoe(character) {
+  if (Object.keys(character).length === 0) {
+    return "";
+  }
   const template =
     character.template.length > 0
       ? character.template.charAt(0).toUpperCase() + character.template.slice(1)

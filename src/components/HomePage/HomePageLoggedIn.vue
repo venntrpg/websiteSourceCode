@@ -1,39 +1,35 @@
 <template>
   <div class="largePageWidth">
     <h3>Your Characters</h3>
-    <div>
-      <router-link
-        v-for="(character, id) in characters"
-        v-bind:key="id"
-        :to="{ name: 'Character', params: { id } }"
-        class="btn basicBtn link"
-      >
-        <div class="basicBtnContents">
-          <bullet :character="character" />
-          {{ character.name }} - Level: {{ level(character.xp) }}
-        </div>
-      </router-link>
-      <router-link to="/create" class="btn basicBtn link">
-        <div class="basicBtnContents">
-          <bullet />
-          Create or Import a new character
-        </div>
-      </router-link>
-    </div>
+    <router-link
+      v-for="(character, id) in filteredCharacters"
+      v-bind:key="id"
+      :to="{ name: 'Character', params: { id } }"
+      class="btn basicBtn link"
+    >
+      <div class="basicBtnContents">
+        <bullet :character="character" />
+        {{ character.name }} - Level: {{ level(character.xp) }}
+      </div>
+    </router-link>
+    <router-link to="/create" class="btn basicBtn link">
+      <div class="basicBtnContents">
+        <bullet />
+        Create or Import a new character
+      </div>
+    </router-link>
     <h3>Your Campaigns</h3>
-    <div>
-      <router-link
-        v-for="(campaign, index) in campaigns"
-        v-bind:key="index"
-        :to="{ name: 'Campaign', params: { campaignId: campaign.id } }"
-        class="btn basicBtn link"
-      >
-        <div class="basicBtnContents">
-          <bullet />
-          {{ campaign.name }}
-        </div>
-      </router-link>
-    </div>
+    <router-link
+      v-for="(campaign, index) in campaigns"
+      v-bind:key="index"
+      :to="{ name: 'Campaign', params: { campaignId: campaign.id } }"
+      class="btn basicBtn link"
+    >
+      <div class="basicBtnContents">
+        <bullet />
+        {{ campaign.name }}
+      </div>
+    </router-link>
     <label for="campaign-input">Create a New Campaign</label>
     <div class="alignRow">
       <input
@@ -51,7 +47,20 @@
         Make New Campaign
       </button>
     </div>
-    <router-link to="/enemy" class="btn basicBtn link mt-24">
+    <h3>Your Cogs</h3>
+    <router-link
+      v-for="(enemy, id) in filteredEnemies"
+      v-bind:key="id"
+      :to="{ name: 'Character', params: { id } }"
+      class="btn basicBtn link"
+    >
+      <div class="basicBtnContents">
+        <bullet :character="enemy" />
+        {{ enemy.name }} - Level:
+        {{ enemy.level ? enemy.level : level(enemy.xp) }}
+      </div>
+    </router-link>
+    <router-link to="/enemy" class="btn basicBtn link">
       <div class="basicBtnContents">
         <bullet />
         Create an enemy Cog
@@ -84,6 +93,24 @@ export default {
     ...mapState("character", ["characters"]),
     newCampaignButtonDisabled() {
       return this.campaignName === "";
+    },
+    filteredCharacters() {
+      const chars = {};
+      Object.entries(this.characters).forEach((pair) => {
+        if (!pair[1].isEnemy) {
+          chars[pair[0]] = pair[1];
+        }
+      });
+      return chars;
+    },
+    filteredEnemies() {
+      const chars = {};
+      Object.entries(this.characters).forEach((pair) => {
+        if (pair[1].isEnemy) {
+          chars[pair[0]] = pair[1];
+        }
+      });
+      return chars;
     },
   },
   methods: {

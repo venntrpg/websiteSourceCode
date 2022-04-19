@@ -145,6 +145,7 @@ body {
   --total-nav-height: calc(var(--nav-height) + var(--sub-nav-height));
   --page-height: calc(100vh - var(--nav-height));
   --sub-nav-page-height: calc(100vh - var(--total-nav-height));
+  --sub-nav-page-fullscreen-height: calc(100vh - var(--sub-nav-height));
   --sidebar-width: 400px;
 
   background-color: var(--background);
@@ -323,6 +324,18 @@ ul {
 }
 .mb-64 {
   margin-bottom: 64px;
+}
+.ml-0 {
+  margin-left: 0px;
+}
+.ml-8 {
+  margin-left: 8px;
+}
+.mr-0 {
+  margin-right: 0px;
+}
+.mr-8 {
+  margin-right: 8px;
 }
 
 .wide {
@@ -687,6 +700,9 @@ ul {
   font-size: 18pt;
   z-index: 5;
 }
+.subNav.scroll {
+  overflow-x: auto;
+}
 .subNavButton {
   background-color: var(--sub-nav-background);
   height: 32px;
@@ -738,5 +754,19 @@ ul {
 }
 .subNavPage .page {
   margin-top: var(--total-nav-height);
+}
+
+.subNavPage:fullscreen {
+  overflow-y: scroll;
+}
+.subNavPage:fullscreen .subNav {
+  top: 0;
+}
+.subNavPage:fullscreen .sideBar {
+  top: var(--sub-nav-height);
+  height: var(--sub-nav-page-fullscreen-height);
+}
+.subNavPage:fullscreen .page {
+  margin-top: var(--sub-nav-height);
 }
 </style>
