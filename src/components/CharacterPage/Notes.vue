@@ -120,8 +120,9 @@ export default {
   bottom: 0;
   width: calc(100% - var(--sidebar-width));
   right: 0;
-  max-width: 560px;
+  max-width: 640px;
   z-index: 10;
+  background-color: var(--background-high-contrast);
 }
 .notesHeader {
   cursor: row-resize;
@@ -133,6 +134,8 @@ export default {
   border-radius: 0px;
   padding: 8px;
   height: 100%;
+  background-color: var(--background-high-contrast);
+  line-height: 1.2;
 }
 
 .sideBarPage.rightVisible + .notesCard {
