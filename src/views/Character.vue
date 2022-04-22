@@ -69,7 +69,7 @@
     </div>
     <!--  --------------------- PAGE SUB ROUTER --------------------- -->
     <div v-bind:class="showRightSideBar" class="page sideBarPage">
-      <div class="largePageWidth main" v-responsive="breakpoints">
+      <div class="largePageWidth main mb-256" v-responsive="breakpoints">
         <inventory v-if="inventoryPage" />
         <item-shop v-else-if="shopPage" />
         <character-settings v-else-if="settingsPage" />

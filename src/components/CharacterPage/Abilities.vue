@@ -96,7 +96,6 @@
         {{ searchAbilityError }}
       </div>
     </div>
-    <div class="tall"></div>
   </div>
 </template>
 

@@ -34,6 +34,11 @@
         :text="'Show Containers'"
         @toggled="toggleShowContainers"
       />
+      <check-box
+        :checked="showWeapons"
+        :text="'Show Weapons'"
+        @toggled="toggleShowWeapons"
+      />
       <div class="seperator"></div>
       <check-box
         :checked="spendOnPurchase"
@@ -84,7 +89,6 @@
         </div>
       </div>
     </div>
-    <div class="tall"></div>
   </div>
 </template>
 
@@ -96,6 +100,7 @@ import { itemList, convertToValidItem } from "../Common/Util/ItemUtils";
 const ITEM_TYPE_EQUIPMENT = "equipment";
 const ITEM_TYPE_CONSUMABLE = "consumable";
 const ITEM_TYPE_CONTAINER = "container";
+const ITEM_TYPE_WEAPON = "weapon";
 
 export default {
   components: { CheckBox },
@@ -108,6 +113,7 @@ export default {
       showEquipment: false,
       showConsumables: false,
       showContainers: false,
+      showWeapons: false,
       spendOnPurchase: true,
       hideExpensive: false,
     };
@@ -119,12 +125,14 @@ export default {
       if (
         !this.showEquipment &&
         !this.showConsumables &&
-        !this.showContainers
+        !this.showContainers &&
+        !this.showWeapons
       ) {
         typeFilters.push(
           ITEM_TYPE_EQUIPMENT,
           ITEM_TYPE_CONSUMABLE,
-          ITEM_TYPE_CONTAINER
+          ITEM_TYPE_CONTAINER,
+          ITEM_TYPE_WEAPON
         );
       } else {
         if (this.showEquipment) {
@@ -135,6 +143,9 @@ export default {
         }
         if (this.showContainers) {
           typeFilters.push(ITEM_TYPE_CONTAINER);
+        }
+        if (this.showWeapons) {
+          typeFilters.push(ITEM_TYPE_WEAPON);
         }
       }
       const sections = {};
@@ -174,6 +185,9 @@ export default {
     },
     toggleShowContainers() {
       this.showContainers = !this.showContainers;
+    },
+    toggleShowWeapons() {
+      this.showWeapons = !this.showWeapons;
     },
     toggleSpendOnPurchase() {
       this.spendOnPurchase = !this.spendOnPurchase;

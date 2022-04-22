@@ -5,15 +5,24 @@
   >
     <div @mousedown="headerDragStart" class="alignRow split notesHeader">
       <label for="character-notes-field" class="labelText ml-8">Notes</label>
-      <button v-on:click="toggleNotes()" class="btn basicBtn">
-        <div class="basicBtnContents">
-          <span class="material-icons">close</span>
+      <div class="alignRow">
+        <div class="mr-8">
+          <span v-if="edited" class="material-icons defaultSize mutedText">
+            sync
+          </span>
+          <span v-else class="material-icons defaultSize mutedText">check</span>
         </div>
-      </button>
+        <button v-on:click="toggleNotes()" class="btn basicBtn">
+          <div class="basicBtnContents">
+            <span class="material-icons">close</span>
+          </div>
+        </button>
+      </div>
     </div>
     <!-- v-on:input="typing" -->
     <textarea
       v-model="notes"
+      v-on:input="typing"
       placeholder="Character notes can live here"
       class="input textInput notesField"
       id="character-notes-field"
@@ -29,9 +38,11 @@ export default {
   data() {
     return {
       notes: "",
-      boxHeight: 160,
+      boxHeight: 200,
       startMouseY: 0,
       startBoxHeight: 0,
+      timeout: undefined,
+      edited: false,
     };
   },
   beforeMount() {
@@ -47,18 +58,16 @@ export default {
     }
   },
   destroyed() {
-    if (this.notes !== localStorage.getItem(this.localStorageId)) {
-      localStorage.setItem(this.localStorageId, this.notes);
-    }
+    this.saveNotes();
     localStorage.setItem(this.localStorageHeightId, this.boxHeight);
   },
   computed: {
     ...mapState("character", ["character"]),
     localStorageId() {
-      return this.character.id + "-notes";
+      return this.character.id + "-n";
     },
     localStorageHeightId() {
-      return this.localStorageId + "-height";
+      return this.localStorageId + "h";
     },
   },
   methods: {
@@ -82,8 +91,22 @@ export default {
       document.onmousemove = null;
     },
     typing() {
-      // TODO: Fix this so it works and can be used for saving updates to server
-      // debounce(() => console.log("hi"));
+      if (!this.edited) {
+        this.edited = true;
+      }
+      if (this.timeout) {
+        clearTimeout(this.timeout);
+      }
+      this.timeout = setTimeout(() => {
+        this.saveNotes();
+      }, 3000); // delay
+    },
+    saveNotes() {
+      if (this.edited) {
+        // TODO: save to server instead of here
+        localStorage.setItem(this.localStorageId, this.notes);
+        this.edited = false;
+      }
     },
   },
 };

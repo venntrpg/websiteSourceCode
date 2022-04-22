@@ -283,6 +283,10 @@ ul {
   color: var(--text-error);
 }
 
+.mutedText {
+  color: var(--text-muted);
+}
+
 .labelText {
   font-size: 16pt;
 }
@@ -324,6 +328,9 @@ ul {
 }
 .mb-64 {
   margin-bottom: 64px;
+}
+.mb-256 {
+  margin-bottom: 256px;
 }
 .ml-0 {
   margin-left: 0px;
@@ -456,7 +463,7 @@ ul {
 }
 
 /* Override material icons size definition as button icon */
-.material-icons {
+.material-icons:not(.defaultSize) {
   font-size: 30px;
 }
 .basicBtn .material-icons.selected {

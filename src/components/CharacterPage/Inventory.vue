@@ -87,7 +87,6 @@
     >
       Add Item
     </button>
-    <div class="tall"></div>
   </div>
 </template>
 

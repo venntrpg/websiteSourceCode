@@ -7,7 +7,7 @@
       implemented, we will default to the course settings defined there.
     </p>
     <div class="seperator mb-64 mt-64"></div>
-    <copyable-character :character="character" class="mb-64" />
+    <copyable-character :character="character" />
   </div>
 </template>
 
