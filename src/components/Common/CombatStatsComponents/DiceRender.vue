@@ -83,7 +83,7 @@ export default {
 }
 
 .dice {
-  background-color: var(--red-600);
+  background-color: var(--main-button);
   color: white;
 }
 

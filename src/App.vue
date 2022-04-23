@@ -78,6 +78,7 @@ body {
   --yellow-500: #e6af2e;
   --yellow-600: #e0a51b;
 
+  --gray-950: #1d1d1d;
   --gray-900: #303030;
   --gray-800: #2a2a2a;
   --gray-750: #3c3d3f;
@@ -96,6 +97,7 @@ body {
 
   --background: var(--gray-250);
   --background-highlight: white;
+  --background-low-contrast: var(--gray-300);
   --background-high-contrast: var(--gray-900);
 
   --nav-background: var(--purple-500);
@@ -123,7 +125,7 @@ body {
   --text-error: var(--red-600);
   --link-hover: var(--red-500);
   --link-active: var(--red-700);
-  --text-muted: var(--gray-800);
+  --text-muted: var(--gray-650);
   --text-contrast: white;
   --link-contrast-hover: var(--red-300);
   --link-contrast-active: var(--red-500);
@@ -156,6 +158,7 @@ body {
   body {
     --background: var(--purple-950);
     --background-highlight: var(--purple-900);
+    --background-low-contrast: var(--gray-950);
 
     --nav-background: var(--purple-600);
     --nav-button-hover: var(--purple-700);
@@ -282,9 +285,11 @@ ul {
 .errorText {
   color: var(--text-error);
 }
-
 .mutedText {
   color: var(--text-muted);
+}
+.contrastText {
+  color: var(--text-contrast);
 }
 
 .labelText {
