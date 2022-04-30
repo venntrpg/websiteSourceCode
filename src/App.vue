@@ -301,6 +301,9 @@ ul {
 .mt-0 {
   margin-top: 0px;
 }
+.mt-4 {
+  margin-top: 4px;
+}
 .mt-2 {
   margin-top: 2px;
 }
@@ -322,6 +325,9 @@ ul {
 .mb-2 {
   margin-bottom: 2px;
 }
+.mt-4 {
+  margin-bottom: 4px;
+}
 .mb-8 {
   margin-bottom: 8px;
 }
@@ -340,11 +346,17 @@ ul {
 .ml-0 {
   margin-left: 0px;
 }
+.ml-2 {
+  margin-left: 2px;
+}
 .ml-8 {
   margin-left: 8px;
 }
 .mr-0 {
   margin-right: 0px;
+}
+.mr-2 {
+  margin-right: 2px;
 }
 .mr-8 {
   margin-right: 8px;

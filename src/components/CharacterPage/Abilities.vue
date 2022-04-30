@@ -158,6 +158,10 @@ export default {
         return 0;
       }
       return this.character.abilities.reduce((sum, ability) => {
+        if (ability.purchase.includes("sp")) {
+          // do not include sp here
+          return sum;
+        }
         let cost = parseInt(ability.purchase);
         if (
           ability.expedited &&
@@ -169,6 +173,36 @@ export default {
         return sum + cost;
       }, 0);
     },
+    sortedPaths() {
+      // sort by minimum purchased ability cost, at least for now - There are definetly better ways to do this sorting,
+      // like using a predefined list from scraping the server or something. Maybe I should add that to the vennt-scripts
+      // folder and automatically run and populate the resulting jsons into this repo when I deploy??
+      if (this.character.abilities === undefined) {
+        return [];
+      }
+      const pathCostMap = {};
+      this.character.abilities.forEach((ability) => {
+        let cost = parseInt(ability.purchase);
+        if (isNaN(cost)) {
+          cost = 5000; // arbitrary amount that costs a lot
+        }
+        if (
+          ability === undefined ||
+          ability.name === "NULL" ||
+          ability.path === undefined
+        ) {
+          return;
+        }
+        if (ability.path in pathCostMap) {
+          pathCostMap[ability.path] = Math.min(cost, pathCostMap[ability.path]);
+        } else {
+          pathCostMap[ability.path] = cost;
+        }
+      });
+      const paths = Object.keys(pathCostMap);
+      paths.sort((p1, p2) => pathCostMap[p1] - pathCostMap[p2]);
+      return paths;
+    },
     sortedAbilities() {
       if (this.character.abilities === undefined) {
         return [];
@@ -177,16 +211,39 @@ export default {
         (ability) => ability !== undefined && ability.name !== "NULL"
       );
       return abilityCopy.sort((a1, a2) => {
-        // put Passive abilities at the end of the list
-        const a1Passive = a1.activation === "Passive";
-        const a2Passive = a2.activation === "Passive";
+        // 1. put Passive abilities at the end of the list
+        const a1Passive = a1.cost && "Passive" in a1.cost && a1.cost.Passive;
+        const a2Passive = a2.cost && "Passive" in a2.cost && a2.cost.Passive;
         if (!a1Passive && a2Passive) {
           return -1;
         } else if (a1Passive && !a2Passive) {
           return 1;
         }
-        // sort by XP price otherwise (for now at least)
-        return parseInt(a1.purchase) - parseInt(a2.purchase);
+        // 2. put abilities which use SP instead of XP at the end of the list when passive
+        if (a1Passive && a2Passive) {
+          const a1SP = a1.purchase.includes("sp");
+          const a2SP = a2.purchase.includes("sp");
+          if (!a1SP && a2SP) {
+            return -1;
+          } else if (a1SP && !a2SP) {
+            return 1;
+          }
+        }
+        // 3. sort by path gathering
+        if (a1.path !== a2.path) {
+          const pathIdx = (given) =>
+            this.sortedPaths.findIndex((path) => path === given);
+          return pathIdx(a1.path) - pathIdx(a2.path);
+        }
+        // 4. sort by XP price otherwise (for now at least)
+        const costInt = (purchase) => {
+          const cost = parseInt(purchase);
+          if (isNaN(cost)) {
+            return 0;
+          }
+          return cost;
+        };
+        return costInt(a1.purchase) - costInt(a2.purchase);
       });
     },
   },

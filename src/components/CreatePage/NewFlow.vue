@@ -432,6 +432,9 @@ export default {
         items.push("Functional Outfit");
       }
 
+      // all characters start with both of these weapons for free
+      items.push("Melee Blade", "Ranged Sidearm");
+
       switch (this.create.itemSet) {
         case "chef":
           items.push(

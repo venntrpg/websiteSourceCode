@@ -5,13 +5,13 @@
     </div>
     <div class="seperator"></div>
     <!-- COMBAT STATS -->
-    <div class="flex">
+    <div class="alignRow">
       <bullet :character="character" />
       <h2>Combat Stats</h2>
     </div>
     <div>
       <div v-for="(attrRow, index) in combatStatsRows" v-bind:key="index">
-        <div class="attrsRow">
+        <div class="alignRow split gap">
           <button
             v-for="attr in attrRow"
             v-bind:key="attr"
@@ -37,7 +37,10 @@
             <div class="margin">
               <div v-if="showUpdateDropdown">
                 <div class="attrHeaderMargin">Update Stat Values:</div>
-                <div v-if="adjustFields[attr] !== undefined" class="alignRow">
+                <div
+                  v-if="adjustFields[attr] !== undefined"
+                  class="alignRow mt-4"
+                >
                   <label v-bind:for="attr + '-adjust'" class="incrementLabel">
                     Adjust (+/-) {{ getAttrDisplayName(attr) }}:
                   </label>
@@ -55,11 +58,11 @@
                 <button
                   v-if="showResetToFullButton(attr)"
                   v-on:click="adjustAttrToFullButton(attr)"
-                  class="btn roundedButton clear wide noSelect topMargin"
+                  class="btn roundedButton clear wide noSelect mt-4"
                 >
                   Reset {{ getAttrDisplayName(attr) }} to Full
                 </button>
-                <div class="alignRow">
+                <div class="alignRow mt-4">
                   <label v-bind:for="attr + '-current'" class="incrementLabel">
                     Current {{ getAttrDisplayName(attr) }}:
                   </label>
@@ -76,7 +79,7 @@
                 </div>
                 <div
                   v-if="getAttrMaxValue(attr) !== undefined"
-                  class="alignRow"
+                  class="alignRow mt-4"
                 >
                   <label v-bind:for="attr + '-max'" class="incrementLabel">
                     Maximum {{ getAttrDisplayName(attr) }}:
@@ -93,19 +96,19 @@
                   />
                 </div>
               </div>
-              <p v-else v-html="getAttrHelpHTML(attr)" class="mt-0 mb-8"></p>
+              <attr-help v-else :attr="attr" />
             </div>
           </div>
         </div>
       </div>
     </div>
     <!-- ATTRIBUTES -->
-    <div class="flex">
+    <div class="alignRow">
       <bullet :character="character" />
       <h2>Attributes</h2>
     </div>
     <div v-for="(attrRow, index) in attributeRows" v-bind:key="index">
-      <div class="attrsRow">
+      <div class="alignRow split gap">
         <button
           v-for="attr in attrRow"
           v-bind:key="attr"
@@ -126,7 +129,7 @@
           v-bind:class="getDropDownClass(j, 3)"
         >
           <div class="margin">
-            <div class="alignRow">
+            <div class="alignRow split">
               <div class="attrHeader">
                 <a
                   v-bind:href="getAttrLink(attr)"
@@ -163,7 +166,7 @@
               </div>
             </div>
             <div v-if="showUpdateDropdown">
-              <div class="seperator topBottomMargin"></div>
+              <div class="seperator mt-16 mb-16"></div>
               <div class="attrHeaderMargin">Special Conditions:</div>
               <button
                 v-on:click="attrRollButtonHeroPoint(attr)"
@@ -176,7 +179,7 @@
                 </div>
               </button>
               <!-- TODO: It would be neat if we could add abilities here too -->
-              <div class="seperator topBottomMargin"></div>
+              <div class="seperator mt-16 mb-16"></div>
               <div class="attrHeaderMargin">Update Attribute Value:</div>
               <check-box
                 :checked="propegateChanges"
@@ -184,24 +187,26 @@
                 :highlight="true"
                 @toggled="propegateChangesButton()"
               />
-              <div class="alignRow">
+              <div class="alignRow split mt-4">
                 <div class="incrementLabel">
                   Update {{ attr.toUpperCase() }} value:
                 </div>
-                <button
-                  v-on:click="adjustAttrButton(attr, true)"
-                  v-bind:disabled="attrIncrementButtonDisabled(attr)"
-                  class="btn roundedButton wide noSelect"
-                >
-                  +1
-                </button>
-                <button
-                  v-on:click="adjustAttrButton(attr, false)"
-                  v-bind:disabled="attrDecrementButtonDisabled(attr)"
-                  class="btn roundedButton wide noSelect"
-                >
-                  -1
-                </button>
+                <div class="alignRow gap wide">
+                  <button
+                    v-on:click="adjustAttrButton(attr, true)"
+                    v-bind:disabled="attrIncrementButtonDisabled(attr)"
+                    class="btn roundedButton wide noSelect"
+                  >
+                    +1
+                  </button>
+                  <button
+                    v-on:click="adjustAttrButton(attr, false)"
+                    v-bind:disabled="attrDecrementButtonDisabled(attr)"
+                    class="btn roundedButton wide noSelect"
+                  >
+                    -1
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -213,41 +218,35 @@
     <button
       v-if="!isEnemy && character.gift"
       v-on:click="attrButton('gift')"
-      class="btn basicBtn attrButton noSelect singleStat"
+      class="btn basicBtn attrButton noSelect"
       v-bind:class="attrButtonClass('gift')"
     >
       <div class="basicBtnContents attrButtonContents">
         Gift: {{ character.gift }}
       </div>
     </button>
-    <div
-      v-if="showDropDown('gift')"
-      class="card diceDropDown left right singleStat"
-    >
+    <div v-if="showDropDown('gift')" class="card diceDropDown left right">
       <div class="margin">
-        <div class="seperator bottomMargin"></div>
+        <div class="seperator mb-16"></div>
         <gift-description :gift="character.gift" :showTitle="false" />
       </div>
     </div>
-    <div v-if="isEnemy && character.template" class="card stat singleStat">
+    <div v-if="isEnemy && character.template" class="card stat">
       Template: {{ character.template }}
     </div>
     <button
       v-if="isEnemy && character.cogType"
       v-on:click="attrButton('cogType')"
-      class="btn basicBtn attrButton noSelect singleStat"
+      class="btn basicBtn attrButton noSelect"
       v-bind:class="attrButtonClass('cogType')"
     >
       <div class="basicBtnContents attrButtonContents">
         Type: {{ cogTypeTitle }}
       </div>
     </button>
-    <div
-      v-if="showDropDown('cogType')"
-      class="card diceDropDown left right singleStat"
-    >
+    <div v-if="showDropDown('cogType')" class="card diceDropDown left right">
       <div class="margin">
-        <div class="seperator bottomMargin"></div>
+        <div class="seperator mb-16"></div>
         <cog-type-description :cogType="character.cogType" :showTitle="false" />
       </div>
     </div>
@@ -255,7 +254,7 @@
     <div v-for="attr in singleRowAttributes" v-bind:key="attr">
       <button
         v-on:click="attrButton(attr)"
-        class="btn basicBtn attrButton noSelect singleStat"
+        class="btn basicBtn attrButton noSelect"
         v-bind:class="attrButtonClass(attr)"
       >
         <div class="basicBtnContents attrButtonContents">
@@ -263,15 +262,12 @@
           <div class="number">{{ character[attr] }}</div>
         </div>
       </button>
-      <div
-        v-if="showDropDown(attr)"
-        class="card diceDropDown left right singleStat"
-      >
+      <div v-if="showDropDown(attr)" class="card diceDropDown left right">
         <div class="margin">
-          <div class="seperator bottomMargin"></div>
+          <div class="seperator mb-16"></div>
           <div v-if="showUpdateDropdown">
             <div class="attrHeaderMargin">Update Stat Value:</div>
-            <div v-if="adjustFields[attr] !== undefined" class="alignRow">
+            <div v-if="adjustFields[attr] !== undefined" class="alignRow mt-4">
               <label v-bind:for="attr + '-adjust'" class="incrementLabel">
                 Adjust (+/-) {{ getAttrDisplayName(attr) }}:
               </label>
@@ -286,7 +282,7 @@
                 class="input"
               />
             </div>
-            <div class="alignRow">
+            <div class="alignRow mt-4">
               <label v-bind:for="attr + '-current'" class="incrementLabel">
                 Current {{ getAttrDisplayName(attr) }}:
               </label>
@@ -302,7 +298,7 @@
               />
             </div>
           </div>
-          <p v-else v-html="getAttrHelpHTML(attr)" class="mt-0 mb-8"></p>
+          <attr-help v-else :attr="attr" />
         </div>
       </div>
     </div>
@@ -341,6 +337,7 @@ import CogTypeDescription from "../EnemyPage/CogTypeDescription.vue";
 import { cogTypeTitle } from "../EnemyPage/CogFlowUtils/CogTypeDescriptionUtils";
 import AbilitiesSection from "./CombatStatsComponents/AbilitiesSection.vue";
 import ItemsSection from "./CombatStatsComponents/ItemsSection.vue";
+import AttrHelp from "./CombatStatsComponents/AttrHelp.vue";
 
 // The maximum value an attribute can be
 const ATTRIBUTE_CAP = 9;
@@ -374,6 +371,7 @@ export default {
     CogTypeDescription,
     AbilitiesSection,
     ItemsSection,
+    AttrHelp,
   },
   data() {
     return {
@@ -511,44 +509,6 @@ export default {
         this.getAttrMaxValue(attr) &&
         this.character[attr] < this.getAttrMaxValue(attr)
       );
-    },
-    // TODO: Convert into component instead of keeping HTML in strings
-    getAttrHelpHTML(attr) {
-      const helpMap = {
-        hp: `Your maximum Health (HP) is 20 + Level + 3 times Strength.
-        <a href="https://vennt.fandom.com/wiki/Health" target="_blank" class="link">Wiki entry</a>.`,
-        mp: `Your maximum Mana (MP) is 6 + 3 times Wisdom.
-        <a href="https://vennt.fandom.com/wiki/Mana" target="_blank" class="link">Wiki entry</a>.`,
-        vim: `Your maximum Vim is equal to your maximum HP.
-        <a href="https://vennt.fandom.com/wiki/Vim" target="_blank" class="link">Wiki entry</a>`,
-        hero: `Hero Points are reserves of luck that can be spent to create moments of shining excellence.
-        <a href="https://vennt.fandom.com/wiki/Hero_Points" target="_blank" class="link">Wiki entry</a>.
-        Note: Hero Points require that the
-        <a href="https://vennt.fandom.com/wiki/Hero_Points" target="_blank" class="link">Course of Heroism</a>
-        has been introduced.`,
-        init: `Your Initiative is your Agility + Dexterity.
-        <a href="https://vennt.fandom.com/wiki/Initiative" target="_blank" class="link">Wiki entry</a>.`,
-        speed: `Your Speed is 3 + Agility minus any Burden from your Armor.
-        <a href="https://vennt.fandom.com/wiki/Movement" target="_blank" class="link">Wiki entry</a>.`,
-        armor: `Your Armor serves as damage reduction from blows dealt to you.
-        <a href="https://vennt.fandom.com/wiki/Armor" target="_blank" class="link">Wiki entry</a>.`,
-        xp: `Experience Points, the resource gained by player characters during play and spent on Abilities.
-        Your character's level is your xp&nbsp;/&nbsp;1000.
-        <a href="https://vennt.fandom.com/wiki/XP" target="_blank" class="link">Wiki entry</a>`,
-        sp: `Silver Pieces are Amnis's main currency.
-        <a href="https://vennt.fandom.com/wiki/Money" target="_blank" class="link">Wiki entry</a>`,
-        maxBulk: `Bulk is an abstract unit of measurement to represent the weight and size of one's inventory.
-        You can carry an amount of Bulk up to your carrying capacity.`,
-        level: `Level of the cog. See the
-        <a href="https://vennt.fandom.com/wiki/Course_of_Tactics#The_L_stat" target="_blank" class="link">Wiki entry</a>.`,
-        acc: `Attacks are generally made by comparing the target's Accuracy to the target's Vim.
-        <a href="https://vennt.fandom.com/wiki/Accuracy" target="_blank" class="link">Wiki entry</a>.`,
-        radius: `The Radius of a cog refers to how many hexes outside of it's central hex the cog takes up`,
-        reach: `Reach is the distance from which a creature can make melee attacks and manipulate objects.
-        This defaults to 1 hex/meter for human-sized creatures.
-        <a href="https://vennt.fandom.com/wiki/Reach" target="_blank" class="link">Wiki entry</a>.`,
-      };
-      return helpMap[attr];
     },
     getAttrFullName(attr) {
       const nameMap = {
@@ -782,26 +742,16 @@ export default {
   padding: 10px 8px 10px 8px;
 }
 
-.flex {
-  display: flex;
-  align-items: center;
-}
-
-.attrsRow {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-}
 .attrButton {
   width: 100%;
   background-color: var(--background-highlight);
   border-radius: 5px;
-  margin-top: 4px;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 .attrButton.selected {
-  margin-bottom: -4px;
+  margin-bottom: 0px;
   border-radius: 5px 5px 0px 0px;
+  padding-bottom: 8px;
 }
 .attrButtonContents {
   font-size: 16pt;
@@ -824,8 +774,7 @@ export default {
 }
 
 .diceDropDown {
-  margin-top: 4px;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 .diceDropDown.left {
   border-top-left-radius: 0px;
@@ -850,32 +799,9 @@ export default {
   margin-right: 8px;
 }
 
-.seperator.topBottomMargin {
-  margin-top: 16px;
-  margin-bottom: 16px;
-}
-.seperator.bottomMargin {
-  margin-bottom: 16px;
-}
-
-.alignRow {
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 5px;
-}
-
-.topMargin {
-  margin-top: 5px;
-}
-
 .incrementLabel {
   font-size: 14pt;
   min-width: 180px;
-}
-
-.singleStat {
-  /* Prevents margin collaps */
-  margin-bottom: 8px;
 }
 
 /* Mobile Styles */
