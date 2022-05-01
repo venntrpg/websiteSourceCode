@@ -110,6 +110,37 @@ const setAttribute = (id, attr, val) => {
     });
 };
 
+const updateAttributes = (id, attrs, msg) => {
+  const params = {
+    auth_token: getAuth(),
+    id,
+  };
+  if (msg !== undefined && msg !== "") {
+    params.msg = msg;
+  }
+  return backendApi
+    .post("/update_attrs", JSON.stringify(localCharacter2Server(attrs)), {
+      params,
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+const filterChangelog = (id, attr) => {
+  return backendApi
+    .get("/clear_changelog", {
+      params: {
+        auth_token: getAuth(),
+        id,
+        attr: localAttr2Server(attr),
+      },
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
 // ------------------------- ABILITY APIS ------------------------- //
 
 // https://github.com/joshmiller17/vennt-server#lookup-ability
@@ -371,6 +402,8 @@ export default {
   listCharacters,
   getCharacter,
   setAttribute,
+  updateAttributes,
+  filterChangelog,
   lookupAbility,
   addAbility,
   removeAbility,

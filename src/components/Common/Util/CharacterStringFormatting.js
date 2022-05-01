@@ -5,11 +5,11 @@ import {
   COG_WEAKNESS_TYPE,
 } from "../../EnemyPage/CogFlowUtils/CogConstants";
 import { consolidateItemList } from "./ItemUtils";
-import { attributes } from "../../../store/constants";
+import { ATTRIBUTES } from "../../../utils/constants";
 
 function formatBasicAttributes(character) {
   let characterText = "\n";
-  attributes.forEach((attr) => {
+  ATTRIBUTES.forEach((attr) => {
     characterText += `${attr.toUpperCase()}: ${character[attr]}  `;
   });
   characterText += "\n\n";

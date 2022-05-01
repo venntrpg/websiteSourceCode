@@ -43,10 +43,12 @@ const attrsToServerNames = {
   xp: { server: "XP", type: "n" },
   sp: { server: "SP", type: "n" },
   armor: { server: "ARMOR", type: "n" },
+  notes: { server: "NOTES" },
   gift: { server: "gift" },
   isEnemy: { server: "is_enemy" },
   items: { server: "items" },
   abilities: { server: "abilities" },
+  changelog: { server: "changelog" },
 };
 
 // inverse of attrsToServerNames
@@ -84,15 +86,14 @@ export function serverCharacter2Local(character) {
       }
     }
   });
+  // TODO: Convert changelog also
   return result;
 }
 
 export function localCharacter2Server(character) {
   const result = {};
   Object.entries(character).forEach((pair) => {
-    const map = attrsToServerNames[pair[0]];
-    const attr = map !== undefined ? map.server : pair[0].toUpperCase();
-    result[attr] = pair[1];
+    result[localAttr2Server(pair[0])] = pair[1];
   });
   return result;
 }

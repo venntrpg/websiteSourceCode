@@ -1,6 +1,6 @@
 import api from "@/api/api";
 import router from "@/router/index";
-import { checkResponse } from "../storeUtil";
+import { checkResponse } from "../../utils/storeUtil";
 
 const state = {
   campaigns: [],

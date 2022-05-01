@@ -5,14 +5,9 @@
     class="btn basicBtn wide noSelect"
   >
     <div class="basicBtnContents">
-      <span
-        v-if="checked"
-        class="material-icons space"
-        v-bind:class="selectedClass"
-      >
-        check_box
+      <span class="material-icons space" v-bind:class="selectedClass">
+        {{ icon }}
       </span>
-      <span v-else class="material-icons space">check_box_outline_blank</span>
       <span v-bind:class="textClass" v-html="text"></span>
     </div>
   </button>
@@ -38,10 +33,16 @@ export default {
   },
   computed: {
     selectedClass() {
-      return this.highlight ? "selected" : "";
+      return this.checked && this.highlight ? "selected" : "";
     },
     textClass() {
       return this.smallText ? "pt-12" : "";
+    },
+    icon() {
+      if (this.checked) {
+        return "check_box";
+      }
+      return "check_box_outline_blank";
     },
   },
   methods: {

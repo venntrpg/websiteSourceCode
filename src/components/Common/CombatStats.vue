@@ -37,24 +37,6 @@
             <div class="margin">
               <div v-if="showUpdateDropdown">
                 <div class="attrHeaderMargin">Update Stat Values:</div>
-                <div
-                  v-if="adjustFields[attr] !== undefined"
-                  class="alignRow mt-4"
-                >
-                  <label v-bind:for="attr + '-adjust'" class="incrementLabel">
-                    Adjust (+/-) {{ getAttrDisplayName(attr) }}:
-                  </label>
-                  <input
-                    type="number"
-                    v-on:keyup.enter="adjustAttrFromAdjustField(attr)"
-                    v-model="adjustFields[attr]"
-                    placeholder="0"
-                    title="Press Enter to Submit"
-                    v-bind:id="attr + '-adjust'"
-                    v-bind:class="inputAdjustFieldClass(attr)"
-                    class="input"
-                  />
-                </div>
                 <button
                   v-if="showResetToFullButton(attr)"
                   v-on:click="adjustAttrToFullButton(attr)"
@@ -94,6 +76,44 @@
                     v-bind:class="inputFieldClass(getAttrMaxName(attr))"
                     class="input"
                   />
+                </div>
+                <div class="seperator mt-8 mb-8"></div>
+                <!-- NOTE: UPDATED VERSION -->
+                <div v-if="adjustFields[attr] !== undefined">
+                  <label
+                    v-bind:for="attr + '-adjustReason'"
+                    class="attrHeaderMargin"
+                  >
+                    Update {{ getAttrDisplayName(attr) }} Values:
+                  </label>
+                  <input
+                    type="text"
+                    v-on:keyup.enter="jumpToAdjustField(attr)"
+                    v-model="adjustReasonFields[attr]"
+                    placeholder="Reason for update (not required)"
+                    title="Press Enter to Submit"
+                    v-bind:id="attr + '-adjustReason'"
+                    v-bind:class="inputAdjustFieldClass(attr)"
+                    class="input mt-4"
+                  />
+                  <div class="alignRow mt-4">
+                    <label
+                      v-bind:for="adjustFieldID(attr)"
+                      class="incrementLabel"
+                    >
+                      Adjust (+/-) {{ getAttrDisplayName(attr) }}:
+                    </label>
+                    <input
+                      type="number"
+                      v-on:keyup.enter="adjustAttrFromAdjustField(attr)"
+                      v-model="adjustFields[attr]"
+                      placeholder="0"
+                      title="Press Enter to Submit"
+                      v-bind:id="adjustFieldID(attr)"
+                      v-bind:class="inputAdjustFieldClass(attr)"
+                      class="input"
+                    />
+                  </div>
                 </div>
               </div>
               <attr-help v-else :attr="attr" />
@@ -338,6 +358,7 @@ import { cogTypeTitle } from "../EnemyPage/CogFlowUtils/CogTypeDescriptionUtils"
 import AbilitiesSection from "./CombatStatsComponents/AbilitiesSection.vue";
 import ItemsSection from "./CombatStatsComponents/ItemsSection.vue";
 import AttrHelp from "./CombatStatsComponents/AttrHelp.vue";
+import { adjustAttrsAPI } from "../../utils/attributeUtils";
 
 // The maximum value an attribute can be
 const ATTRIBUTE_CAP = 9;
@@ -409,6 +430,15 @@ export default {
         hp: "",
         mp: "",
         vim: "",
+        hero: "",
+        xp: "",
+        sp: "",
+      },
+      adjustReasonFields: {
+        hp: "",
+        mp: "",
+        vim: "",
+        hero: "",
         xp: "",
         sp: "",
       },
@@ -610,24 +640,35 @@ export default {
       if (attr !== "init" && val < 0) {
         return false;
       }
+      /*
+      // NOTE: COMMENTED OUT FOR NOW SINCE I THINK THIS IS ACTUALLY OK
       if (["hp", "mp", "vim", "hero"].includes(attr)) {
         if (this.getAttrMaxValue(attr) && val > this.getAttrMaxValue(attr)) {
           return false;
         }
       }
-      return val;
+      */
+      return adjust;
     },
     inputAdjustFieldClass(attr) {
-      return this.validateAdjustField(attr) === false ? "invalid" : "";
+      return this.validateAdjustField(attr) === false &&
+        this.adjustFields[attr] !== ""
+        ? "invalid"
+        : "";
     },
     adjustAttrFromAdjustField(attr) {
-      const val = this.validateAdjustField(attr);
-      if (val !== false) {
-        this.$store.dispatch("character/setAttribute", {
-          id: this.character.id,
-          attr: attr,
-          val: val,
-        });
+      const adjust = this.validateAdjustField(attr);
+      if (adjust !== false) {
+        const attrs = {};
+        attrs[attr] = adjust;
+        adjustAttrsAPI(
+          this.character,
+          attrs,
+          this.propegateChanges,
+          this.adjustReasonFields[attr]
+        );
+        this.adjustFields[attr] = "";
+        this.adjustReasonFields[attr] = "";
       }
     },
     attrRollButtonHeroPoint(attr) {
@@ -723,6 +764,12 @@ export default {
         }
       }
     },
+    adjustFieldID(attr) {
+      return attr + "-adjust";
+    },
+    jumpToAdjustField(attr) {
+      document.getElementById(this.adjustFieldID(attr)).focus();
+    },
   },
 };
 </script>
@@ -745,12 +792,12 @@ export default {
 .attrButton {
   width: 100%;
   background-color: var(--background-highlight);
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   margin-bottom: 8px;
 }
 .attrButton.selected {
   margin-bottom: 0px;
-  border-radius: 5px 5px 0px 0px;
+  border-radius: var(--border-radius) var(--border-radius) 0px 0px;
   padding-bottom: 8px;
 }
 .attrButtonContents {

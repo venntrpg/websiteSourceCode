@@ -139,7 +139,7 @@
         Click the "Clear Character" button to delete this character and start
         again.
       </p>
-      <div class="bottomButtons">
+      <div class="alignRow gap wrap split mt-8 mb-128">
         <button v-on:click="createCharacterButton()" class="btn roundedButton">
           <div class="btnContents">Import Character</div>
         </button>
@@ -155,9 +155,7 @@
 <script>
 import RadioButtonSelection from "../Common/RadioButtonSelection.vue";
 import ConfirmSelectionButton from "../Common/ConfirmSelectionButton.vue";
-import { attributes } from "../../store/constants";
-
-const CHAR_LOCAL_STORAGE = "creation-import-wip";
+import { ATTRIBUTES, CHAR_IMPORT_LOCAL_STORAGE } from "../../utils/constants";
 
 export default {
   name: "ImportFlow",
@@ -193,7 +191,7 @@ export default {
     };
   },
   beforeMount() {
-    const rawChar = localStorage.getItem(CHAR_LOCAL_STORAGE);
+    const rawChar = localStorage.getItem(CHAR_IMPORT_LOCAL_STORAGE);
     if (rawChar) {
       try {
         const char = JSON.parse(rawChar);
@@ -201,7 +199,7 @@ export default {
         this.character = char;
       } catch (e) {
         // stored json was malformed, so we delete it and restart fresh
-        localStorage.removeItem(CHAR_LOCAL_STORAGE);
+        localStorage.removeItem(CHAR_IMPORT_LOCAL_STORAGE);
       }
     }
   },
@@ -221,7 +219,7 @@ export default {
       };
     },
     validAttributes() {
-      return attributes;
+      return ATTRIBUTES;
     },
   },
   methods: {
@@ -230,14 +228,17 @@ export default {
       return !isNaN(result) ? result : 0;
     },
     backupImport() {
-      localStorage.setItem(CHAR_LOCAL_STORAGE, JSON.stringify(this.character));
+      localStorage.setItem(
+        CHAR_IMPORT_LOCAL_STORAGE,
+        JSON.stringify(this.character)
+      );
     },
     giftUpdated(newGift) {
       this.character.gift = newGift;
       this.backupImport();
     },
     clearCharacter() {
-      localStorage.removeItem(CHAR_LOCAL_STORAGE);
+      localStorage.removeItem(CHAR_IMPORT_LOCAL_STORAGE);
       this.$router.push({ name: "Create" });
     },
     createCharacterButton() {
@@ -301,12 +302,5 @@ export default {
 }
 .attributeName {
   width: 72px;
-}
-
-.bottomButtons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-  margin-bottom: 150px;
 }
 </style>

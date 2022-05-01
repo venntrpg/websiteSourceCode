@@ -59,7 +59,7 @@
             step later. Or, press the button to generate a random name for now.
           </p>
         </label>
-        <div class="alignRow nameRow">
+        <div class="alignRow mt-4 nameRow">
           <input
             type="text"
             name="charName"
@@ -289,7 +289,7 @@
           Click the "Clear Character" button to delete this character and start
           again.
         </p>
-        <div class="bottomButtons">
+        <div class="alignRow gap wrap split mt-8 mb-128">
           <confirmation-modal
             :buttonText="'Create Character'"
             :confStr="'Create Character'"
@@ -318,10 +318,7 @@ import GiftSelection from "./GiftSelection.vue";
 import RadioButtonSelection from "../Common/RadioButtonSelection.vue";
 import ConfirmationModal from "../Common/ConfirmationModal.vue";
 import { keys2Items } from "../Common/Util/ItemUtils";
-import { attributes } from "../../store/constants";
-
-// Constants
-const CHAR_LOCAL_STORAGE = "creation-new-wip";
+import { ATTRIBUTES, CHAR_LOCAL_STORAGE } from "../../utils/constants";
 
 export default {
   name: "NewFlow",
@@ -387,7 +384,7 @@ export default {
       return this.showingStats ? "showStats" : "";
     },
     validAttributes() {
-      return attributes;
+      return ATTRIBUTES;
     },
     // formulas come from https://vennt.fandom.com/wiki/Character_Creation
     calculateHP() {
@@ -862,10 +859,6 @@ export default {
   margin-right: 10px;
 }
 
-.alignRow {
-  margin-top: 5px;
-}
-
 .btnContents {
   display: flex;
   align-items: center;
@@ -873,13 +866,6 @@ export default {
 
 .bottomMargin {
   margin-bottom: 20px;
-}
-
-.bottomButtons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-  margin-bottom: 150px;
 }
 
 /* subNav and sideBar Styles */

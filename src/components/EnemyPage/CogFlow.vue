@@ -171,9 +171,7 @@ import {
   formatTraits,
 } from "./CogFlowUtils/CogTraitsUtils";
 import { cogTypeAttrVal } from "./CogFlowUtils/CogTypeDescriptionUtils";
-import { attributes } from "../../store/constants";
-
-const COG_LOCAL_STORAGE = "creation-cog-wip";
+import { ATTRIBUTES, COG_LOCAL_STORAGE } from "../../utils/constants";
 
 // TODO: Start storing temporary cog data in vue module??
 // Should help with a lot of the info emits I am doing here
@@ -288,7 +286,7 @@ export default {
         abilities,
       };
       // add attributes
-      attributes.forEach((attr) => {
+      ATTRIBUTES.forEach((attr) => {
         enemy[attr] = this.calculateAttribute(attr);
       });
       // add special fields if they need to be set

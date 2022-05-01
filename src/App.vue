@@ -150,6 +150,8 @@ body {
   --sub-nav-page-fullscreen-height: calc(100vh - var(--sub-nav-height));
   --sidebar-width: 400px;
 
+  --border-radius: 5px;
+
   background-color: var(--background);
   color: var(--text);
 }
@@ -340,6 +342,9 @@ ul {
 .mb-64 {
   margin-bottom: 64px;
 }
+.mb-128 {
+  margin-bottom: 128px;
+}
 .mb-256 {
   margin-bottom: 256px;
 }
@@ -508,7 +513,7 @@ ul {
   line-height: 16px;
   height: 40px;
   width: 100%;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   color: var(--text);
   padding: 12px 10px;
   background-color: var(--background-highlight);
@@ -552,7 +557,7 @@ ul {
 .card {
   display: flex;
   background-color: var(--background-highlight);
-  border-radius: 5px;
+  border-radius: var(--border-radius);
 }
 .card.padded {
   padding: 16px;
@@ -599,6 +604,9 @@ ul {
 .alignRow.end {
   justify-content: end;
 }
+.alignRow.wrap {
+  flex-wrap: wrap;
+}
 
 /* Custom tables */
 
@@ -621,6 +629,9 @@ ul {
 }
 .tableItems:nth-child(even) {
   background-color: var(--table-contrast);
+}
+.tableItems:last-child {
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
 
 /* A little bit janky way to delay animation */
@@ -648,7 +659,7 @@ ul {
   background-color: var(--background-high-contrast);
   color: var(--text-contrast);
   font-size: 13pt;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   padding: 8px;
   z-index: 5;
 }
@@ -682,7 +693,7 @@ ul {
   top: var(--nav-height);
   display: flex;
   background-color: var(--background-highlight);
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   padding: 16px;
   border: 1px solid var(--border);
   z-index: 4;
@@ -690,6 +701,48 @@ ul {
 .stickyHeader.thin {
   padding-top: 4px;
   padding-bottom: 4px;
+}
+
+/* Modal component */
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 10; /* Needs to sit on top of everything else */
+}
+
+.modal.show {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.dialogue {
+  width: 500px;
+  margin: 8px;
+  margin-top: 80px;
+  border: 1px solid var(--border-contrast);
+}
+
+.dialogue-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.dialogue-title {
+  margin-left: 16px;
+}
+
+.dialogue-details {
+  margin: 16px;
 }
 
 /* Nav Styles - useful for subnav styles */

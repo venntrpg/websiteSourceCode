@@ -1,5 +1,5 @@
 import router from "@/router/index";
-import store from "./index";
+import store from "../store/index";
 
 export function checkResponse(response) {
   if (!response || response.success !== true) {

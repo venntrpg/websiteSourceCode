@@ -22,33 +22,39 @@
       <check-box
         :checked="showEquipment"
         :text="'Show Equipment'"
+        :highlight="true"
         @toggled="toggleShowEquipment"
       />
       <check-box
         :checked="showConsumables"
         :text="'Show Consumables'"
+        :highlight="true"
         @toggled="toggleShowConsumables"
       />
       <check-box
         :checked="showContainers"
         :text="'Show Containers'"
+        :highlight="true"
         @toggled="toggleShowContainers"
       />
       <check-box
         :checked="showWeapons"
         :text="'Show Weapons'"
+        :highlight="true"
         @toggled="toggleShowWeapons"
       />
       <div class="seperator"></div>
       <check-box
         :checked="spendOnPurchase"
         :text="'Spend SP on item purchase'"
+        :highlight="true"
         @toggled="toggleSpendOnPurchase"
       />
       <div class="seperator"></div>
       <check-box
         :checked="hideExpensive"
         :text="'Hide items that are too expensive for you'"
+        :highlight="true"
         @toggled="toggleHideExpensive"
       />
     </div>

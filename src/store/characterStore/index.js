@@ -1,8 +1,9 @@
 import api from "@/api/api";
 import router from "@/router/index";
 import { serverCharacter2Local } from "@/api/apiUtil";
-import { checkResponse } from "../storeUtil";
+import { checkResponse } from "../../utils/storeUtil";
 import { consolidateItemList } from "../../components/Common/Util/ItemUtils";
+import { CHAR_LOCAL_STORAGE, COG_LOCAL_STORAGE } from "../../utils/constants";
 
 const state = {
   characters: {},
@@ -31,6 +32,22 @@ const mutations = {
   updateCharacterAttribute(state, { attr, val }) {
     state.character[attr] = val;
   },
+  updateCharacterAttributes(state, { attrs, msg }) {
+    Object.entries(attrs).forEach((pair) => {
+      const attr = pair[0];
+      state.character[attr] = pair[1];
+      if (msg !== undefined) {
+        if (!state.character.changelog) {
+          state.character.changelog = [];
+        }
+        const log = { attr, msg, time: Math.floor(Date.now() / 1000) };
+        if (state.character[attr]) {
+          log.prev = state.character[attr];
+        }
+        state.character.changelog.push(log);
+      }
+    });
+  },
   setSearchAbility(state, ability) {
     state.searchAbility = ability;
   },
@@ -48,7 +65,7 @@ const actions = {
   createCharacter: ({ commit }, { character, redirectToCharacter }) => {
     return api.createCharacter(character).then((response) => {
       if (checkResponse(response)) {
-        localStorage.removeItem("creation-new-wip");
+        localStorage.removeItem(CHAR_LOCAL_STORAGE);
         character.id = response.id;
         commit("setCharacter", character);
         if (redirectToCharacter) {
@@ -61,7 +78,7 @@ const actions = {
   createEnemy: ({ commit }, { enemy, campaign, redirectToCharacter }) => {
     return api.createEnemy(enemy, campaign).then((response) => {
       if (checkResponse(response)) {
-        localStorage.removeItem("creation-cog-wip");
+        localStorage.removeItem(COG_LOCAL_STORAGE);
         enemy.id = response.id;
         commit("setCharacter", enemy);
         if (campaign) {
@@ -101,6 +118,14 @@ const actions = {
       if (checkResponse(response)) {
         console.log(response);
       }
+    });
+  },
+
+  updateAttributes: ({ commit }, { id, attrs, msg }) => {
+    // upate value locally immediately so it looks seamless
+    commit("updateCharacterAttributes", { attrs, msg });
+    return api.updateAttributes(id, attrs, msg).then((response) => {
+      checkResponse(response);
     });
   },
 
