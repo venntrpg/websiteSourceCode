@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <div v-if="!isLoggedIn" class="smallPageWidth">
+    <form v-if="!isLoggedIn" class="smallPageWidth">
       <h1>LOG IN</h1>
       <div class="usernameSection">
         <label for="login-username">Enter your username:</label>
@@ -11,10 +11,10 @@
           placeholder="Username"
           autocomplete="username"
           v-model="fields.username"
-          class="input smallTopMargin wide"
+          class="input mt-4 wide"
         />
       </div>
-      <div class="passwordSection topMargin">
+      <div class="passwordSection mt-16">
         <label for="login-password">Enter your password:</label>
         <input
           type="password"
@@ -24,19 +24,20 @@
           autocomplete="current-password"
           v-model="fields.password"
           v-on:keyup.enter="loginButton()"
-          class="input smallTopMargin wide"
+          class="input mt-4 wide"
         />
       </div>
       <button
+        type="button"
         v-on:click="loginButton()"
-        class="topMargin btn roundedButton wide noSelect"
+        class="btn roundedButton wide noSelect mt-16"
       >
         LOG IN
       </button>
-      <div class="topMargin">
+      <div class="mt-16">
         <div class="errorText">{{ getErrorMessage }}</div>
       </div>
-    </div>
+    </form>
     <div v-else class="smallPageWidth">You are already signed in. Log out?</div>
   </div>
 </template>
@@ -80,13 +81,6 @@ export default {
 </script>
 
 <style scoped>
-.topMargin {
-  margin-top: 16px;
-}
-.smallTopMargin {
-  margin-top: 4px;
-}
-
 .errorText {
   font-size: 10pt;
 }

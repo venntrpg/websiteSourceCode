@@ -1,3 +1,4 @@
+import { ATTRIBUTES } from "./constants";
 import store from "../store/index";
 
 export function hpByDiff(diff) {
@@ -10,6 +11,43 @@ export function vimByDiff(diff) {
 
 export function mpByDiff(diff) {
   return diff * 3;
+}
+
+export function getAttrFullName(attr) {
+  const nameMap = {
+    per: "Perception",
+    tek: "Technology",
+    agi: "Agility",
+    dex: "Dexterity",
+    int: "Intelligence",
+    spi: "Spirit",
+    str: "Strength",
+    wis: "Wisdom",
+    cha: "Charisma",
+    hero: "Hero Points",
+  };
+  const name = nameMap[attr];
+  if (name) {
+    return name;
+  }
+  return getAttrDisplayName(attr);
+}
+
+export function getAttrDisplayName(attr) {
+  if (attr === "init") {
+    return "Initiative";
+  }
+  if (attr === "maxBulk") {
+    return "Carrying Capacity";
+  }
+  if (attr.length <= 2 || ATTRIBUTES.includes(attr)) {
+    return attr.toUpperCase();
+  }
+  return attr.charAt(0).toUpperCase() + attr.slice(1);
+}
+
+export function getAttrMaxName(attr) {
+  return "max" + attr.charAt(0).toUpperCase() + attr.slice(1);
 }
 
 export function adjustAttrsAPI(

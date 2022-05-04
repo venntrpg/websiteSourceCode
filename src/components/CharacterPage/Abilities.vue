@@ -220,7 +220,7 @@ export default {
           return 1;
         }
         // 2. put abilities which use SP instead of XP at the end of the list when passive
-        if (a1Passive && a2Passive) {
+        if (a1Passive && a1.purchase && a2Passive && a2.purchase) {
           const a1SP = a1.purchase.includes("sp");
           const a2SP = a2.purchase.includes("sp");
           if (!a1SP && a2SP) {

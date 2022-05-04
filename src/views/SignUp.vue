@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <div v-if="!isLoggedIn" class="smallPageWidth">
+    <form v-if="!isLoggedIn" class="smallPageWidth">
       <h1>SIGN UP</h1>
       <div class="usernameSection">
         <label for="signup-username">Enter a username:</label>
@@ -11,10 +11,10 @@
           placeholder="Username"
           autocomplete="username"
           v-model="fields.username"
-          class="input smallTopMargin wide"
+          class="input mt-4 wide"
         />
       </div>
-      <div class="password1Section topMargin">
+      <div class="password1Section mt-16">
         <label for="signup-password1">Enter a password:</label>
         <input
           type="password"
@@ -23,10 +23,10 @@
           placeholder="Password"
           autocomplete="new-password"
           v-model="fields.password1"
-          class="input smallTopMargin wide"
+          class="input mt-4 wide"
         />
       </div>
-      <div class="password1Section topMargin">
+      <div class="password1Section mt-16">
         <label for="signup-password2">Verify your password:</label>
         <input
           type="password"
@@ -35,19 +35,20 @@
           placeholder="Verify Password"
           autocomplete="new-password"
           v-model="fields.password2"
-          class="input smallTopMargin wide"
+          class="input mt-4 wide"
         />
       </div>
       <button
+        type="button"
         v-on:click="signupButton()"
-        class="topMargin btn roundedButton wide noSelect"
+        class="mt-16 btn roundedButton wide noSelect"
       >
         SIGN UP
       </button>
-      <div class="topMargin">
+      <div class="mt-16">
         <div class="errorText">{{ getErrorMessage }}</div>
       </div>
-    </div>
+    </form>
     <div v-else class="smallPageWidth">You are already signed in. Log out?</div>
   </div>
 </template>
@@ -97,13 +98,6 @@ export default {
 </script>
 
 <style scoped>
-.topMargin {
-  margin-top: 16px;
-}
-.smallTopMargin {
-  margin-top: 4px;
-}
-
 .errorText {
   font-size: 10pt;
 }

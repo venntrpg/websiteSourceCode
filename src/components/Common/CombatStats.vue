@@ -20,7 +20,7 @@
             v-bind:class="attrButtonClass(attr)"
           >
             <div class="basicBtnContents attrButtonContents">
-              <span class="fractionLabel">{{ getAttrDisplayName(attr) }}:</span>
+              <span class="fractionLabel">{{ attrDisplayName(attr) }}:</span>
               <fraction
                 :top="character[attr]"
                 :bottom="getAttrMaxValue(attr)"
@@ -32,66 +32,23 @@
           <div
             v-if="showDropDown(attr)"
             class="card diceDropDown"
-            v-bind:class="getDropDownClass(j, 2)"
+            v-bind:class="getDropDownClass(j, attrRow.length)"
           >
             <div class="margin">
               <div v-if="showUpdateDropdown">
-                <div class="attrHeaderMargin">Update Stat Values:</div>
-                <button
-                  v-if="showResetToFullButton(attr)"
-                  v-on:click="adjustAttrToFullButton(attr)"
-                  class="btn roundedButton clear wide noSelect mt-4"
-                >
-                  Reset {{ getAttrDisplayName(attr) }} to Full
-                </button>
-                <div class="alignRow mt-4">
-                  <label v-bind:for="attr + '-current'" class="incrementLabel">
-                    Current {{ getAttrDisplayName(attr) }}:
-                  </label>
-                  <input
-                    type="number"
-                    v-on:keyup.enter="adjustAttrFromField(attr)"
-                    v-model="attrFields[attr]"
-                    v-bind:placeholder="character[attr]"
-                    title="Press Enter to Submit"
-                    v-bind:id="attr + '-current'"
-                    v-bind:class="inputFieldClass(attr)"
-                    class="input"
-                  />
-                </div>
-                <div
-                  v-if="getAttrMaxValue(attr) !== undefined"
-                  class="alignRow mt-4"
-                >
-                  <label v-bind:for="attr + '-max'" class="incrementLabel">
-                    Maximum {{ getAttrDisplayName(attr) }}:
-                  </label>
-                  <input
-                    type="number"
-                    v-on:keyup.enter="adjustAttrFromField(getAttrMaxName(attr))"
-                    v-model="attrFields[getAttrMaxName(attr)]"
-                    v-bind:placeholder="getAttrMaxValue(attr)"
-                    title="Press Enter to Submit"
-                    v-bind:id="attr + '-max'"
-                    v-bind:class="inputFieldClass(getAttrMaxName(attr))"
-                    class="input"
-                  />
-                </div>
-                <div class="seperator mt-8 mb-8"></div>
-                <!-- NOTE: UPDATED VERSION -->
                 <div v-if="adjustFields[attr] !== undefined">
                   <label
                     v-bind:for="attr + '-adjustReason'"
                     class="attrHeaderMargin"
                   >
-                    Update {{ getAttrDisplayName(attr) }} Values:
+                    Adjust {{ attrDisplayName(attr) }} Values:
                   </label>
                   <input
                     type="text"
                     v-on:keyup.enter="jumpToAdjustField(attr)"
                     v-model="adjustReasonFields[attr]"
                     placeholder="Reason for update (not required)"
-                    title="Press Enter to Submit"
+                    title="Press Enter to jump to the next field"
                     v-bind:id="attr + '-adjustReason'"
                     v-bind:class="inputAdjustFieldClass(attr)"
                     class="input mt-4"
@@ -101,7 +58,7 @@
                       v-bind:for="adjustFieldID(attr)"
                       class="incrementLabel"
                     >
-                      Adjust (+/-) {{ getAttrDisplayName(attr) }}:
+                      Adjust (+/-) {{ attrDisplayName(attr) }}:
                     </label>
                     <input
                       type="number"
@@ -114,7 +71,17 @@
                       class="input"
                     />
                   </div>
+                  <div class="seperator mt-8 mb-8"></div>
                 </div>
+                <router-link
+                  :to="attrModalLink(attr)"
+                  class="btn roundedButton"
+                >
+                  <div class="basicBtnContents">
+                    <span class="material-icons space">edit</span>
+                    Edit {{ attrFullName(attr) }} / History
+                  </div>
+                </router-link>
               </div>
               <attr-help v-else :attr="attr" />
             </div>
@@ -146,7 +113,7 @@
         <div
           v-if="showDropDown(attr)"
           class="card diceDropDown"
-          v-bind:class="getDropDownClass(j, 3)"
+          v-bind:class="getDropDownClass(j, attrRow.length)"
         >
           <div class="margin">
             <div class="alignRow split">
@@ -156,7 +123,7 @@
                   target="_blank"
                   class="link stealth"
                 >
-                  {{ getAttrFullName(attr) }}
+                  {{ attrFullName(attr) }}
                 </a>
                 (
                 <span class="number">{{ character[attr] }}</span>
@@ -247,11 +214,10 @@
     </button>
     <div v-if="showDropDown('gift')" class="card diceDropDown left right">
       <div class="margin">
-        <div class="seperator mb-16"></div>
         <gift-description :gift="character.gift" :showTitle="false" />
       </div>
     </div>
-    <div v-if="isEnemy && character.template" class="card stat">
+    <div v-if="isEnemy && character.template" class="card stat mb-8">
       Template: {{ character.template }}
     </div>
     <button
@@ -266,7 +232,6 @@
     </button>
     <div v-if="showDropDown('cogType')" class="card diceDropDown left right">
       <div class="margin">
-        <div class="seperator mb-16"></div>
         <cog-type-description :cogType="character.cogType" :showTitle="false" />
       </div>
     </div>
@@ -278,18 +243,17 @@
         v-bind:class="attrButtonClass(attr)"
       >
         <div class="basicBtnContents attrButtonContents">
-          <span class="attrLabelWide">{{ getAttrDisplayName(attr) }}:</span>
+          <span class="attrLabelWide">{{ attrDisplayName(attr) }}:</span>
           <div class="number">{{ character[attr] }}</div>
         </div>
       </button>
       <div v-if="showDropDown(attr)" class="card diceDropDown left right">
         <div class="margin">
-          <div class="seperator mb-16"></div>
           <div v-if="showUpdateDropdown">
             <div class="attrHeaderMargin">Update Stat Value:</div>
             <div v-if="adjustFields[attr] !== undefined" class="alignRow mt-4">
               <label v-bind:for="attr + '-adjust'" class="incrementLabel">
-                Adjust (+/-) {{ getAttrDisplayName(attr) }}:
+                Adjust (+/-) {{ attrDisplayName(attr) }}:
               </label>
               <input
                 type="number"
@@ -304,7 +268,7 @@
             </div>
             <div class="alignRow mt-4">
               <label v-bind:for="attr + '-current'" class="incrementLabel">
-                Current {{ getAttrDisplayName(attr) }}:
+                Current {{ attrDisplayName(attr) }}:
               </label>
               <input
                 type="number"
@@ -358,7 +322,12 @@ import { cogTypeTitle } from "../EnemyPage/CogFlowUtils/CogTypeDescriptionUtils"
 import AbilitiesSection from "./CombatStatsComponents/AbilitiesSection.vue";
 import ItemsSection from "./CombatStatsComponents/ItemsSection.vue";
 import AttrHelp from "./CombatStatsComponents/AttrHelp.vue";
-import { adjustAttrsAPI } from "../../utils/attributeUtils";
+import {
+  getAttrFullName,
+  getAttrDisplayName,
+  getAttrMaxName,
+  adjustAttrsAPI,
+} from "../../utils/attributeUtils";
 
 // The maximum value an attribute can be
 const ATTRIBUTE_CAP = 9;
@@ -515,23 +484,11 @@ export default {
       }
       return "";
     },
-    getAttrDisplayName(attr) {
-      if (attr === "init") {
-        return "Initiative";
-      }
-      if (attr === "maxBulk") {
-        return "Carrying Capacity";
-      }
-      if (attr.length <= 2) {
-        return attr.toUpperCase();
-      }
-      return attr.charAt(0).toUpperCase() + attr.slice(1);
-    },
-    getAttrMaxName(attr) {
-      return "max" + attr.charAt(0).toUpperCase() + attr.slice(1);
+    attrDisplayName(attr) {
+      return getAttrDisplayName(attr);
     },
     getAttrMaxValue(attr) {
-      return this.character[this.getAttrMaxName(attr)];
+      return this.character[getAttrMaxName(attr)];
     },
     showResetToFullButton(attr) {
       return (
@@ -540,26 +497,11 @@ export default {
         this.character[attr] < this.getAttrMaxValue(attr)
       );
     },
-    getAttrFullName(attr) {
-      const nameMap = {
-        per: "Perception",
-        tek: "Technology",
-        agi: "Agility",
-        dex: "Dexterity",
-        int: "Intelligence",
-        spi: "Spirit",
-        str: "Strength",
-        wis: "Wisdom",
-        cha: "Charisma",
-      };
-      const name = nameMap[attr];
-      if (name) {
-        return name;
-      }
-      return "";
+    attrFullName(attr) {
+      return getAttrFullName(attr);
     },
     getAttrLink(attr) {
-      return `https://vennt.fandom.com/wiki/${this.getAttrFullName(
+      return `https://vennt.fandom.com/wiki/${this.attrFullName(
         attr
       )}_(${attr.toUpperCase()})`;
     },
@@ -770,6 +712,13 @@ export default {
     jumpToAdjustField(attr) {
       document.getElementById(this.adjustFieldID(attr)).focus();
     },
+    attrModalLink(attr) {
+      return {
+        name: this.$route.name,
+        params: this.$route.params,
+        query: { attr },
+      };
+    },
   },
 };
 </script>
@@ -798,7 +747,8 @@ export default {
 .attrButton.selected {
   margin-bottom: 0px;
   border-radius: var(--border-radius) var(--border-radius) 0px 0px;
-  padding-bottom: 8px;
+  padding-bottom: 7px;
+  border-bottom: 1px var(--border) solid;
 }
 .attrButtonContents {
   font-size: 16pt;
@@ -852,7 +802,7 @@ export default {
 }
 
 /* Mobile Styles */
-@media screen and (max-width: 366px) {
+@media screen and (max-width: 396px) {
   .panel {
     margin-left: 0px;
     margin-right: 0px;

@@ -327,7 +327,7 @@ ul {
 .mb-2 {
   margin-bottom: 2px;
 }
-.mt-4 {
+.mb-4 {
   margin-bottom: 4px;
 }
 .mb-8 {

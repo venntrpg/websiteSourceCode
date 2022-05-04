@@ -18,11 +18,12 @@
           <span class="material-icons">hiking</span>
         </router-link>
         <router-link
+          v-if="showInventoryButton"
           :to="{ name: 'Character', params: { id, section: inventory } }"
           title="Inventory (i)"
           class="btn navButton subNavButton"
         >
-          <span class="material-icons">shopping_bag</span>
+          <span class="material-icons">backpack</span>
         </router-link>
         <router-link
           :to="{ name: 'Character', params: { id, section: settings } }"
@@ -77,6 +78,11 @@
         <abilities v-else />
       </div>
     </div>
+    <attr-modal
+      v-if="showAttrModal"
+      :attr="showAttrModal"
+      :character="character"
+    />
     <notes v-if="showNotes" @toggleNotes="toggleNotes" />
   </div>
 </template>
@@ -92,6 +98,7 @@ import Inventory from "../components/CharacterPage/Inventory.vue";
 import ItemShop from "../components/CharacterPage/ItemShop.vue";
 import CharacterSettings from "../components/CharacterPage/CharacterSettings.vue";
 import Notes from "../components/CharacterPage/Notes.vue";
+import AttrModal from "../components/CharacterPage/AttrModal.vue";
 
 const SECTION_STATS = "stats";
 const SECTION_ABILITIES = "abilities";
@@ -109,6 +116,7 @@ export default {
     ItemShop,
     CharacterSettings,
     Notes,
+    AttrModal,
   },
   directives: {
     responsive: ResponsiveDirective,
@@ -191,6 +199,18 @@ export default {
     },
     fullScreenAvailable() {
       return document.fullscreenEnabled;
+    },
+    showAttrModal() {
+      return this.$route.query.attr;
+    },
+    showInventoryButton() {
+      return !(
+        this.character.id &&
+        this.character.id.startsWith("E") &&
+        "template" in this.character &&
+        this.character.items &&
+        this.character.items.length === 0
+      );
     },
   },
   methods: {
