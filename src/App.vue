@@ -371,6 +371,10 @@ ul {
   width: 100%;
 }
 
+.tall {
+  height: 64px;
+}
+
 /* Button Styles */
 
 .btn {
@@ -578,6 +582,8 @@ ul {
   border: 1px solid var(--red-600);
 }
 
+/* Seperator */
+
 .seperator {
   height: 2px;
   width: 100%;
@@ -587,9 +593,7 @@ ul {
   height: 1px;
 }
 
-.tall {
-  height: 64px;
-}
+/* AlignRow utility class for putting items into a row */
 
 .alignRow {
   display: flex;
@@ -607,11 +611,17 @@ ul {
 .alignRow.wrap {
   flex-wrap: wrap;
 }
+.alignRow.top {
+  align-items: flex-start;
+}
 
 /* Custom tables */
 
 .tableHeader {
   margin-right: 46px;
+}
+.tableHeader.noBtn {
+  margin-right: 0px;
 }
 .tableHeader .headerFont {
   font-size: 15pt !important;
@@ -729,6 +739,9 @@ ul {
   margin: 8px;
   margin-top: 80px;
   border: 1px solid var(--border-contrast);
+}
+.dialogue.lg {
+  width: 800px;
 }
 
 .dialogue-content {

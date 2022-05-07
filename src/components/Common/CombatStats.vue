@@ -41,7 +41,7 @@
                     v-bind:for="attr + '-adjustReason'"
                     class="attrHeaderMargin"
                   >
-                    Adjust {{ attrDisplayName(attr) }} Values:
+                    Update {{ attrDisplayName(attr) }} Values:
                   </label>
                   <input
                     type="text"
@@ -590,6 +590,9 @@ export default {
         }
       }
       */
+      if (this.adjustReasonFields[attr].length > 300) {
+        return false;
+      }
       return adjust;
     },
     inputAdjustFieldClass(attr) {

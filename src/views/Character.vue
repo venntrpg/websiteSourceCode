@@ -65,11 +65,11 @@
     <div class="sideBar">
       <combat-stats :character="character" :showItems="shopPage" />
     </div>
-    <div v-bind:class="showRightSideBar" class="sideBar right">
+    <div v-bind:class="rightSideBarClass" class="sideBar right">
       <right-side-bar />
     </div>
     <!--  --------------------- PAGE SUB ROUTER --------------------- -->
-    <div v-bind:class="showRightSideBar" class="page sideBarPage">
+    <div v-bind:class="rightSideBarClass" class="page sideBarPage">
       <div class="largePageWidth main mb-256" v-responsive="breakpoints">
         <inventory v-if="inventoryPage" />
         <item-shop v-else-if="shopPage" />
@@ -80,7 +80,7 @@
     </div>
     <attr-modal
       v-if="showAttrModal"
-      :attr="showAttrModal"
+      :attr="attrToEdit"
       :character="character"
     />
     <notes v-if="showNotes" @toggleNotes="toggleNotes" />
@@ -99,6 +99,7 @@ import ItemShop from "../components/CharacterPage/ItemShop.vue";
 import CharacterSettings from "../components/CharacterPage/CharacterSettings.vue";
 import Notes from "../components/CharacterPage/Notes.vue";
 import AttrModal from "../components/CharacterPage/AttrModal.vue";
+import { attrIsEditable } from "../api/apiUtil";
 
 const SECTION_STATS = "stats";
 const SECTION_ABILITIES = "abilities";
@@ -192,16 +193,24 @@ export default {
       return this.$route.params.section === SECTION_SETTINGS;
     },
     showRightSideBar() {
-      return (this.abilitiesPage || this.inventoryPage) &&
+      return (
+        (this.abilitiesPage || this.inventoryPage) &&
         this.$route.params.detail !== undefined
-        ? "rightVisible"
-        : "";
+      );
+    },
+    rightSideBarClass() {
+      return this.showRightSideBar ? "rightVisible" : "";
     },
     fullScreenAvailable() {
       return document.fullscreenEnabled;
     },
-    showAttrModal() {
+    attrToEdit() {
       return this.$route.query.attr;
+    },
+    showAttrModal() {
+      return (
+        this.attrToEdit !== undefined && attrIsEditable(this.$route.query.attr)
+      );
     },
     showInventoryButton() {
       return !(
@@ -226,32 +235,33 @@ export default {
         // do not override key inputs from regular text inputs
         return;
       }
-      switch (e.code) {
-        case "KeyF":
+      switch (e.key) {
+        case "f":
           this.tryFullscreen();
           break;
-        case "KeyN":
+        case "n":
           this.toggleNotes();
           break;
-        case "KeyA":
+        case "a":
           this.$router.push({
             name: "Character",
             params: { id: this.id, section: SECTION_ABILITIES },
           });
           break;
-        case "KeyI":
+        case "i":
           this.$router.push({
             name: "Character",
             params: { id: this.id, section: SECTION_INVENTORY },
           });
           break;
-        case "KeyH":
+        case "h":
           this.$router.push({
             name: "Character",
             params: { id: this.id, section: SECTION_SETTINGS },
           });
           break;
-        case "KeyS":
+        case "s":
+          console.log("shop");
           this.$router.push({
             name: "Character",
             params: { id: this.id, section: SECTION_SHOP },

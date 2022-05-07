@@ -11,40 +11,40 @@ export function getAuth() {
 }
 
 // type: n means the field is a number and should be converted if it is not passed in as a number
+// edit: true means the attribute can be edited using an edit modal
 const attrsToServerNames = {
-  name: { server: "name" },
+  name: { server: "name", edit: true },
   id: { server: "id" },
-  agi: { server: "AGI", type: "n" },
-  cha: { server: "CHA", type: "n" },
-  dex: { server: "DEX", type: "n" },
-  int: { server: "INT", type: "n" },
-  per: { server: "PER", type: "n" },
-  spi: { server: "SPI", type: "n" },
-  str: { server: "STR", type: "n" },
-  tek: { server: "TEK", type: "n" },
-  wis: { server: "WIS", type: "n" },
-  hp: { server: "HP", type: "n" },
-  maxHp: { server: "MAX_HP", type: "n" },
-  mp: { server: "MP", type: "n" },
-  maxMp: { server: "MAX_MP", type: "n" },
-  vim: { server: "VIM", type: "n" },
-  maxVim: { server: "MAX_VIM", type: "n" },
-  hero: { server: "HERO", type: "n" },
-  maxHero: { server: "MAX_HERO", type: "n" },
-  maxBulk: { server: "MAX_BULK", type: "n" },
+  agi: { server: "AGI", type: "n", edit: true },
+  cha: { server: "CHA", type: "n", edit: true },
+  dex: { server: "DEX", type: "n", edit: true },
+  int: { server: "INT", type: "n", edit: true },
+  per: { server: "PER", type: "n", edit: true },
+  spi: { server: "SPI", type: "n", edit: true },
+  str: { server: "STR", type: "n", edit: true },
+  tek: { server: "TEK", type: "n", edit: true },
+  wis: { server: "WIS", type: "n", edit: true },
+  hp: { server: "HP", type: "n", edit: true },
+  maxHp: { server: "MAX_HP", type: "n", edit: true },
+  mp: { server: "MP", type: "n", edit: true },
+  maxMp: { server: "MAX_MP", type: "n", edit: true },
+  vim: { server: "VIM", type: "n", edit: true },
+  maxVim: { server: "MAX_VIM", type: "n", edit: true },
+  hero: { server: "HERO", type: "n", edit: true },
+  maxHero: { server: "MAX_HERO", type: "n", edit: true },
   template: { server: "TEMPLATE" },
   cogType: { server: "COG_TYPE" },
   level: { server: "LEVEL", type: "n" },
-  acc: { server: "ACC", type: "n" },
-  radius: { server: "RADIUS", type: "n" },
-  reach: { server: "REACH", type: "n" },
-  init: { server: "INIT", type: "n" },
-  speed: { server: "SPEED", type: "n" },
-  xp: { server: "XP", type: "n" },
-  sp: { server: "SP", type: "n" },
-  armor: { server: "ARMOR", type: "n" },
+  acc: { server: "ACC", type: "n", edit: true },
+  radius: { server: "RADIUS", type: "n", edit: true },
+  reach: { server: "REACH", type: "n", edit: true },
+  init: { server: "INIT", type: "n", edit: true },
+  speed: { server: "SPEED", type: "n", edit: true },
+  xp: { server: "XP", type: "n", edit: true },
+  sp: { server: "SP", type: "n", edit: true },
+  armor: { server: "ARMOR", type: "n", edit: true },
   notes: { server: "NOTES" },
-  gift: { server: "gift" },
+  gift: { server: "gift", edit: true },
   isEnemy: { server: "is_enemy" },
   items: { server: "items" },
   abilities: { server: "abilities" },
@@ -63,6 +63,10 @@ Object.entries(attrsToServerNames).forEach((pair) => {
   }
   attrsFromServerNames[serverAttr] = map;
 });
+
+export function attrIsEditable(attr) {
+  return attrsToServerNames[attr] && attrsToServerNames[attr].edit === true;
+}
 
 export function localAttr2Server(attr) {
   const foundAttr = attrsToServerNames[attr];
@@ -86,7 +90,20 @@ export function serverCharacter2Local(character) {
       }
     }
   });
-  // TODO: Convert changelog also
+  if (!("changelog" in character)) {
+    result.character = [];
+  }
+  result.changelog = character.changelog.map((log) => {
+    const serverAttr = log.attr;
+    const map = attrsFromServerNames[serverAttr];
+    if (map !== undefined) {
+      log.attr = map.local;
+      if ("prev" in log && map.type === "n") {
+        log.prev = parseInt(log.prev);
+      }
+    }
+    return log;
+  });
   return result;
 }
 

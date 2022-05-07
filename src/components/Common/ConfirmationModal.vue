@@ -8,7 +8,12 @@
     >
       {{ buttonText }}
     </button>
-    <div class="modal" v-bind:class="visibleClass">
+    <div
+      v-if="visible"
+      v-on:click="closeClick"
+      class="modal show"
+      id="confirmation-modal"
+    >
       <div class="dialogue card column">
         <div class="dialogue-content">
           <div class="alignRow split dialogue-title">
@@ -85,6 +90,11 @@ export default {
     mainButton() {
       this.$emit("mainButton");
       this.toggleVisible();
+    },
+    closeClick(event) {
+      if (document.getElementById("confirmation-modal") === event.target) {
+        this.toggleVisible();
+      }
     },
   },
 };
