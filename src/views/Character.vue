@@ -98,7 +98,7 @@ import Inventory from "../components/CharacterPage/Inventory.vue";
 import ItemShop from "../components/CharacterPage/ItemShop.vue";
 import CharacterSettings from "../components/CharacterPage/CharacterSettings.vue";
 import Notes from "../components/CharacterPage/Notes.vue";
-import AttrModal from "../components/CharacterPage/AttrModal.vue";
+import AttrModal from "../components/Common/AttrModal.vue";
 import { attrIsEditable } from "../api/apiUtil";
 
 const SECTION_STATS = "stats";

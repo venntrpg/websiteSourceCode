@@ -35,7 +35,6 @@ const mutations = {
   updateCharacterAttributes(state, { attrs, msg }) {
     Object.entries(attrs).forEach((pair) => {
       const attr = pair[0];
-      state.character[attr] = pair[1];
       if (msg !== undefined) {
         if (!state.character.changelog) {
           state.character.changelog = [];
@@ -46,7 +45,16 @@ const mutations = {
         }
         state.character.changelog.push(log);
       }
+      state.character[attr] = pair[1];
     });
+  },
+  filterCharacterChangelog(state, attr) {
+    if (!state.character.changelog) {
+      state.character.changelog = [];
+    }
+    state.character.changelog = state.character.changelog.filter(
+      (log) => log.attr !== attr
+    );
   },
   setSearchAbility(state, ability) {
     state.searchAbility = ability;
@@ -126,6 +134,14 @@ const actions = {
     commit("updateCharacterAttributes", { attrs, msg });
     return api.updateAttributes(id, attrs, msg).then((response) => {
       checkResponse(response);
+    });
+  },
+
+  filterChangelog: ({ commit }, { id, attr }) => {
+    return api.filterChangelog(id, attr).then((response) => {
+      if (checkResponse(response)) {
+        commit("filterCharacterChangelog", attr);
+      }
     });
   },
 

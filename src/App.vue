@@ -357,6 +357,9 @@ ul {
 .ml-8 {
   margin-left: 8px;
 }
+.ml-16 {
+  margin-left: 16px;
+}
 .mr-0 {
   margin-right: 0px;
 }
@@ -365,6 +368,9 @@ ul {
 }
 .mr-8 {
   margin-right: 8px;
+}
+.mr-16 {
+  margin-right: 16px;
 }
 
 .wide {

@@ -13,6 +13,16 @@ export function mpByDiff(diff) {
   return diff * 3;
 }
 
+export function getMaxAttr(attr) {
+  const map = {
+    hp: "maxHp",
+    mp: "maxMp",
+    vim: "maxVim",
+    hero: "maxHero",
+  };
+  return map[attr];
+}
+
 export function getAttrFullName(attr) {
   const nameMap = {
     per: "Perception",
