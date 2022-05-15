@@ -13,14 +13,20 @@ export function mpByDiff(diff) {
   return diff * 3;
 }
 
+const attrMaxMap = {
+  hp: "maxHp",
+  mp: "maxMp",
+  vim: "maxVim",
+  hero: "maxHero",
+};
+
 export function getMaxAttr(attr) {
-  const map = {
-    hp: "maxHp",
-    mp: "maxMp",
-    vim: "maxVim",
-    hero: "maxHero",
-  };
-  return map[attr];
+  return attrMaxMap[attr];
+}
+
+export function getBaseAttrFromMax(attr) {
+  const pair = Object.entries(attrMaxMap).find((pair) => pair[1] === attr);
+  return pair === undefined ? pair : pair[0];
 }
 
 export function getAttrFullName(attr) {
@@ -39,6 +45,9 @@ export function getAttrFullName(attr) {
   const name = nameMap[attr];
   if (name) {
     return name;
+  }
+  if (attr.startsWith("max")) {
+    return "Maximum " + attr.substring(3);
   }
   return getAttrDisplayName(attr);
 }

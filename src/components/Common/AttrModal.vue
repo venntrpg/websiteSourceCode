@@ -1,10 +1,14 @@
 <template>
-  <div v-on:click="closeClick" class="modal show" id="attribute-modal">
+  <div v-on:click="closeClick" class="modal show" id="attr-modal-background">
     <div class="dialogue lg card column">
       <div class="dialogue-content">
         <div class="alignRow split dialogue-title">
           <h2 class="mt-0 mb-0">Edit {{ attrFullName }}</h2>
-          <router-link :to="exitRoute" class="btn basicBtn">
+          <router-link
+            :to="exitRoute"
+            class="btn basicBtn"
+            id="attr-modal-first-interactive"
+          >
             <div class="basicBtnContents">
               <span class="material-icons">close</span>
             </div>
@@ -12,15 +16,37 @@
         </div>
         <div class="seperator thin"></div>
         <div class="dialogue-details">
-          <div class="alignRow labelText mb-16">
-            Current {{ attrDisplayName }}:
-            <fraction
+          <div class="alignRow split mb-16">
+            <div class="alignRow labelText">
+              Current {{ attrDisplayName }}:
+              <fraction
+                v-if="maxAttr"
+                :top="character[attr]"
+                :bottom="character[maxAttr]"
+                class="ml-8"
+              />
+              <span v-else class="ml-8">{{ character[attr] }}</span>
+            </div>
+            <router-link
               v-if="maxAttr"
-              :top="character[attr]"
-              :bottom="character[maxAttr]"
-              class="ml-8"
-            />
-            <span v-else class="ml-8">{{ character[attr] }}</span>
+              :to="maxAttrModalRoute"
+              class="btn basicBtn"
+            >
+              <div class="basicBtnContents">
+                <span class="material-icons space">edit</span>
+                Edit {{ maxAttrDisplayName }}
+              </div>
+            </router-link>
+            <router-link
+              v-else-if="baseAttr"
+              :to="baseAttrModalRoute"
+              class="btn basicBtn"
+            >
+              <div class="basicBtnContents">
+                <span class="material-icons space">edit</span>
+                Edit {{ baseAttrDisplayName }}
+              </div>
+            </router-link>
           </div>
           <div class="cols-2">
             <div>
@@ -29,9 +55,13 @@
                 type="button"
                 v-if="showResetButton"
                 v-on:click="resetButton"
-                class="btn roundedButton wide mt-8"
+                :title="`Refill your ${attrDisplayName} to full. Warning: this will clear your ${attrDisplayName} history.`"
+                class="btn basicBtn wide mt-8"
               >
-                Reset {{ attrDisplayName }} to Full
+                <div class="basicBtnContents">
+                  <span class="material-icons space">restart_alt</span>
+                  Reset {{ attrDisplayName }} to Full
+                </div>
               </button>
             </div>
             <div>
@@ -55,6 +85,7 @@ import AttrHistory from "./AttrHistory.vue";
 import Fraction from "./CombatStatsComponents/Fraction.vue";
 import {
   getMaxAttr,
+  getBaseAttrFromMax,
   getAttrFullName,
   getAttrDisplayName,
   adjustAttrsAPI,
@@ -66,6 +97,10 @@ export default {
   props: {
     character: Object,
     attr: String,
+  },
+  mounted() {
+    // When the user is using keyboard navigation, jump focus to modal
+    document.getElementById("attr-modal-first-interactive").focus();
   },
   computed: {
     exitRoute() {
@@ -80,16 +115,40 @@ export default {
     maxAttr() {
       return getMaxAttr(this.attr);
     },
+    maxAttrDisplayName() {
+      return this.maxAttr === undefined ? "" : getAttrFullName(this.maxAttr);
+    },
+    maxAttrModalRoute() {
+      return {
+        name: this.$route.name,
+        params: this.$route.params,
+        query: { attr: this.maxAttr },
+      };
+    },
+    baseAttr() {
+      return getBaseAttrFromMax(this.attr);
+    },
+    baseAttrDisplayName() {
+      return this.baseAttr === undefined ? "" : getAttrFullName(this.baseAttr);
+    },
+    baseAttrModalRoute() {
+      return {
+        name: this.$route.name,
+        params: this.$route.params,
+        query: { attr: this.baseAttr },
+      };
+    },
     showResetButton() {
       return (
         this.maxAttr !== undefined &&
-        this.character[this.attr] !== this.character[this.maxAttr]
+        this.character[this.attr] !== this.character[this.maxAttr] &&
+        this.attr !== "hero"
       );
     },
   },
   methods: {
     closeClick(event) {
-      if (document.getElementById("attribute-modal") === event.target) {
+      if (document.getElementById("attr-modal-background") === event.target) {
         this.$router.push(this.exitRoute);
       }
     },

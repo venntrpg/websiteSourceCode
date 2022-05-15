@@ -30,6 +30,7 @@
     </div>
     <button
       v-if="submitBtn"
+      v-bind:disabled="adjustButtonDisabled"
       type="button"
       v-on:click="adjustAttrFromAdjustField"
       class="btn roundedButton wide mt-4"
@@ -101,6 +102,9 @@ export default {
       return this.validateAdjustField === false && this.adjust !== ""
         ? "invalid"
         : "";
+    },
+    adjustButtonDisabled() {
+      return this.validateAdjustField === false;
     },
   },
   methods: {
