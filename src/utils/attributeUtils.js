@@ -46,7 +46,7 @@ export function getAttrFullName(attr) {
   if (name) {
     return name;
   }
-  if (attr.startsWith("max")) {
+  if (getBaseAttrFromMax(attr) !== undefined) {
     return "Maximum " + getAttrFullName(attr.substring(3).toLowerCase());
   }
   return getAttrDisplayName(attr);
