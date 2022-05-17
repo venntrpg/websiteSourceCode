@@ -2,7 +2,7 @@
   <div>
     <h1>Abilities</h1>
     <div v-if="!isEnemy" class="alignRow xpLabel">
-      Current XP:
+      Used XP:
       <fraction :top="usedXP" :bottom="character.xp" class="xpFraction" />
     </div>
     <div v-if="sortedAbilities.length > 0" class="card column">

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="changelog.length !== 0" class="card column border">
+    <div v-if="isNumber && hasHistory" class="card column border">
       <div class="alignRow tableData tableHeader noBtn">
         <div class="logPrev headerFont">
           <b v-if="showDiff">Change</b>
@@ -26,27 +26,33 @@
         </div>
       </div>
     </div>
-    <div v-else class="mutedText">This Attribute has no history yet.</div>
+    <p v-if="isNumber && !hasHistory" class="mt-0 mb-8 mutedText">
+      This Attribute has no history yet.
+    </p>
+    <attr-help v-if="!isNumber || !hasHistory" :attr="attr" class="mutedText" />
   </div>
 </template>
 
 <script>
-import { getMaxAttr } from "../../utils/attributeUtils";
+import AttrHelp from "./CombatStatsComponents/AttrHelp.vue";
+import { attrIsNumber } from "../../api/apiUtil";
 
 export default {
+  components: { AttrHelp },
   name: "AttrHistory",
   props: {
     character: Object,
     attr: String,
   },
   computed: {
-    maxAttr() {
-      return getMaxAttr(this.attr);
+    isNumber() {
+      return attrIsNumber(this.attr);
+    },
+    hasHistory() {
+      return this.changelog.length !== 0;
     },
     showDiff() {
-      return (
-        this.maxAttr !== undefined && this.character[this.maxAttr] !== undefined
-      );
+      return ["hp", "vim", "mp", "hero", "xp", "sp"].includes(this.attr);
     },
     changelog() {
       if (!this.character.changelog) {

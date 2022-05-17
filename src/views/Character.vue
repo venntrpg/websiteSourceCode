@@ -1,7 +1,7 @@
 <template>
   <div id="character-page" class="subNavPage">
     <!--  --------------------- SUB NAV --------------------- -->
-    <div class="subNav scroll">
+    <nav class="subNav scroll">
       <div class="alignRow">
         <router-link
           :to="{ name: 'Character', params: { id, section: stats } }"
@@ -60,7 +60,7 @@
           </button>
         </div>
       </div>
-    </div>
+    </nav>
     <!--  --------------------- SIDE BAR --------------------- -->
     <div class="sideBar">
       <combat-stats :character="character" :showItems="shopPage" />

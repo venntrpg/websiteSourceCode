@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <label v-bind:for="adjustReasonID" class="attrHeaderMargin">
+  <form>
+    <label v-bind:for="adjustReasonID" class="labelText">
       Adjust {{ attrDisplayName }} Values:
     </label>
     <input
@@ -28,6 +28,7 @@
         class="input"
       />
     </div>
+    <p v-if="showError" class="errorText pt-12 mt-2 mb-2">{{ adjustError }}</p>
     <button
       v-if="submitBtn"
       v-bind:disabled="adjustButtonDisabled"
@@ -37,14 +38,20 @@
     >
       Submit Adjustment
     </button>
-  </div>
+  </form>
 </template>
 
 <script>
 import {
   getAttrDisplayName,
+  generateDefaultAdjustMsg,
   adjustAttrsAPI,
 } from "../../../utils/attributeUtils";
+import {
+  ATTRIBUTES,
+  MIN_ATTRIBUTE_CAP,
+  MAX_ATTRIBUTE_CAP,
+} from "../../../utils/constants";
 
 export default {
   name: "AdjustAttr",
@@ -76,35 +83,39 @@ export default {
     adjustFieldID() {
       return `${this.loc}-${this.attr}-adjust`;
     },
-    validateAdjustField() {
+    adjustVal() {
       const adjust = parseInt(this.adjust);
-      if (isNaN(adjust) || adjust === 0) {
-        return false;
+      return isNaN(adjust) ? 0 : adjust;
+    },
+    adjustError() {
+      if (this.adjustVal === 0) {
+        return `${this.adjust} must adjust current value`;
       }
-      const val = this.character[this.attr] + adjust;
-      if (this.attr !== "init" && val < 0) {
-        return false;
+      const val = this.character[this.attr] + this.adjustVal;
+      const negativeAttrs = ATTRIBUTES + ["init", "sp"];
+      if (!negativeAttrs.includes(this.attr) && val < 0) {
+        return `${this.attrDisplayName} cannot be negative`;
       }
-      /*
-      // NOTE: COMMENTED OUT FOR NOW SINCE I THINK THIS IS ACTUALLY OK
-      if (["hp", "mp", "vim", "hero"].includes(attr)) {
-        if (this.getAttrMaxValue(attr) && val > this.getAttrMaxValue(attr)) {
-          return false;
+      if (ATTRIBUTES.includes(this.attr)) {
+        if (val < MIN_ATTRIBUTE_CAP || val > MAX_ATTRIBUTE_CAP) {
+          return `${this.attrDisplayName} cannot exceed attribute caps`;
         }
       }
-      */
+      // We used to check if values like HP exceeded maximum value, but I think this is ok because that's
+      // how you can handle having temp HP and things like that.
       if (this.reason.length > 300) {
-        return false;
+        return "Reason is too long";
       }
-      return adjust;
-    },
-    inputAdjustFieldClass() {
-      return this.validateAdjustField === false && this.adjust !== ""
-        ? "invalid"
-        : "";
+      return false;
     },
     adjustButtonDisabled() {
-      return this.validateAdjustField === false;
+      return this.adjustError !== false;
+    },
+    showError() {
+      return this.adjustButtonDisabled && this.adjust !== "";
+    },
+    inputAdjustFieldClass() {
+      return this.showError ? "invalid" : "";
     },
   },
   methods: {
@@ -112,16 +123,15 @@ export default {
       document.getElementById(this.adjustFieldID).focus();
     },
     adjustAttrFromAdjustField() {
-      const adjust = this.validateAdjustField;
+      const adjust = this.adjustVal;
       if (adjust !== false) {
         const attrs = {};
         attrs[this.attr] = adjust;
-        adjustAttrsAPI(
-          this.character,
-          attrs,
-          this.propegateChanges,
-          this.reason
-        );
+        let reason =
+          this.reason !== ""
+            ? this.reason
+            : generateDefaultAdjustMsg(this.attr, adjust);
+        adjustAttrsAPI(this.character, attrs, true, reason);
         this.adjust = "";
         this.reason = "";
       }

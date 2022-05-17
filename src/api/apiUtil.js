@@ -68,6 +68,10 @@ export function attrIsEditable(attr) {
   return attrsToServerNames[attr] && attrsToServerNames[attr].edit === true;
 }
 
+export function attrIsNumber(attr) {
+  return attrsToServerNames[attr] && attrsToServerNames[attr].type === "n";
+}
+
 export function localAttr2Server(attr) {
   const foundAttr = attrsToServerNames[attr];
   if (foundAttr) {

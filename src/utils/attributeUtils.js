@@ -26,7 +26,7 @@ export function getMaxAttr(attr) {
 
 export function getBaseAttrFromMax(attr) {
   const pair = Object.entries(attrMaxMap).find((pair) => pair[1] === attr);
-  return pair === undefined ? pair : pair[0];
+  return pair === undefined ? undefined : pair[0];
 }
 
 export function getAttrFullName(attr) {
@@ -47,7 +47,7 @@ export function getAttrFullName(attr) {
     return name;
   }
   if (attr.startsWith("max")) {
-    return "Maximum " + attr.substring(3);
+    return "Maximum " + getAttrFullName(attr.substring(3).toLowerCase());
   }
   return getAttrDisplayName(attr);
 }
@@ -67,6 +67,40 @@ export function getAttrDisplayName(attr) {
 
 export function getAttrMaxName(attr) {
   return "max" + attr.charAt(0).toUpperCase() + attr.slice(1);
+}
+
+export function generateDefaultAdjustMsg(attr, adjust) {
+  if (adjust === 0) {
+    return "";
+  }
+  const increased = adjust > 0;
+  if (["hp", "mp", "vim", "hero", "xp", "sp"].includes(attr)) {
+    let pre = "";
+    switch (attr) {
+      case "hp":
+        pre = increased ? "Healed" : "Lost";
+        break;
+      case "mp":
+      case "vim":
+        pre = increased ? "Gained" : "Lost";
+        break;
+      case "hero":
+        pre = increased ? "Gained" : "Used";
+        break;
+      case "xp":
+        pre = increased ? "Earned" : "Lost";
+        break;
+      case "sp":
+        pre = increased ? "Gained" : "Spent";
+        break;
+    }
+    return `${pre} ${Math.abs(adjust)} ${attr}`;
+  }
+  let pre = "Increased";
+  if (!increased) {
+    pre = "Decreased";
+  }
+  return `${pre} ${attr} by ${Math.abs(adjust)}`;
 }
 
 export function adjustAttrsAPI(

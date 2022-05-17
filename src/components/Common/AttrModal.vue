@@ -16,7 +16,7 @@
         </div>
         <div class="seperator thin"></div>
         <div class="dialogue-details">
-          <div class="alignRow split mb-16">
+          <div class="alignRow split wrap mb-16">
             <div class="alignRow labelText">
               Current {{ attrDisplayName }}:
               <fraction
@@ -25,7 +25,10 @@
                 :bottom="character[maxAttr]"
                 class="ml-8"
               />
-              <span v-else class="ml-8">{{ character[attr] }}</span>
+              <span v-else-if="attr in character" class="ml-8">
+                {{ character[attr] }}
+              </span>
+              <span v-else class="ml-8">Not yet defined</span>
             </div>
             <router-link
               v-if="maxAttr"
@@ -48,8 +51,8 @@
               </div>
             </router-link>
           </div>
-          <div class="cols-2">
-            <div>
+          <div class="cols-2 table-split">
+            <div class="attr-history-side">
               <attr-history :attr="attr" :character="character" />
               <button
                 type="button"
@@ -171,5 +174,25 @@ export default {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+}
+
+/* Mobile Styles */
+@media screen and (max-width: 600px) {
+  .table-split {
+    grid-template-columns: 1fr;
+  }
+  .attr-history-side {
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 8px;
+  }
+}
+
+@media screen and (max-width: 500px), screen and (max-height: 400px) {
+  .dialogue {
+    min-width: 100vw;
+    min-height: 100vh;
+    margin: 0px;
+    border: 0px;
+  }
 }
 </style>

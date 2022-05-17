@@ -1,5 +1,5 @@
 <template>
-  <div class="panel">
+  <div class="panel mb-64">
     <div class="centeredText">
       <h2>{{ character.name }}</h2>
     </div>
@@ -36,52 +36,13 @@
           >
             <div class="margin">
               <div v-if="showUpdateDropdown">
-                <div v-if="adjustFields[attr] !== undefined">
-                  <label
-                    v-bind:for="attr + '-adjustReason'"
-                    class="attrHeaderMargin"
-                  >
-                    Update {{ attrDisplayName(attr) }} Values:
-                  </label>
-                  <input
-                    type="text"
-                    v-on:keyup.enter="jumpToAdjustField(attr)"
-                    v-model="adjustReasonFields[attr]"
-                    placeholder="Reason for update (not required)"
-                    title="Press Enter to jump to the next field"
-                    v-bind:id="attr + '-adjustReason'"
-                    v-bind:class="inputAdjustFieldClass(attr)"
-                    class="input mt-4"
-                  />
-                  <div class="alignRow mt-4">
-                    <label
-                      v-bind:for="adjustFieldID(attr)"
-                      class="incrementLabel"
-                    >
-                      Adjust (+/-) {{ attrDisplayName(attr) }}:
-                    </label>
-                    <input
-                      type="number"
-                      v-on:keyup.enter="adjustAttrFromAdjustField(attr)"
-                      v-model="adjustFields[attr]"
-                      placeholder="0"
-                      title="Press Enter to Submit"
-                      v-bind:id="adjustFieldID(attr)"
-                      v-bind:class="inputAdjustFieldClass(attr)"
-                      class="input"
-                    />
-                  </div>
-                  <div class="seperator mt-8 mb-8"></div>
-                </div>
-                <router-link
-                  :to="attrModalLink(attr)"
-                  class="btn roundedButton"
-                >
-                  <div class="basicBtnContents">
-                    <span class="material-icons space">edit</span>
-                    Edit {{ attrFullName(attr) }} / History
-                  </div>
-                </router-link>
+                <adjust-attr
+                  :attr="attr"
+                  :character="character"
+                  loc="combat-stats"
+                />
+                <div class="seperator mt-8 mb-8"></div>
+                <adjust-attr-link :attr="attr" />
               </div>
               <attr-help v-else :attr="attr" />
             </div>
@@ -167,34 +128,7 @@
               </button>
               <!-- TODO: It would be neat if we could add abilities here too -->
               <div class="seperator mt-16 mb-16"></div>
-              <div class="attrHeaderMargin">Update Attribute Value:</div>
-              <check-box
-                :checked="propegateChanges"
-                :text="'Propegate Changes'"
-                :highlight="true"
-                @toggled="propegateChangesButton()"
-              />
-              <div class="alignRow split mt-4">
-                <div class="incrementLabel">
-                  Update {{ attr.toUpperCase() }} value:
-                </div>
-                <div class="alignRow gap wide">
-                  <button
-                    v-on:click="adjustAttrButton(attr, true)"
-                    v-bind:disabled="attrIncrementButtonDisabled(attr)"
-                    class="btn roundedButton wide noSelect"
-                  >
-                    +1
-                  </button>
-                  <button
-                    v-on:click="adjustAttrButton(attr, false)"
-                    v-bind:disabled="attrDecrementButtonDisabled(attr)"
-                    class="btn roundedButton wide noSelect"
-                  >
-                    -1
-                  </button>
-                </div>
-              </div>
+              <adjust-attr-link :attr="attr" />
             </div>
           </div>
         </div>
@@ -213,9 +147,7 @@
       </div>
     </button>
     <div v-if="showDropDown('gift')" class="card diceDropDown left right">
-      <div class="margin">
-        <gift-description :gift="character.gift" :showTitle="false" />
-      </div>
+      <gift-description :gift="character.gift" :showTitle="false" />
     </div>
     <div v-if="isEnemy && character.template" class="card stat mb-8">
       Template: {{ character.template }}
@@ -231,9 +163,7 @@
       </div>
     </button>
     <div v-if="showDropDown('cogType')" class="card diceDropDown left right">
-      <div class="margin">
-        <cog-type-description :cogType="character.cogType" :showTitle="false" />
-      </div>
+      <cog-type-description :cogType="character.cogType" :showTitle="false" />
     </div>
     <!-- SINGLE LINE STATS -->
     <div v-for="attr in singleRowAttributes" v-bind:key="attr">
@@ -250,37 +180,15 @@
       <div v-if="showDropDown(attr)" class="card diceDropDown left right">
         <div class="margin">
           <div v-if="showUpdateDropdown">
-            <div class="attrHeaderMargin">Update Stat Value:</div>
-            <div v-if="adjustFields[attr] !== undefined" class="alignRow mt-4">
-              <label v-bind:for="attr + '-adjust'" class="incrementLabel">
-                Adjust (+/-) {{ attrDisplayName(attr) }}:
-              </label>
-              <input
-                type="number"
-                v-on:keyup.enter="adjustAttrFromAdjustField(attr)"
-                v-model="adjustFields[attr]"
-                placeholder="0"
-                title="Press Enter to Submit"
-                v-bind:id="attr + '-adjust'"
-                v-bind:class="inputAdjustFieldClass(attr)"
-                class="input"
-              />
-            </div>
-            <div class="alignRow mt-4">
-              <label v-bind:for="attr + '-current'" class="incrementLabel">
-                Current {{ attrDisplayName(attr) }}:
-              </label>
-              <input
-                type="number"
-                v-on:keyup.enter="adjustAttrFromField(attr)"
-                v-model="attrFields[attr]"
-                v-bind:placeholder="character[attr]"
-                title="Press Enter to Submit"
-                v-bind:id="attr + '-current'"
-                v-bind:class="inputFieldClass(attr)"
-                class="input"
-              />
-            </div>
+            <adjust-attr
+              v-if="singleRowShowAdjust(attr)"
+              :attr="attr"
+              :character="character"
+              loc="combat-stats"
+            />
+            <attr-help v-else :attr="attr" />
+            <div class="seperator mt-8 mb-8"></div>
+            <adjust-attr-link :attr="attr" />
           </div>
           <attr-help v-else :attr="attr" />
         </div>
@@ -298,7 +206,6 @@
     <div v-if="showItems && character.items && character.items.length > 0">
       <items-section :character="character" />
     </div>
-    <div class="tall"></div>
   </div>
 </template>
 
@@ -316,21 +223,19 @@ import Bullet from "./Bullet.vue";
 import DiceRender from "./CombatStatsComponents/DiceRender.vue";
 import Fraction from "./CombatStatsComponents/Fraction.vue";
 import GiftDescription from "./CombatStatsComponents/GiftDescription.vue";
-import CheckBox from "./CheckBox.vue";
 import CogTypeDescription from "../EnemyPage/CogTypeDescription.vue";
 import { cogTypeTitle } from "../EnemyPage/CogFlowUtils/CogTypeDescriptionUtils";
 import AbilitiesSection from "./CombatStatsComponents/AbilitiesSection.vue";
 import ItemsSection from "./CombatStatsComponents/ItemsSection.vue";
 import AttrHelp from "./CombatStatsComponents/AttrHelp.vue";
+import AdjustAttr from "./CombatStatsComponents/AdjustAttr.vue";
+import AdjustAttrLink from "./CombatStatsComponents/AdjustAttrLink.vue";
 import {
   getAttrFullName,
   getAttrDisplayName,
   getAttrMaxName,
   adjustAttrsAPI,
 } from "../../utils/attributeUtils";
-
-// The maximum value an attribute can be
-const ATTRIBUTE_CAP = 9;
 
 export default {
   name: "combatStats",
@@ -357,11 +262,12 @@ export default {
     DiceRender,
     Fraction,
     GiftDescription,
-    CheckBox,
     CogTypeDescription,
     AbilitiesSection,
     ItemsSection,
     AttrHelp,
+    AdjustAttr,
+    AdjustAttrLink,
   },
   data() {
     return {
@@ -377,39 +283,6 @@ export default {
         str: null,
         wis: null,
         cha: null,
-      },
-      propegateChanges: true,
-      attrFields: {
-        hp: this.character.hp,
-        maxHp: this.character.maxHp,
-        mp: this.character.mp,
-        maxMp: this.character.maxMp,
-        vim: this.character.vim,
-        maxVim: this.character.maxVim,
-        hero: this.character.hero,
-        maxHero: this.character.maxHero,
-        init: this.character.init,
-        speed: this.character.speed,
-        armor: this.character.armor,
-        xp: this.character.xp,
-        sp: this.character.sp,
-        maxBulk: this.character.maxBulk,
-      },
-      adjustFields: {
-        hp: "",
-        mp: "",
-        vim: "",
-        hero: "",
-        xp: "",
-        sp: "",
-      },
-      adjustReasonFields: {
-        hp: "",
-        mp: "",
-        vim: "",
-        hero: "",
-        xp: "",
-        sp: "",
       },
     };
   },
@@ -490,13 +363,6 @@ export default {
     getAttrMaxValue(attr) {
       return this.character[getAttrMaxName(attr)];
     },
-    showResetToFullButton(attr) {
-      return (
-        attr !== "hero" &&
-        this.getAttrMaxValue(attr) &&
-        this.character[attr] < this.getAttrMaxValue(attr)
-      );
-    },
     attrFullName(attr) {
       return getAttrFullName(attr);
     },
@@ -522,100 +388,7 @@ export default {
     getDiceAverage(attr) {
       return this.latestRoll[attr].averageTotal;
     },
-    propegateChangesButton() {
-      this.propegateChanges = !this.propegateChanges;
-    },
-    adjustAttrToFullButton(attr) {
-      const maxVal = this.getAttrMaxValue(attr);
-      if (!maxVal || this.character[attr] >= maxVal) {
-        return;
-      }
-      this.$store.dispatch("character/setAttribute", {
-        id: this.character.id,
-        attr: attr,
-        val: maxVal,
-      });
-    },
-    validateField(attr) {
-      const val =
-        this.attrFields[attr] !== undefined
-          ? parseInt(this.attrFields[attr])
-          : 0;
-      if (isNaN(val)) {
-        return false;
-      }
-      if (attr !== "init" && val < 0) {
-        return false;
-      }
-      if (["hp", "mp", "vim", "hero"].includes(attr)) {
-        if (this.getAttrMaxValue(attr) && val > this.getAttrMaxValue(attr)) {
-          return false;
-        }
-      }
-      return val;
-    },
-    inputFieldClass(attr) {
-      return this.validateField(attr) === false ? "invalid" : "";
-    },
-    adjustAttrFromField(attr) {
-      const val = this.validateField(attr);
-      if (val !== false) {
-        this.$store.dispatch("character/setAttribute", {
-          id: this.character.id,
-          attr: attr,
-          val: val,
-        });
-      }
-    },
-    validateAdjustField(attr) {
-      const adjust =
-        this.adjustFields[attr] !== undefined
-          ? parseInt(this.adjustFields[attr])
-          : 0;
-      if (isNaN(adjust)) {
-        return false;
-      }
-      if (adjust === 0) {
-        return false;
-      }
-      const val = this.character[attr] + adjust;
-      if (attr !== "init" && val < 0) {
-        return false;
-      }
-      /*
-      // NOTE: COMMENTED OUT FOR NOW SINCE I THINK THIS IS ACTUALLY OK
-      if (["hp", "mp", "vim", "hero"].includes(attr)) {
-        if (this.getAttrMaxValue(attr) && val > this.getAttrMaxValue(attr)) {
-          return false;
-        }
-      }
-      */
-      if (this.adjustReasonFields[attr].length > 300) {
-        return false;
-      }
-      return adjust;
-    },
-    inputAdjustFieldClass(attr) {
-      return this.validateAdjustField(attr) === false &&
-        this.adjustFields[attr] !== ""
-        ? "invalid"
-        : "";
-    },
-    adjustAttrFromAdjustField(attr) {
-      const adjust = this.validateAdjustField(attr);
-      if (adjust !== false) {
-        const attrs = {};
-        attrs[attr] = adjust;
-        adjustAttrsAPI(
-          this.character,
-          attrs,
-          this.propegateChanges,
-          this.adjustReasonFields[attr]
-        );
-        this.adjustFields[attr] = "";
-        this.adjustReasonFields[attr] = "";
-      }
-    },
+    // TODO: REMOVE THIS and just replace with a button to copy the dice roll
     attrRollButtonHeroPoint(attr) {
       if (this.character.hero <= 0) {
         return;
@@ -627,100 +400,15 @@ export default {
         this.character[attr] +
         "+9";
       this.latestRoll[attr] = new DiceRoll(rollStr);
-      this.adjustAttrButton("hero", false);
+      adjustAttrsAPI(
+        this.character,
+        { hero: -1 },
+        true,
+        "Rolled using hero point"
+      );
     },
-    attrIncrementButtonDisabled(attr) {
-      return this.character[attr] >= ATTRIBUTE_CAP;
-    },
-    attrDecrementButtonDisabled(attr) {
-      return this.character[attr] <= -1 * ATTRIBUTE_CAP;
-    },
-    adjustAttrButton(attr, increment) {
-      const adjustment = increment ? 1 : -1;
-      const newVal = this.character[attr] + adjustment;
-      this.$store.dispatch("character/setAttribute", {
-        id: this.character.id,
-        attr: attr,
-        val: newVal,
-      });
-      if (this.propegateChanges) {
-        // HP & VIM
-        if (attr === "str") {
-          const newHp = Math.max(this.character.maxHp + adjustment * 3, 0);
-          const newVim = Math.max(this.character.maxVim + adjustment * 3, 0);
-          this.$store.dispatch("character/setAttribute", {
-            id: this.character.id,
-            attr: "maxHp",
-            val: newHp,
-          });
-          this.$store.dispatch("character/setAttribute", {
-            id: this.character.id,
-            attr: "maxVim",
-            val: newVim,
-          });
-          if (this.character.hp > newHp) {
-            this.$store.dispatch("character/setAttribute", {
-              id: this.character.id,
-              attr: "hp",
-              val: newHp,
-            });
-          }
-          if (this.character.vim > newVim) {
-            this.$store.dispatch("character/setAttribute", {
-              id: this.character.id,
-              attr: "vim",
-              val: newVim,
-            });
-          }
-        }
-        // MP
-        if (attr === "wis") {
-          const newMp = Math.max(this.character.maxMp + adjustment * 3, 0);
-          this.$store.dispatch("character/setAttribute", {
-            id: this.character.id,
-            attr: "maxMp",
-            val: newMp,
-          });
-          if (this.character.mp > newMp) {
-            this.$store.dispatch("character/setAttribute", {
-              id: this.character.id,
-              attr: "mp",
-              val: newMp,
-            });
-          }
-        }
-        // SPEED
-        if (attr === "agi") {
-          const newSpeed = Math.max(this.character.speed + adjustment, 0);
-          this.$store.dispatch("character/setAttribute", {
-            id: this.character.id,
-            attr: "speed",
-            val: newSpeed,
-          });
-        }
-        // INIT
-        if (attr === "agi" || attr === "dex") {
-          const newInit = Math.max(this.character.init + adjustment, 0);
-          this.$store.dispatch("character/setAttribute", {
-            id: this.character.id,
-            attr: "init",
-            val: newInit,
-          });
-        }
-      }
-    },
-    adjustFieldID(attr) {
-      return attr + "-adjust";
-    },
-    jumpToAdjustField(attr) {
-      document.getElementById(this.adjustFieldID(attr)).focus();
-    },
-    attrModalLink(attr) {
-      return {
-        name: this.$route.name,
-        params: this.$route.params,
-        query: { attr },
-      };
+    singleRowShowAdjust(attr) {
+      return ["xp", "sp"].includes(attr);
     },
   },
 };

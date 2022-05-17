@@ -246,6 +246,9 @@ h1 {
 .link {
   color: var(--text);
 }
+.mutedText > .link {
+  color: var(--text-muted);
+}
 .link:hover {
   color: var(--link-hover);
 }
@@ -744,6 +747,7 @@ ul {
   width: 500px;
   margin: 8px;
   margin-top: 80px;
+  margin-bottom: 80px;
   border: 1px solid var(--border-contrast);
 }
 .dialogue.lg {
