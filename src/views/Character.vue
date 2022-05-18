@@ -63,7 +63,11 @@
     </nav>
     <!--  --------------------- SIDE BAR --------------------- -->
     <div class="sideBar">
-      <combat-stats :character="character" :showItems="shopPage" />
+      <combat-stats
+        :character="character"
+        :showItems="shopPage"
+        :useCopyableDice="true"
+      />
     </div>
     <div v-bind:class="rightSideBarClass" class="sideBar right">
       <right-side-bar />
@@ -74,7 +78,11 @@
         <inventory v-if="inventoryPage" />
         <item-shop v-else-if="shopPage" />
         <character-settings v-else-if="settingsPage" />
-        <combat-stats v-else-if="statsPage" :character="character" />
+        <combat-stats
+          v-else-if="statsPage"
+          :character="character"
+          :useCopyableDice="true"
+        />
         <abilities v-else />
       </div>
     </div>

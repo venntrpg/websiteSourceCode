@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex">
+    <div class="alignRow">
       <bullet :character="character" />
       <h2>Abilities</h2>
     </div>

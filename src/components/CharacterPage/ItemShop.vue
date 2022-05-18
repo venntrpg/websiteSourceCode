@@ -61,7 +61,7 @@
     <div v-for="(items, section) in sectionsMap" v-bind:key="section">
       <h2>{{ section }}</h2>
       <div class="card column">
-        <div class="alignRow tableData tableHeader">
+        <div class="alignRow tableData tableHeader sticky">
           <div class="itemName headerFont">
             <b>Item</b>
           </div>
@@ -72,7 +72,6 @@
             <b>Description</b>
           </div>
         </div>
-        <div class="seperator thin"></div>
         <div
           v-for="item in items"
           v-bind:key="item.name"
@@ -102,6 +101,7 @@
 import { mapState } from "vuex";
 import CheckBox from "../Common/CheckBox.vue";
 import { itemList, convertToValidItem } from "../Common/Util/ItemUtils";
+import { adjustAttrsAPI } from "../../utils/attributeUtils";
 
 const ITEM_TYPE_EQUIPMENT = "equipment";
 const ITEM_TYPE_CONSUMABLE = "consumable";
@@ -213,12 +213,12 @@ export default {
         refreshCharacter: true,
       });
       if (this.spendOnPurchase && "sp" in item) {
-        const newSp = this.character.sp - item.sp;
-        this.$store.dispatch("character/setAttribute", {
-          id: this.character.id,
-          attr: "sp",
-          val: newSp,
-        });
+        adjustAttrsAPI(
+          this.character,
+          { sp: -item.sp },
+          true,
+          `Purchased a ${item.name}`
+        );
       }
     },
   },

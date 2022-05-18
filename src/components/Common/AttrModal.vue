@@ -187,12 +187,14 @@ export default {
   }
 }
 
+/* Fullscreen Modal */
 @media screen and (max-width: 500px), screen and (max-height: 400px) {
   .dialogue {
     min-width: 100vw;
     min-height: 100vh;
     margin: 0px;
     border: 0px;
+    border-radius: 0px;
   }
 }
 </style>

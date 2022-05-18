@@ -91,6 +91,7 @@
                 )
               </div>
               <button
+                v-if="!useCopyableDice"
                 v-on:click="attrRollButton(attr)"
                 class="btn basicBtn noSelect"
               >
@@ -100,7 +101,7 @@
                 </div>
               </button>
             </div>
-            <div class="diceSection">
+            <div v-if="!useCopyableDice" class="diceSection">
               <div v-if="showDice(attr)">
                 <DiceRender :roll="getDice(attr)" />
                 <div>
@@ -113,20 +114,70 @@
                 </div>
               </div>
             </div>
-            <div v-if="showUpdateDropdown">
-              <div class="seperator mt-16 mb-16"></div>
-              <div class="attrHeaderMargin">Special Conditions:</div>
+            <div v-else>
+              <dice-copy
+                v-bind:key="'dice' + diceKey"
+                :attr="attr"
+                :character="character"
+                :settings="diceSettings"
+                class="mt-8 mb-8"
+              />
               <button
-                v-on:click="attrRollButtonHeroPoint(attr)"
-                :disabled="character.hero <= 0"
-                class="btn basicBtn wide noSelect"
+                v-if="!diceDropDown"
+                v-on:click="toggleDiceDropDown"
+                class="btn basicBtn wide"
               >
                 <div class="basicBtnContents">
-                  <span class="material-icons selected space">casino</span>
-                  Roll Dice using Hero Point
+                  <span class="material-icons">keyboard_arrow_down</span>
+                  Show Other Dice Options
                 </div>
               </button>
-              <!-- TODO: It would be neat if we could add abilities here too -->
+              <div v-else class="card border column">
+                <button
+                  v-on:click="toggleDiceDropDown"
+                  class="btn basicBtn wide"
+                >
+                  <div class="basicBtnContents">
+                    <span class="material-icons">keyboard_arrow_up</span>
+                    Hide Other Dice Options
+                  </div>
+                </button>
+                <div class="labelText mt-8 ml-8">Hero Point boost:</div>
+                <dice-copy
+                  v-bind:key="'hero' + diceKey"
+                  :attr="attr"
+                  :character="character"
+                  :settings="heroPointDiceSettings"
+                  class="mt-8"
+                />
+                <div class="labelText mt-8 ml-8">Other common settings:</div>
+                <check-box
+                  v-bind:key="'flow' + diceKey"
+                  :checked="diceSettings.flow"
+                  :highlight="true"
+                  text="Flow"
+                  @toggled="toggleDiceSetting('flow')"
+                  class="mt-8"
+                />
+                <check-box
+                  v-bind:key="'ebb' + diceKey"
+                  :checked="diceSettings.ebb"
+                  :highlight="true"
+                  text="Ebb"
+                  @toggled="toggleDiceSetting('ebb')"
+                  class="mt-8"
+                />
+                <check-box
+                  v-bind:key="'rr1s' + diceKey"
+                  :checked="diceSettings.rr1s"
+                  :highlight="true"
+                  text="Re-roll All 1s"
+                  @toggled="toggleDiceSetting('rr1s')"
+                  class="mt-8"
+                />
+              </div>
+            </div>
+            <div v-if="showUpdateDropdown">
               <div class="seperator mt-16 mb-16"></div>
               <adjust-attr-link :attr="attr" />
             </div>
@@ -234,8 +285,9 @@ import {
   getAttrFullName,
   getAttrDisplayName,
   getAttrMaxName,
-  adjustAttrsAPI,
 } from "../../utils/attributeUtils";
+import DiceCopy from "./CombatStatsComponents/DiceCopy.vue";
+import CheckBox from "./CheckBox.vue";
 
 export default {
   name: "combatStats",
@@ -256,6 +308,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    useCopyableDice: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     Bullet,
@@ -268,6 +324,8 @@ export default {
     AttrHelp,
     AdjustAttr,
     AdjustAttrLink,
+    DiceCopy,
+    CheckBox,
   },
   data() {
     return {
@@ -284,6 +342,9 @@ export default {
         wis: null,
         cha: null,
       },
+      diceSettings: {},
+      diceDropDown: false,
+      diceKey: 0,
     };
   },
   computed: {
@@ -330,10 +391,20 @@ export default {
       }
       return "";
     },
+    heroPointDiceSettings() {
+      return {
+        ...this.diceSettings,
+        drop: 1,
+        end: "+9",
+      };
+    },
   },
   methods: {
     showDropDown(attr) {
       return this.selectedAttr === attr;
+    },
+    toggleDiceDropDown() {
+      this.diceDropDown = !this.diceDropDown;
     },
     getDropDownClass(index, length) {
       if (index === 0) {
@@ -388,24 +459,9 @@ export default {
     getDiceAverage(attr) {
       return this.latestRoll[attr].averageTotal;
     },
-    // TODO: REMOVE THIS and just replace with a button to copy the dice roll
-    attrRollButtonHeroPoint(attr) {
-      if (this.character.hero <= 0) {
-        return;
-      }
-      // we drop the lowest roll with dl1 and then add 9
-      const rollStr =
-        "3d6dl1" +
-        (this.character[attr] >= 0 ? "+" : "") +
-        this.character[attr] +
-        "+9";
-      this.latestRoll[attr] = new DiceRoll(rollStr);
-      adjustAttrsAPI(
-        this.character,
-        { hero: -1 },
-        true,
-        "Rolled using hero point"
-      );
+    toggleDiceSetting(setting) {
+      this.diceSettings[setting] = !this.diceSettings[setting];
+      this.diceKey++; // hack to ensure dependents of diceSettings are re-rendered
     },
     singleRowShowAdjust(attr) {
       return ["xp", "sp"].includes(attr);

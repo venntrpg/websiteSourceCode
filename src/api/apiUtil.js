@@ -34,7 +34,7 @@ const attrsToServerNames = {
   maxHero: { server: "MAX_HERO", type: "n", edit: true },
   template: { server: "TEMPLATE" },
   cogType: { server: "COG_TYPE" },
-  level: { server: "LEVEL", type: "n" },
+  level: { server: "LEVEL", type: "n", edit: true },
   acc: { server: "ACC", type: "n", edit: true },
   radius: { server: "RADIUS", type: "n", edit: true },
   reach: { server: "REACH", type: "n", edit: true },

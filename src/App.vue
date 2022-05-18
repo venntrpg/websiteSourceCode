@@ -283,6 +283,9 @@ ul {
   max-width: 75ch; /* 75 character limit for legibility */
 }
 
+.pt-10 {
+  font-size: 10pt;
+}
 .pt-12 {
   font-size: 12pt;
 }
@@ -626,15 +629,6 @@ ul {
 
 /* Custom tables */
 
-.tableHeader {
-  margin-right: 46px;
-}
-.tableHeader.noBtn {
-  margin-right: 0px;
-}
-.tableHeader .headerFont {
-  font-size: 15pt !important;
-}
 .tableData {
   display: flex;
   align-items: center;
@@ -651,6 +645,28 @@ ul {
 }
 .tableItems:last-child {
   border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+.tableHeader {
+  padding-right: 54px; /* Accounts for button on left side of table */
+  background-color: var(--table-contrast);
+  border-bottom: 1px solid var(--border);
+}
+.tableHeader.noBtn {
+  margin-right: 0px;
+}
+.tableHeader.sticky {
+  position: sticky;
+  z-index: 4;
+  top: var(--nav-height);
+}
+.subNavPage .tableHeader.sticky {
+  top: var(--total-nav-height);
+}
+.subNavPage:fullscreen .tableHeader.sticky {
+  top: var(--sub-nav-height);
+}
+.tableHeader .headerFont {
+  font-size: 15pt !important;
 }
 
 /* A little bit janky way to delay animation */

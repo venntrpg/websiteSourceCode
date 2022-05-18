@@ -25,7 +25,9 @@
       >
         <div class="tableData">
           <div class="abilityName">{{ ability.name }}</div>
-          <div class="abilityActivation">{{ ability.activation }}</div>
+          <div class="abilityActivation">
+            {{ ability.activation }}
+          </div>
           <parse-ability-effect :ability="ability" class="abilityEffect" />
         </div>
         <router-link
@@ -158,7 +160,7 @@ export default {
         return 0;
       }
       return this.character.abilities.reduce((sum, ability) => {
-        if (ability.purchase.includes("sp")) {
+        if (!ability.purchase || ability.purchase.includes("sp")) {
           // do not include sp here
           return sum;
         }
