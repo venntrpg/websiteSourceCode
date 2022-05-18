@@ -148,7 +148,7 @@ body {
   --page-height: calc(100vh - var(--nav-height));
   --sub-nav-page-height: calc(100vh - var(--total-nav-height));
   --sub-nav-page-fullscreen-height: calc(100vh - var(--sub-nav-height));
-  --sidebar-width: 400px;
+  --sidebar-width: 380px;
 
   --border-radius: 5px;
 

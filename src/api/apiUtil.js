@@ -95,7 +95,7 @@ export function serverCharacter2Local(character) {
     }
   });
   if (!("changelog" in character)) {
-    result.character = [];
+    character.changelog = [];
   }
   result.changelog = character.changelog.map((log) => {
     const serverAttr = log.attr;
