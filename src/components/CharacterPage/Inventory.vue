@@ -2,7 +2,7 @@
   <div>
     <h1>Inventory</h1>
     <div class="alignRow bulkLabel">
-      Current Carrying Capacity:
+      Used Carrying Capacity:
       <fraction :top="bulkSum" :bottom="bulkCapacity" class="bulkFraction" />
     </div>
     <div v-if="consolidatedItems.length > 0" class="card column">
