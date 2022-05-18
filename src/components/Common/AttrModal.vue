@@ -54,18 +54,32 @@
           <div class="cols-2 table-split">
             <div class="attr-history-side">
               <attr-history :attr="attr" :character="character" />
-              <button
-                type="button"
-                v-if="showResetButton"
-                v-on:click="resetButton"
-                :title="`Refill your ${attrDisplayName} to full. Warning: this will clear your ${attrDisplayName} history.`"
-                class="btn basicBtn wide mt-8"
-              >
-                <div class="basicBtnContents">
-                  <span class="material-icons space">restart_alt</span>
-                  Reset {{ attrDisplayName }} to Full
-                </div>
-              </button>
+              <div class="alignRow wrap mt-8">
+                <button
+                  type="button"
+                  v-if="showResetButton"
+                  v-on:click="resetButton"
+                  :title="`Refill your ${attrDisplayName} to full. Warning: this will clear your ${attrDisplayName} history.`"
+                  class="btn basicBtn wide"
+                >
+                  <div class="basicBtnContents">
+                    <span class="material-icons space">restart_alt</span>
+                    Reset {{ attrDisplayName }} to Full
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  v-if="showClearHistoryButton"
+                  v-on:click="clearHistoryButton"
+                  :title="`Delete your ${attrDisplayName} history.`"
+                  class="btn basicBtn wide"
+                >
+                  <div class="basicBtnContents">
+                    <span class="material-icons space">delete_outline</span>
+                    Clear History
+                  </div>
+                </button>
+              </div>
             </div>
             <div>
               <adjust-attr
@@ -148,6 +162,12 @@ export default {
         this.attr !== "hero"
       );
     },
+    showClearHistoryButton() {
+      return (
+        this.character.changelog.filter((log) => log.attr === this.attr)
+          .length > 0
+      );
+    },
   },
   methods: {
     closeClick(event) {
@@ -160,6 +180,9 @@ export default {
       attrs[this.attr] =
         this.character[this.maxAttr] - this.character[this.attr];
       adjustAttrsAPI(this.character, attrs, true);
+      this.clearHistoryButton();
+    },
+    clearHistoryButton() {
       this.$store.dispatch("character/filterChangelog", {
         id: this.character.id,
         attr: this.attr,

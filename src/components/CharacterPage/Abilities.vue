@@ -17,7 +17,6 @@
           <b>Effect</b>
         </div>
       </div>
-      <div class="seperator thin"></div>
       <div
         v-for="(ability, index) in sortedAbilities"
         v-bind:key="index"

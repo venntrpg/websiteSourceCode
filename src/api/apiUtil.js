@@ -88,7 +88,12 @@ export function serverCharacter2Local(character) {
     const map = attrsFromServerNames[serverAttr];
     if (map !== undefined) {
       if (map.type === "n") {
-        result[map.local] = parseInt(val);
+        const converted = parseInt(val);
+        if (isNaN(converted)) {
+          result[map.local] = 0;
+        } else {
+          result[map.local] = converted;
+        }
       } else {
         result[map.local] = val;
       }

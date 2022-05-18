@@ -10,7 +10,6 @@
           <b>Message</b>
         </div>
       </div>
-      <div class="seperator thin"></div>
       <div
         v-for="(log, idx) in changelog"
         v-bind:key="idx"

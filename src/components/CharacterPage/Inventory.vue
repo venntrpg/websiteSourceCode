@@ -17,7 +17,6 @@
           <b>Description</b>
         </div>
       </div>
-      <div class="seperator thin"></div>
       <div
         v-for="(item, index) in consolidatedItems"
         v-bind:key="index"

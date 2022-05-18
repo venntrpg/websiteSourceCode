@@ -593,6 +593,9 @@ ul {
 .card.selectable.selected {
   border: 1px solid var(--red-600);
 }
+.card .card {
+  background-color: var(--table-contrast);
+}
 
 /* Seperator */
 
@@ -650,9 +653,13 @@ ul {
   padding-right: 54px; /* Accounts for button on left side of table */
   background-color: var(--table-contrast);
   border-bottom: 1px solid var(--border);
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
 }
 .tableHeader.noBtn {
-  margin-right: 0px;
+  padding-right: 0px;
 }
 .tableHeader.sticky {
   position: sticky;

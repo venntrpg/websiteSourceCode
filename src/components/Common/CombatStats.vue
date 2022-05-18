@@ -132,7 +132,7 @@
                   Show Other Dice Options
                 </div>
               </button>
-              <div v-else class="card border column">
+              <div v-else class="card column">
                 <button
                   v-on:click="toggleDiceDropDown"
                   class="btn basicBtn wide"
@@ -142,6 +142,7 @@
                     Hide Other Dice Options
                   </div>
                 </button>
+                <div class="seperator thin"></div>
                 <div class="labelText mt-8 ml-8">Hero Point boost:</div>
                 <dice-copy
                   v-bind:key="'hero' + diceKey"
