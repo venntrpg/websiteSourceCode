@@ -77,110 +77,18 @@
           v-bind:class="getDropDownClass(j, attrRow.length)"
         >
           <div class="margin">
-            <div class="alignRow split">
-              <div class="attrHeader">
-                <a
-                  v-bind:href="getAttrLink(attr)"
-                  target="_blank"
-                  class="link stealth"
-                >
-                  {{ attrFullName(attr) }}
-                </a>
-                (
-                <span class="number">{{ character[attr] }}</span>
-                )
-              </div>
-              <button
-                v-if="!useCopyableDice"
-                v-on:click="attrRollButton(attr)"
-                class="btn basicBtn noSelect"
-              >
-                <div class="basicBtnContents">
-                  <span class="material-icons selected space">casino</span>
-                  Roll {{ attr.toUpperCase() }}
-                </div>
-              </button>
-            </div>
-            <div v-if="!useCopyableDice" class="diceSection">
-              <div v-if="showDice(attr)">
-                <DiceRender :roll="getDice(attr)" />
-                <div>
-                  Dice Rolled:
-                  <span class="number">{{ getDiceNotation(attr) }}</span>
-                </div>
-                <div>
-                  Average Roll:
-                  <span class="number">{{ getDiceAverage(attr) }}</span>
-                </div>
-              </div>
+            <dice-section
+              :attr="attr"
+              :character="character"
+              :useCopyableDice="useCopyableDice"
+            />
+            <div v-if="showUpdateDropdown">
+              <div class="seperator mt-8 mb-8"></div>
+              <adjust-attr-link :attr="attr" />
             </div>
             <div v-else>
-              <dice-copy
-                v-bind:key="'dice' + diceKey"
-                :attr="attr"
-                :character="character"
-                :settings="diceSettings"
-                class="mt-8 mb-8"
-              />
-              <button
-                v-if="!diceDropDown"
-                v-on:click="toggleDiceDropDown"
-                class="btn basicBtn wide"
-              >
-                <div class="basicBtnContents">
-                  <span class="material-icons">keyboard_arrow_down</span>
-                  Show Other Dice Options
-                </div>
-              </button>
-              <div v-else class="card column">
-                <button
-                  v-on:click="toggleDiceDropDown"
-                  class="btn basicBtn wide"
-                >
-                  <div class="basicBtnContents">
-                    <span class="material-icons">keyboard_arrow_up</span>
-                    Hide Other Dice Options
-                  </div>
-                </button>
-                <div class="seperator thin"></div>
-                <div class="labelText mt-8 ml-8">Hero Point boost:</div>
-                <dice-copy
-                  v-bind:key="'hero' + diceKey"
-                  :attr="attr"
-                  :character="character"
-                  :settings="heroPointDiceSettings"
-                  class="mt-8"
-                />
-                <div class="labelText mt-8 ml-8">Other common settings:</div>
-                <check-box
-                  v-bind:key="'flow' + diceKey"
-                  :checked="diceSettings.flow"
-                  :highlight="true"
-                  text="Flow"
-                  @toggled="toggleDiceSetting('flow')"
-                  class="mt-8"
-                />
-                <check-box
-                  v-bind:key="'ebb' + diceKey"
-                  :checked="diceSettings.ebb"
-                  :highlight="true"
-                  text="Ebb"
-                  @toggled="toggleDiceSetting('ebb')"
-                  class="mt-8"
-                />
-                <check-box
-                  v-bind:key="'rr1s' + diceKey"
-                  :checked="diceSettings.rr1s"
-                  :highlight="true"
-                  text="Re-roll All 1s"
-                  @toggled="toggleDiceSetting('rr1s')"
-                  class="mt-8"
-                />
-              </div>
-            </div>
-            <div v-if="showUpdateDropdown">
-              <div class="seperator mt-16 mb-16"></div>
-              <adjust-attr-link :attr="attr" />
+              <div class="seperator mt-8 mb-8"></div>
+              <attr-help :attr="attr" class="mutedText" />
             </div>
           </div>
         </div>
@@ -233,10 +141,16 @@
         <div class="margin">
           <div v-if="showUpdateDropdown">
             <adjust-attr
-              v-if="singleRowShowAdjust(attr)"
+              v-if="showAdjust(attr)"
               :attr="attr"
               :character="character"
               loc="combat-stats"
+            />
+            <dice-section
+              v-else-if="showDice(attr)"
+              :attr="attr"
+              :character="character"
+              :useCopyableDice="useCopyableDice"
             />
             <attr-help v-else :attr="attr" />
             <div class="seperator mt-8 mb-8"></div>
@@ -262,33 +176,18 @@
 </template>
 
 <script>
-/*
-TODO:
-
-- SPLIT THIS UP INTO SMALLER COMPONENTS
-- Add animation (maybe) to opening and closing dice roll panels
-
-*/
-
-import { DiceRoll } from "rpg-dice-roller";
 import Bullet from "./Bullet.vue";
-import DiceRender from "./CombatStatsComponents/DiceRender.vue";
 import Fraction from "./CombatStatsComponents/Fraction.vue";
 import GiftDescription from "./CombatStatsComponents/GiftDescription.vue";
 import CogTypeDescription from "../EnemyPage/CogTypeDescription.vue";
-import { cogTypeTitle } from "../EnemyPage/CogFlowUtils/CogTypeDescriptionUtils";
 import AbilitiesSection from "./CombatStatsComponents/AbilitiesSection.vue";
 import ItemsSection from "./CombatStatsComponents/ItemsSection.vue";
 import AttrHelp from "./CombatStatsComponents/AttrHelp.vue";
 import AdjustAttr from "./CombatStatsComponents/AdjustAttr.vue";
 import AdjustAttrLink from "./CombatStatsComponents/AdjustAttrLink.vue";
-import {
-  getAttrFullName,
-  getAttrDisplayName,
-  getAttrMaxName,
-} from "../../utils/attributeUtils";
-import DiceCopy from "./CombatStatsComponents/DiceCopy.vue";
-import CheckBox from "./CheckBox.vue";
+import DiceSection from "./CombatStatsComponents/DiceSection.vue";
+import { cogTypeTitle } from "../EnemyPage/CogFlowUtils/CogTypeDescriptionUtils";
+import { getAttrDisplayName, getAttrMaxName } from "../../utils/attributeUtils";
 
 export default {
   name: "combatStats",
@@ -316,7 +215,6 @@ export default {
   },
   components: {
     Bullet,
-    DiceRender,
     Fraction,
     GiftDescription,
     CogTypeDescription,
@@ -325,27 +223,11 @@ export default {
     AttrHelp,
     AdjustAttr,
     AdjustAttrLink,
-    DiceCopy,
-    CheckBox,
+    DiceSection,
   },
   data() {
     return {
       selectedAttr: "",
-      // These need to get moved into seperate components instead of being up here
-      latestRoll: {
-        per: null,
-        tek: null,
-        agi: null,
-        dex: null,
-        int: null,
-        spi: null,
-        str: null,
-        wis: null,
-        cha: null,
-      },
-      diceSettings: {},
-      diceDropDown: false,
-      diceKey: 0,
     };
   },
   computed: {
@@ -392,20 +274,10 @@ export default {
       }
       return "";
     },
-    heroPointDiceSettings() {
-      return {
-        ...this.diceSettings,
-        drop: 1,
-        end: "+9",
-      };
-    },
   },
   methods: {
     showDropDown(attr) {
       return this.selectedAttr === attr;
-    },
-    toggleDiceDropDown() {
-      this.diceDropDown = !this.diceDropDown;
     },
     getDropDownClass(index, length) {
       if (index === 0) {
@@ -435,37 +307,11 @@ export default {
     getAttrMaxValue(attr) {
       return this.character[getAttrMaxName(attr)];
     },
-    attrFullName(attr) {
-      return getAttrFullName(attr);
-    },
-    getAttrLink(attr) {
-      return `https://vennt.fandom.com/wiki/${this.attrFullName(
-        attr
-      )}_(${attr.toUpperCase()})`;
-    },
-    attrRollButton(attr) {
-      const rollStr =
-        "3d6" + (this.character[attr] >= 0 ? "+" : "") + this.character[attr];
-      this.latestRoll[attr] = new DiceRoll(rollStr);
+    showAdjust(attr) {
+      return ["xp", "sp"].includes(attr);
     },
     showDice(attr) {
-      return this.latestRoll[attr] !== null;
-    },
-    getDice(attr) {
-      return this.latestRoll[attr];
-    },
-    getDiceNotation(attr) {
-      return this.latestRoll[attr].notation;
-    },
-    getDiceAverage(attr) {
-      return this.latestRoll[attr].averageTotal;
-    },
-    toggleDiceSetting(setting) {
-      this.diceSettings[setting] = !this.diceSettings[setting];
-      this.diceKey++; // hack to ensure dependents of diceSettings are re-rendered
-    },
-    singleRowShowAdjust(attr) {
-      return ["xp", "sp"].includes(attr);
+      return ["init"].includes(attr);
     },
   },
 };
@@ -508,16 +354,6 @@ export default {
   width: 100%;
 }
 
-.attrHeader {
-  font-size: 16pt;
-  font-weight: 500;
-}
-.attrHeaderMargin {
-  font-size: 16pt;
-  font-weight: 500;
-  margin-bottom: 8px;
-}
-
 .diceDropDown {
   margin-bottom: 8px;
 }
@@ -526,11 +362,6 @@ export default {
 }
 .diceDropDown.right {
   border-top-right-radius: 0px;
-}
-
-.diceSection {
-  margin-top: 8px;
-  min-height: 90px;
 }
 
 .fractionLabel {
@@ -542,11 +373,6 @@ export default {
 .attrLabelWide {
   min-width: 88px;
   margin-right: 8px;
-}
-
-.incrementLabel {
-  font-size: 14pt;
-  min-width: 180px;
 }
 
 /* Mobile Styles */

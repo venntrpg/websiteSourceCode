@@ -304,6 +304,10 @@ ul {
   font-size: 16pt;
 }
 
+.stronger {
+  font-weight: 500;
+}
+
 /* Margin Utilities */
 
 .mt-0 {

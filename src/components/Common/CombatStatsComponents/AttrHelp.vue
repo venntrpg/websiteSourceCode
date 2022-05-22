@@ -53,7 +53,7 @@ export default {
         per: `Your ability to understand the stimuli you are perceiving and notice fine detail. How far away can you see,
         how quickly can you pick out a person in a crowd, and do you notice someone pickpocketing you? This stat can be used
         for identifying people far away, noticing traps before they trigger, and avoiding attacks in combat.`,
-        tek: `Your ability to make and use tools--the practical counterpart to INT. How quickly can you build a bomb,
+        tek: `Your ability to make and use tools — the practical counterpart to INT. How quickly can you build a bomb,
         how much damage does that bomb do, and how far can you see through this extremely-complicated telescope? This stat
         can be used for creating weapons, using unfamiliar technologies, destroying technologies efficiently, and using
         technology-based weapons in combat.`,

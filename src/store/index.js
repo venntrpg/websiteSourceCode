@@ -4,6 +4,7 @@ import api from "@/api/api";
 import router from "@/router/index";
 import campaignStore from "./campaignStore";
 import characterStore from "./characterStore";
+import diceStore from "./diceStore";
 import otherStore from "./otherStore";
 
 Vue.use(Vuex);
@@ -118,6 +119,7 @@ export default new Vuex.Store({
   modules: {
     campaign: campaignStore,
     character: characterStore,
+    dice: diceStore,
     other: otherStore,
   },
 });
