@@ -10,6 +10,8 @@
           id="login-username"
           placeholder="Username"
           autocomplete="username"
+          autocorrect="off"
+          autocapitalize="none"
           v-model="fields.username"
           class="input mt-4 wide"
         />

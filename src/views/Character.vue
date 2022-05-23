@@ -312,7 +312,7 @@ export default {
   }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 760px) {
   .statLink {
     display: block;
   }

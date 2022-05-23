@@ -153,7 +153,7 @@ export default {
   }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 760px) {
   /* Both Sidebars stops getting displayed */
   .notesCard {
     width: 100% !important;
