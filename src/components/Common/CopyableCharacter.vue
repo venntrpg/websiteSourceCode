@@ -23,7 +23,7 @@
 import {
   convertCharacter,
   convertCombatCogFoe,
-} from "./Util/CharacterStringFormatting";
+} from "../../utils/CharacterStringFormatting";
 
 export default {
   name: "CogCopyable",

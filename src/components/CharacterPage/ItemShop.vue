@@ -100,7 +100,7 @@
 <script>
 import { mapState } from "vuex";
 import CheckBox from "../Common/CheckBox.vue";
-import { itemList, convertToValidItem } from "../Common/Util/ItemUtils";
+import { itemList, convertToValidItem } from "../../utils/itemUtils";
 import { adjustAttrsAPI } from "../../utils/attributeUtils";
 
 const ITEM_TYPE_EQUIPMENT = "equipment";

@@ -1,4 +1,4 @@
-import items from "./items.json";
+import items from "./data/items.json";
 
 export const itemList = items;
 

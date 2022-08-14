@@ -17,7 +17,7 @@
 <script>
 import Bullet from "../Bullet.vue";
 import DisplayBasicItemDetails from "../Items/DisplayBasicItemDetails.vue";
-import { consolidateItemList } from "../Util/ItemUtils";
+import { consolidateItemList } from "../../../utils/itemUtils";
 
 export default {
   components: { Bullet, DisplayBasicItemDetails },

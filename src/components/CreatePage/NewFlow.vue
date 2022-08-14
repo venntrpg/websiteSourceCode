@@ -317,7 +317,7 @@ import CombatStats from "../Common/CombatStats.vue";
 import GiftSelection from "./GiftSelection.vue";
 import RadioButtonSelection from "../Common/RadioButtonSelection.vue";
 import ConfirmationModal from "../Common/ConfirmationModal.vue";
-import { keys2Items } from "../Common/Util/ItemUtils";
+import { keys2Items } from "../../utils/itemUtils";
 import { ATTRIBUTES, CHAR_LOCAL_STORAGE } from "../../utils/constants";
 
 export default {

@@ -2,7 +2,7 @@ import api from "@/api/api";
 import router from "@/router/index";
 import { serverCharacter2Local } from "@/api/apiUtil";
 import { checkResponse } from "../../utils/storeUtil";
-import { consolidateItemList } from "../../components/Common/Util/ItemUtils";
+import { consolidateItemList } from "../../utils/itemUtils";
 import { CHAR_LOCAL_STORAGE, COG_LOCAL_STORAGE } from "../../utils/constants";
 
 const state = {

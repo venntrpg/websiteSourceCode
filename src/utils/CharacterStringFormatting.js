@@ -1,11 +1,11 @@
-import { cogTypeTitle } from "../../EnemyPage/CogFlowUtils/CogTypeDescriptionUtils";
+import { cogTypeTitle } from "../components/EnemyPage/CogFlowUtils/CogTypeDescriptionUtils";
 import {
   COG_ABILITY_TYPE,
   COG_TRAIT_TYPE,
   COG_WEAKNESS_TYPE,
-} from "../../EnemyPage/CogFlowUtils/CogConstants";
-import { consolidateItemList } from "./ItemUtils";
-import { ATTRIBUTES } from "../../../utils/constants";
+} from "../components/EnemyPage/CogFlowUtils/CogConstants";
+import { consolidateItemList } from "./itemUtils";
+import { ATTRIBUTES } from "./constants";
 
 function formatBasicAttributes(character) {
   let characterText = "\n";
@@ -49,7 +49,9 @@ export function convertCharacter(character) {
   if (character.gift) {
     characterText += `\nGift: ${character.gift}`;
   }
-  characterText += `\nInit: ${character.init}\nHP: ${character.maxHp}\nVim: ${character.maxVim}\nMP: ${character.maxMp}\nSpeed: ${character.speed}`;
+  characterText +=
+    `\nInit: ${character.init}\nHP: ${character.maxHp}\n` +
+    `Vim: ${character.maxVim}\nMP: ${character.maxMp}\nSpeed: ${character.speed}`;
   if (character.armor > 0) {
     characterText += `\nArmor: ${character.armor}`;
   }

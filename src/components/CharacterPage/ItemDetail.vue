@@ -35,7 +35,7 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 import DisplayBasicItemDetails from "../Common/Items/DisplayBasicItemDetails.vue";
-import { itemList } from "../Common/Util/ItemUtils";
+import { itemList } from "../../utils/itemUtils";
 import { adjustAttrsAPI } from "../../utils/attributeUtils";
 
 export default {
@@ -53,7 +53,6 @@ export default {
       );
     },
     foundShopItem() {
-      // cannot use this function - instead try using find on itemList
       return itemList.find(
         (it) =>
           it.name === this.item.name &&
