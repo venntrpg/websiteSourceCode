@@ -1,44 +1,37 @@
 <template>
   <div>
     <h1>Inventory</h1>
-    <div class="alignRow bulkLabel">
+    <div class="alignRow labelText mb-16">
       Used Carrying Capacity:
-      <fraction :top="bulkSum" :bottom="bulkCapacity" class="bulkFraction" />
+      <fraction :top="bulkSum" :bottom="bulkCapacity" class="ml-16" />
     </div>
-    <div v-if="consolidatedItems.length > 0" class="card column">
-      <div class="alignRow tableData tableHeader">
-        <div class="itemName headerFont">
-          <b>Item</b>
-        </div>
-        <div class="itemCount headerFont">
-          <b>Count</b>
-        </div>
-        <div class="itemDesc headerFont">
-          <b>Description</b>
-        </div>
-      </div>
-      <div
-        v-for="(item, index) in consolidatedItems"
-        v-bind:key="index"
-        class="alignRow tableItems"
-      >
-        <div class="tableData">
-          <div class="itemName">{{ item.name }}</div>
-          <div class="itemCount number">{{ item.ids.length }}</div>
-          <div class="itemDesc">{{ item.desc }}</div>
-        </div>
-        <router-link
-          :to="{
-            name: 'Character',
-            params: { id: character.id, section: 'inventory', detail: item.id },
-          }"
-          class="btn basicBtn link"
-        >
-          <div class="basicBtnContents">
-            <span class="material-icons">keyboard_arrow_right</span>
-          </div>
-        </router-link>
-      </div>
+    <div v-if="weapons.length > 0">
+      <h2>Weapons</h2>
+      <item-table
+        :id="character.id"
+        :items="weapons"
+        :itemType="'Weapon'"
+        :hideCount="true"
+        class="mb-24"
+      />
+    </div>
+    <div v-if="generalItems.length > 0">
+      <h2>Equipment &amp; Consumables</h2>
+      <item-table
+        :id="character.id"
+        :items="generalItems"
+        :itemType="'Item'"
+        class="mb-24"
+      />
+    </div>
+    <div v-if="containers.length > 0">
+      <h2>Item Containers</h2>
+      <item-table
+        :id="character.id"
+        :items="containers"
+        :itemType="'Container'"
+        class="mb-24"
+      />
     </div>
     <h2>Buy Items</h2>
     <router-link
@@ -63,7 +56,7 @@
       </div>
     </router-link>
     <h2>Add custom Item</h2>
-    <div class="contentRow">
+    <div class="alignRow mb-8">
       <label for="item-name" class="label">Item name:</label>
       <input
         type="text"
@@ -73,7 +66,7 @@
         class="input"
       />
     </div>
-    <div class="contentRow">
+    <div class="alignRow mb-8">
       <label for="item-bulk" class="label">Item bulk:</label>
       <input
         type="number"
@@ -83,7 +76,7 @@
         class="input"
       />
     </div>
-    <div class="contentRow">
+    <div class="alignRow mb-8">
       <label for="item-desc" class="label">Item description:</label>
       <textarea
         placeholder="Just a donut"
@@ -103,14 +96,12 @@
 </template>
 
 <script>
-// TODO: I would like to add a shop link so you can just buy common items without
-// needing to insert all of the details individually
-
 import { mapGetters, mapState } from "vuex";
 import Fraction from "../Common/CombatStatsComponents/Fraction.vue";
+import ItemTable from "./ItemTable.vue";
 
 export default {
-  components: { Fraction },
+  components: { Fraction, ItemTable },
   name: "Inventory",
   data() {
     return {
@@ -122,6 +113,18 @@ export default {
   computed: {
     ...mapState("character", ["character"]),
     ...mapGetters("character", ["consolidatedItems"]),
+    weapons() {
+      return this.consolidatedItems.filter((item) => item.type === "weapon");
+    },
+    containers() {
+      return this.consolidatedItems.filter((item) => item.type === "container");
+    },
+    generalItems() {
+      return this.consolidatedItems.filter(
+        (item) =>
+          !this.weapons.includes(item) && !this.containers.includes(item)
+      );
+    },
     addItemButtonDisabled() {
       return (
         this.itemName === "" ||
@@ -135,7 +138,7 @@ export default {
         return 0;
       }
       return this.character.items
-        .filter((item) => item.type !== undefined && item.type === "container")
+        .filter((item) => item.type === "container")
         .reduce((sum, item) => sum + item.bulk, 0);
     },
     bulkSum() {
@@ -143,7 +146,7 @@ export default {
         return 0;
       }
       return this.character.items
-        .filter((item) => item.type === undefined || item.type !== "container")
+        .filter((item) => item.type !== "container")
         .reduce((sum, item) => sum + item.bulk, 0);
     },
   },
@@ -170,19 +173,6 @@ export default {
 </script>
 
 <style scoped>
-.bulkLabel {
-  font-size: 16pt;
-  margin-bottom: 16px;
-}
-.bulkFraction {
-  margin-left: 16px;
-}
-
-.contentRow {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-}
 .label {
   width: 170px;
 }
