@@ -16,7 +16,7 @@ const state = {
     ebb: false,
     rr1s: false,
   },
-  diceDropDown: false, // shared between componants to hopefully make the experience feel a bit smoother
+  diceDropDown: false, // shared between components to hopefully make the experience feel a bit smoother
 };
 
 const mutations = {

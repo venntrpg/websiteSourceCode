@@ -77,6 +77,7 @@
       <div class="largePageWidth main mb-256" v-responsive="breakpoints">
         <inventory v-if="inventoryPage" />
         <item-shop v-else-if="shopPage" />
+        <weapon-shop v-else-if="weaponShopPage" />
         <character-settings v-else-if="settingsPage" />
         <combat-stats
           v-else-if="statsPage"
@@ -103,17 +104,20 @@ import CombatStats from "../components/Common/CombatStats.vue";
 import RightSideBar from "../components/CharacterPage/RightSideBar.vue";
 import Abilities from "../components/CharacterPage/Abilities.vue";
 import Inventory from "../components/CharacterPage/Inventory.vue";
+import WeaponShop from "../components/CharacterPage/WeaponShop.vue";
 import ItemShop from "../components/CharacterPage/ItemShop.vue";
 import CharacterSettings from "../components/CharacterPage/CharacterSettings.vue";
 import Notes from "../components/CharacterPage/Notes.vue";
 import AttrModal from "../components/Common/AttrModal.vue";
 import { attrIsEditable } from "../api/apiUtil";
-
-const SECTION_STATS = "stats";
-const SECTION_ABILITIES = "abilities";
-const SECTION_INVENTORY = "inventory";
-const SECTION_SETTINGS = "settings";
-const SECTION_SHOP = "shop";
+import {
+  SECTION_ABILITIES,
+  SECTION_INVENTORY,
+  SECTION_SETTINGS,
+  SECTION_SHOP,
+  SECTION_STATS,
+  SECTION_WEAPON_SHOP,
+} from "../utils/constants";
 
 export default {
   name: "Character",
@@ -126,6 +130,7 @@ export default {
     CharacterSettings,
     Notes,
     AttrModal,
+    WeaponShop,
   },
   directives: {
     responsive: ResponsiveDirective,
@@ -133,7 +138,9 @@ export default {
   data() {
     return {
       breakpoints: {
+        bp900: (el) => el.width < 900,
         bp750: (el) => el.width < 750,
+        bp600: (el) => el.width < 600,
         bp500: (el) => el.width < 500,
       },
       id: "",
@@ -200,9 +207,12 @@ export default {
     settingsPage() {
       return this.$route.params.section === SECTION_SETTINGS;
     },
+    weaponShopPage() {
+      return this.$route.params.section === SECTION_WEAPON_SHOP;
+    },
     showRightSideBar() {
       return (
-        (this.abilitiesPage || this.inventoryPage) &&
+        (this.abilitiesPage || this.inventoryPage || this.weaponShopPage) &&
         this.$route.params.detail !== undefined
       );
     },
@@ -251,29 +261,36 @@ export default {
           this.toggleNotes();
           break;
         case "a":
-          this.$router.push({
-            name: "Character",
-            params: { id: this.id, section: SECTION_ABILITIES },
-          });
+          if (!this.abilitiesPage) {
+            this.$router.push({
+              name: "Character",
+              params: { id: this.id, section: SECTION_ABILITIES },
+            });
+          }
           break;
         case "i":
-          this.$router.push({
-            name: "Character",
-            params: { id: this.id, section: SECTION_INVENTORY },
-          });
+          if (!this.inventoryPage) {
+            this.$router.push({
+              name: "Character",
+              params: { id: this.id, section: SECTION_INVENTORY },
+            });
+          }
           break;
         case "h":
-          this.$router.push({
-            name: "Character",
-            params: { id: this.id, section: SECTION_SETTINGS },
-          });
+          if (!this.settingsPage) {
+            this.$router.push({
+              name: "Character",
+              params: { id: this.id, section: SECTION_SETTINGS },
+            });
+          }
           break;
         case "s":
-          console.log("shop");
-          this.$router.push({
-            name: "Character",
-            params: { id: this.id, section: SECTION_SHOP },
-          });
+          if (!this.shopPage) {
+            this.$router.push({
+              name: "Character",
+              params: { id: this.id, section: SECTION_SHOP },
+            });
+          }
           break;
       }
     },

@@ -40,13 +40,26 @@
         </router-link>
       </div>
     </div>
+    <h2>Buy Items</h2>
     <router-link
       :to="{ name: 'Character', params: { id: character.id, section: 'shop' } }"
       class="btn basicBtn link mt-24"
     >
       <div class="basicBtnContents">
         <span class="material-icons space">store</span>
-        Buy items
+        Item Shop
+      </div>
+    </router-link>
+    <router-link
+      :to="{
+        name: 'Character',
+        params: { id: character.id, section: 'weaponShop' },
+      }"
+      class="btn basicBtn link mt-8"
+    >
+      <div class="basicBtnContents">
+        <span class="material-icons space">sports_martial_arts</span>
+        Weapon Shop
       </div>
     </router-link>
     <h2>Add custom Item</h2>

@@ -33,20 +33,16 @@
         <div><b>Comment:</b></div>
         <button
           v-on:click="commentButton()"
-          class="btn basicBtn toolTipTrigger"
+          title="Add a personal comment to this ability. Useful for tracking details, like how often you've used it during combat, or any special effects it may have."
+          class="btn basicBtn"
         >
           <div class="basicBtnContents">
             <span class="material-icons">chat</span>
           </div>
-          <div class="toolTip wide commentToolTip">
-            Add a personal message to this ability. Useful for tracking details,
-            like how often you've used it during combat, or anything else you
-            might want to track.
-          </div>
         </button>
       </div>
       <div v-if="!editComment && ability.comment">
-        <p class="textBlock">{{ ability.comment }}</p>
+        <p class="textBlock mt-0">{{ ability.comment }}</p>
       </div>
       <div v-if="editComment">
         <textarea
@@ -59,7 +55,7 @@
         </button>
       </div>
       <div class="seperator mt-24 mb-24"></div>
-      <button v-on:click="settingsButton()" class="btn basicBtn">
+      <button v-on:click="settingsButton()" class="btn basicBtn wide">
         <div class="basicBtnContents">
           <span class="material-icons space">settings</span>
           Ability Settings
@@ -67,14 +63,14 @@
       </button>
       <div v-if="showSettings" class="card column padded">
         <div v-if="!ability.special_ability_type">
-          <h3>Refresh Ability</h3>
-          <p class="textBlock">
+          <h3 class="mt-0">Refresh Ability</h3>
+          <p class="textBlock mt-0">
             Is this ability outdated from the same ability in the wiki? This
             button will refresh the ability to match the wiki again. WARNING: if
             the ability does not exist on the wiki, this ability will be
             deleted!
           </p>
-          <button v-on:click="refreshButton()" class="btn basicBtn">
+          <button v-on:click="refreshButton()" class="btn basicBtn wide">
             <div class="basicBtnContents">
               <span class="material-icons space">refresh</span>
               Refresh Ability
@@ -82,9 +78,11 @@
           </button>
           <div class="seperator mt-24 mb-24"></div>
         </div>
-        <h3>Delete Ability</h3>
-        <p class="textBlock">No longer want this ability? Delete it here.</p>
-        <button v-on:click="deleteButton()" class="btn basicBtn">
+        <h3 class="mt-0">Delete Ability</h3>
+        <p class="textBlock mt-0">
+          No longer want this ability? Delete it here.
+        </p>
+        <button v-on:click="deleteButton()" class="btn basicBtn wide">
           <div class="basicBtnContents">
             <span class="material-icons space">delete</span>
             Delete Ability
@@ -183,9 +181,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.commentToolTip {
-  margin-top: -96px;
-}
-</style>

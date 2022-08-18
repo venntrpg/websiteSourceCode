@@ -2,7 +2,7 @@ import api from "@/api/api";
 import router from "@/router/index";
 import { serverCharacter2Local } from "@/api/apiUtil";
 import { checkResponse } from "../../utils/storeUtil";
-import { consolidateItemList } from "../../utils/itemUtils";
+import { consolidateItemList, convertToValidItem } from "../../utils/itemUtils";
 import { CHAR_LOCAL_STORAGE, COG_LOCAL_STORAGE } from "../../utils/constants";
 
 const state = {
@@ -55,6 +55,9 @@ const mutations = {
     state.character.changelog = state.character.changelog.filter(
       (log) => log.attr !== attr
     );
+  },
+  appendItem(state, item) {
+    state.character.items.push(item);
   },
   setSearchAbility(state, ability) {
     state.searchAbility = ability;
@@ -242,16 +245,30 @@ const actions = {
 
   // ------ ITEM APIS ------ //
 
-  addItem: ({ dispatch }, { id, item, refreshCharacter }) => {
-    return api.addItem(id, item).then((response) => {
-      if (checkResponse(response) && response.id && refreshCharacter) {
-        // regrab character info with new item when `refreshCharacter` is true
-        dispatch("getCharacter", id);
+  addItem: (
+    { commit, dispatch },
+    { id, item, refreshCharacter = false, redirectToDetail = false }
+  ) => {
+    return api.addItem(id, convertToValidItem(item)).then((response) => {
+      if (checkResponse(response) && response.id) {
+        if (refreshCharacter) {
+          // regrab character info with new item when `refreshCharacter` is true
+          dispatch("getCharacter", id);
+        } else {
+          item.id = response.id;
+          commit("appendItem", item);
+        }
+        if (redirectToDetail) {
+          router.push({
+            name: "Character",
+            params: { id, section: "inventory", detail: response.id },
+          });
+        }
       }
     });
   },
 
-  removeItem: ({ dispatch }, { id, itemId, redirectToInventory }) => {
+  removeItem: ({ dispatch }, { id, itemId, redirectToInventory = false }) => {
     return api.removeItem(id, itemId).then((response) => {
       if (checkResponse(response)) {
         // regrab character info with item removed

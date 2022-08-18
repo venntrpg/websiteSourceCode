@@ -249,16 +249,8 @@ const addItem = (id, item) => {
   const params = {
     auth_token: getAuth(),
     id,
-    name: item.name,
-    bulk: item.bulk,
-    desc: item.desc,
+    ...item,
   };
-  if ("type" in item) {
-    params.type = item.type;
-  }
-  if ("courses" in item) {
-    params.courses = item.courses;
-  }
   return backendApi.get("add_item", { params }).then((response) => {
     return response.data;
   });

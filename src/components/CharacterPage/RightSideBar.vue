@@ -13,8 +13,9 @@
       </div>
     </router-link>
     <div class="panel">
-      <AbilityDetail v-if="abilitiesPage" />
-      <ItemDetail v-else-if="inventoryPage" />
+      <ability-detail v-if="abilitiesPage" />
+      <item-detail v-else-if="inventoryPage" />
+      <weapon-shop-detail v-else-if="weaponShopPage" />
     </div>
   </div>
 </template>
@@ -22,15 +23,19 @@
 <script>
 import AbilityDetail from "./AbilityDetail.vue";
 import ItemDetail from "./ItemDetail.vue";
-
-const SECTION_ABILITIES = "abilities";
-const SECTION_INVENTORY = "inventory";
+import WeaponShopDetail from "./WeaponShopDetail.vue";
+import {
+  SECTION_ABILITIES,
+  SECTION_INVENTORY,
+  SECTION_WEAPON_SHOP,
+} from "../../utils/constants";
 
 export default {
   name: "rightSideBar",
   components: {
     AbilityDetail,
     ItemDetail,
+    WeaponShopDetail,
   },
   computed: {
     abilitiesPage() {
@@ -38,6 +43,9 @@ export default {
     },
     inventoryPage() {
       return this.$route.params.section === SECTION_INVENTORY;
+    },
+    weaponShopPage() {
+      return this.$route.params.section === SECTION_WEAPON_SHOP;
     },
   },
 };

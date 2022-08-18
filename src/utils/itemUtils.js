@@ -1,15 +1,34 @@
 import items from "./data/items.json";
+import weaponTypes from "./data/weaponTypes.json";
 
 export const itemList = items;
+export const weaponTypesList = weaponTypes;
 
 export function convertToValidItem(item) {
-  return {
-    name: item.name,
-    type: item.type,
-    bulk: item.bulk,
-    desc: item.desc,
-    courses: item.courses,
-  };
+  const cleaned = {};
+  const basicFields = [
+    "name",
+    "bulk",
+    "desc",
+    "type",
+    "courses",
+    "comment",
+    "category",
+    "range",
+    "attr",
+    "dmg",
+    "special",
+    "equipped",
+  ];
+  basicFields.forEach((field) => {
+    if (item[field]) {
+      cleaned[field] = item[field];
+    }
+  });
+  if (item.weaponType) {
+    cleaned.weapon_type = item.weaponType;
+  }
+  return cleaned;
 }
 
 export function keys2Items(keys) {

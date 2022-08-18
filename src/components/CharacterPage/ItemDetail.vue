@@ -1,7 +1,25 @@
 <template>
   <div>
     <div v-if="item !== undefined">
-      <display-basic-item-details :item="item" />
+      <div v-if="item.type === 'weapon'">
+        <h2>
+          {{ item.name
+          }}<span v-if="item.category">
+            (<a
+              v-bind:href="`https://vennt.fandom.com/wiki/Weapons#${item.category}`"
+              target="_blank"
+              class="link stealth"
+              >{{ item.category }}</a
+            >)</span
+          >
+        </h2>
+        <weapon-detail :weapon="item" />
+      </div>
+      <display-basic-item-details v-else :item="item" />
+      <div v-if="item.courses" class="mt-16 mb-16">
+        <b>Courses:</b> {{ item.courses }}
+      </div>
+      <div class="seperator mt-24 mb-24" />
       <button
         v-on:click="removeItemButton()"
         class="btn roundedButton clear wide"
@@ -18,12 +36,8 @@
         <div class="pt-10 mutedText">
           Note: This does not currently take into account any benefits your
           character may have to get a better price. The shop value of this item
-          is
-          {{ shopValue }} SP.
+          is {{ shopValue }} SP.
         </div>
-      </div>
-      <div v-if="item.courses" class="mt-16 mb-16">
-        <b>Courses:</b> {{ item.courses }}
       </div>
     </div>
     <div v-else-if="character !== undefined">
@@ -35,11 +49,12 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 import DisplayBasicItemDetails from "../Common/Items/DisplayBasicItemDetails.vue";
-import { itemList } from "../../utils/itemUtils";
+import WeaponDetail from "./WeaponDetail.vue";
+import { itemList, weaponTypesList } from "../../utils/itemUtils";
 import { adjustAttrsAPI } from "../../utils/attributeUtils";
 
 export default {
-  components: { DisplayBasicItemDetails },
+  components: { DisplayBasicItemDetails, WeaponDetail },
   name: "itemDetail",
   computed: {
     ...mapState("character", ["character"]),
@@ -53,12 +68,18 @@ export default {
       );
     },
     foundShopItem() {
-      return itemList.find(
+      const item = itemList.find(
         (it) =>
           it.name === this.item.name &&
           it.type === this.item.type &&
           it.bulk === this.item.bulk &&
           it.desc === this.item.desc
+      );
+      if (item || !this.item.category) {
+        return item;
+      }
+      return weaponTypesList.find(
+        (weapon) => weapon.category === this.item.category
       );
     },
     showSellItemButton() {

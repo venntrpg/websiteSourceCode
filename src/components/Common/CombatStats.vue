@@ -94,7 +94,7 @@
         </div>
       </div>
     </div>
-    <div class="tall"></div>
+    <div class="mb-24"></div>
     <!-- CUSTOM SINGLE LINE STATS -->
     <button
       v-if="!isEnemy && character.gift"

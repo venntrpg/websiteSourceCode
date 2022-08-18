@@ -113,6 +113,13 @@ export function serverCharacter2Local(character) {
     }
     return log;
   });
+  result.items = character.items.map((item) => {
+    if (item.weapon_type) {
+      item.weaponType = item.weapon_type;
+      delete item.weapon_type;
+    }
+    return item;
+  });
   return result;
 }
 

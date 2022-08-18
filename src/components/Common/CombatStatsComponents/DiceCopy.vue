@@ -2,7 +2,9 @@
   <div>
     <button
       v-if="combineDice"
+      type="button"
       v-on:click="copyDiscord"
+      v-bind:title="discordCommand"
       class="btn basicBtn wide"
     >
       <div class="basicBtnContents">
@@ -11,13 +13,23 @@
       </div>
     </button>
     <div v-else class="alignRow gap">
-      <button v-on:click="copyDiscord" class="btn basicBtn wide">
+      <button
+        type="button"
+        v-on:click="copyDiscord"
+        v-bind:title="discordCommand"
+        class="btn basicBtn wide"
+      >
         <div class="basicBtnContents">
           <span class="material-icons space">content_copy</span>
           Discord
         </div>
       </button>
-      <button v-on:click="copyRoll20" class="btn basicBtn wide">
+      <button
+        type="button"
+        v-on:click="copyRoll20"
+        v-bind:title="roll20Command"
+        class="btn basicBtn wide"
+      >
         <div class="basicBtnContents">
           <span class="material-icons space">content_copy</span>
           Roll20
@@ -46,13 +58,19 @@ export default {
     combineDice() {
       return this.dice.discord === this.dice.roll20;
     },
+    discordCommand() {
+      return "/roll " + this.dice.discord;
+    },
+    roll20Command() {
+      return "/roll " + this.dice.roll20;
+    },
   },
   methods: {
     copyDiscord() {
-      navigator.clipboard.writeText("/roll " + this.dice.discord);
+      navigator.clipboard.writeText(this.discordCommand);
     },
     copyRoll20() {
-      navigator.clipboard.writeText("/roll " + this.dice.roll20);
+      navigator.clipboard.writeText(this.roll20Command);
     },
   },
 };
