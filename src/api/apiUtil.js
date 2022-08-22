@@ -80,6 +80,44 @@ export function localAttr2Server(attr) {
   return attr.toUpperCase();
 }
 
+export function serverItem2Local(item) {
+  if (item.weapon_type) {
+    item.weaponType = item.weapon_type;
+    delete item.weapon_type;
+  }
+  return item;
+}
+
+export function localItem2Server(item) {
+  const cleaned = {};
+  const basicFields = [
+    "name",
+    "bulk",
+    "desc",
+    "type",
+    "courses",
+    "comment",
+    "category",
+    "range",
+    "attr",
+    "dmg",
+    "special",
+    "equipped",
+  ];
+  basicFields.forEach((field) => {
+    if (field in item) {
+      cleaned[field] = item[field];
+    }
+  });
+  if (item.weaponType) {
+    cleaned.weapon_type = item.weaponType;
+  }
+  if (item.id) {
+    cleaned.id2 = item.id;
+  }
+  return cleaned;
+}
+
 export function serverCharacter2Local(character) {
   const result = {};
   Object.entries(character).forEach((pair) => {
@@ -113,13 +151,7 @@ export function serverCharacter2Local(character) {
     }
     return log;
   });
-  result.items = character.items.map((item) => {
-    if (item.weapon_type) {
-      item.weaponType = item.weapon_type;
-      delete item.weapon_type;
-    }
-    return item;
-  });
+  result.items = character.items.map((item) => serverItem2Local(item));
   return result;
 }
 

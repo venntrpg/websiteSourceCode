@@ -13,8 +13,11 @@ export function checkResponse(response) {
         router.push({ name: "Home" });
       }
     } else {
-      // something went wrong
-      console.log(response);
+      // matches comes from the ability search api, which may fail but return near misses
+      if (!response.matches) {
+        // something went wrong
+        console.log(response);
+      }
     }
     return false;
   }

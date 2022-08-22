@@ -146,7 +146,7 @@ export default {
         return 0;
       }
       return this.character.items
-        .filter((item) => item.type !== "container")
+        .filter((item) => item.type !== "container" && !item.equipped)
         .reduce((sum, item) => sum + item.bulk, 0);
     },
   },

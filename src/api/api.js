@@ -271,6 +271,17 @@ const removeItem = (id, itemId) => {
     });
 };
 
+const updateItem = (id, item) => {
+  const params = {
+    auth_token: getAuth(),
+    id,
+    ...item,
+  };
+  return backendApi.get("update_item", { params }).then((response) => {
+    return response.data;
+  });
+};
+
 // ------------------------- CAMPAIGN APIS ------------------------- //
 
 // https://github.com/joshmiller17/vennt-server#create-a-campaign
@@ -405,6 +416,7 @@ export default {
   updateAbility,
   addItem,
   removeItem,
+  updateItem,
   createCampaign,
   listCampaigns,
   getCampaign,

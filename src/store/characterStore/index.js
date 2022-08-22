@@ -1,8 +1,12 @@
 import api from "@/api/api";
 import router from "@/router/index";
-import { serverCharacter2Local } from "@/api/apiUtil";
+import {
+  localItem2Server,
+  serverItem2Local,
+  serverCharacter2Local,
+} from "@/api/apiUtil";
 import { checkResponse } from "../../utils/storeUtil";
-import { consolidateItemList, convertToValidItem } from "../../utils/itemUtils";
+import { consolidateItemList } from "../../utils/itemUtils";
 import { CHAR_LOCAL_STORAGE, COG_LOCAL_STORAGE } from "../../utils/constants";
 
 const state = {
@@ -57,7 +61,15 @@ const mutations = {
     );
   },
   appendItem(state, item) {
-    state.character.items.push(item);
+    const localItem = serverItem2Local(item);
+    state.character.items.push(localItem);
+  },
+  updateItem(state, item) {
+    const localItem = serverItem2Local(item);
+    const itemList = [...state.character.items];
+    const idx = itemList.findIndex((search) => search.id === localItem.id);
+    itemList[idx] = localItem;
+    state.character.items = itemList;
   },
   setSearchAbility(state, ability) {
     state.searchAbility = ability;
@@ -249,7 +261,7 @@ const actions = {
     { commit, dispatch },
     { id, item, refreshCharacter = false, redirectToDetail = false }
   ) => {
-    return api.addItem(id, convertToValidItem(item)).then((response) => {
+    return api.addItem(id, localItem2Server(item)).then((response) => {
       if (checkResponse(response) && response.id) {
         if (refreshCharacter) {
           // regrab character info with new item when `refreshCharacter` is true
@@ -279,6 +291,14 @@ const actions = {
             params: { id, section: "inventory" },
           });
         }
+      }
+    });
+  },
+
+  updateItem: ({ commit }, { id, item }) => {
+    return api.updateItem(id, localItem2Server(item)).then((response) => {
+      if (checkResponse(response)) {
+        commit("updateItem", response.value);
       }
     });
   },

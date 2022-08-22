@@ -50,7 +50,7 @@
 import { mapState } from "vuex";
 import indefinite from "indefinite";
 import WeaponDetail from "./WeaponDetail.vue";
-import { convertToValidItem, weaponTypesList } from "../../utils/itemUtils";
+import { weaponTypesList } from "../../utils/itemUtils";
 import { adjustAttrsAPI } from "../../utils/attributeUtils";
 
 export default {
@@ -94,7 +94,7 @@ export default {
       const named = { name: this.weaponName, ...this.weapon };
       this.$store.dispatch("character/addItem", {
         id: this.character.id,
-        item: convertToValidItem(convertToValidItem(named)),
+        item: named,
         redirectToDetail: true,
       });
       this.weaponName = "";

@@ -1,55 +1,24 @@
 <template>
   <div>
-    <button
-      v-if="combineDice"
-      type="button"
-      v-on:click="copyDiscord"
-      v-bind:title="discordCommand"
-      class="btn basicBtn wide"
-    >
-      <div class="basicBtnContents">
-        <span class="material-icons space">content_copy</span>
-        Roll command
-      </div>
-    </button>
+    <dice-copy-button v-if="combineDice" :dice="dice.discord" />
     <div v-else class="alignRow gap">
-      <button
-        type="button"
-        v-on:click="copyDiscord"
-        v-bind:title="discordCommand"
-        class="btn basicBtn wide"
-      >
-        <div class="basicBtnContents">
-          <span class="material-icons space">content_copy</span>
-          Discord
-        </div>
-      </button>
-      <button
-        type="button"
-        v-on:click="copyRoll20"
-        v-bind:title="roll20Command"
-        class="btn basicBtn wide"
-      >
-        <div class="basicBtnContents">
-          <span class="material-icons space">content_copy</span>
-          Roll20
-        </div>
-      </button>
+      <dice-copy-button :dice="dice.discord" text="Discord" />
+      <dice-copy-button :dice="dice.roll20" text="Roll20" />
     </div>
   </div>
 </template>
 
 <script>
+import DiceCopyButton from "./DiceCopyButton.vue";
 import { defaultDice } from "../../../utils/diceUtils";
+
 export default {
+  components: { DiceCopyButton },
   name: "DiceCopy",
   props: {
-    character: Object,
-    attr: String,
-    settings: {
-      type: Object,
-      default: () => {},
-    },
+    character: { type: Object, required: true },
+    attr: { type: String, required: false },
+    settings: { type: Object, default: () => {} },
   },
   computed: {
     dice() {
@@ -57,20 +26,6 @@ export default {
     },
     combineDice() {
       return this.dice.discord === this.dice.roll20;
-    },
-    discordCommand() {
-      return "/roll " + this.dice.discord;
-    },
-    roll20Command() {
-      return "/roll " + this.dice.roll20;
-    },
-  },
-  methods: {
-    copyDiscord() {
-      navigator.clipboard.writeText(this.discordCommand);
-    },
-    copyRoll20() {
-      navigator.clipboard.writeText(this.roll20Command);
     },
   },
 };

@@ -100,7 +100,7 @@
 <script>
 import { mapState } from "vuex";
 import CheckBox from "../Common/CheckBox.vue";
-import { itemList, convertToValidItem } from "../../utils/itemUtils";
+import { itemList } from "../../utils/itemUtils";
 import { adjustAttrsAPI } from "../../utils/attributeUtils";
 
 const ITEM_TYPE_EQUIPMENT = "equipment";
@@ -209,7 +209,7 @@ export default {
     buyButton(item) {
       this.$store.dispatch("character/addItem", {
         id: this.character.id,
-        item: convertToValidItem(item),
+        item: item,
         refreshCharacter: true,
       });
       if (this.spendOnPurchase && "sp" in item) {
