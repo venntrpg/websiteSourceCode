@@ -71,6 +71,9 @@ export default {
       return this.weapon.id !== undefined;
     },
     hasProficiency() {
+      if (!this.weapon.category) {
+        return false;
+      }
       const possibleNames = [
         `${this.weapon.category} Specialist`,
         `${this.weapon.category} Weapon Proficiency`,
@@ -94,7 +97,7 @@ export default {
       return Math.max(this.attrBonus * 10 + (this.hasProficiency ? 10 : 0), 0);
     },
     dice() {
-      const matched = this.weapon.dmg.match(/\d*d\d+([+-]\d+)*/gm);
+      const matched = this.weapon.dmg.match(/\d*d\d+([+-]\d+)*/gm) || [];
       if (matched.length === 0) {
         return false;
       }

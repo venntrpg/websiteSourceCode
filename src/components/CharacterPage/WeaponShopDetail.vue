@@ -101,5 +101,4 @@ export default {
     },
   },
 };
-// NOTE: regex for pulling out basic dice roll details: /\d+d\d+[+-]*\d*/gm
 </script>

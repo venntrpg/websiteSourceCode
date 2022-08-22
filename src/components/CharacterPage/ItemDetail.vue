@@ -75,7 +75,7 @@ export default {
           it.bulk === this.item.bulk &&
           it.desc === this.item.desc
       );
-      if (item || !this.item.category) {
+      if (item) {
         return item;
       }
       return weaponTypesList.find(

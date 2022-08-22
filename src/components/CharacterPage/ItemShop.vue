@@ -209,7 +209,7 @@ export default {
     buyButton(item) {
       this.$store.dispatch("character/addItem", {
         id: this.character.id,
-        item: item,
+        item,
         refreshCharacter: true,
       });
       if (this.spendOnPurchase && "sp" in item) {
