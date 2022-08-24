@@ -26,3 +26,4 @@ export const SECTION_INVENTORY = "inventory";
 export const SECTION_SETTINGS = "settings";
 export const SECTION_SHOP = "shop";
 export const SECTION_WEAPON_SHOP = "weaponShop";
+export const SECTION_COMBAT = "combat";

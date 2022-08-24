@@ -26,6 +26,13 @@
           <span class="material-icons">backpack</span>
         </router-link>
         <router-link
+          :to="{ name: 'Character', params: { id, section: combat } }"
+          title="Combat (c)"
+          class="btn navButton subNavButton"
+        >
+          <span class="material-icons">sports_kabaddi</span>
+        </router-link>
+        <router-link
           :to="{ name: 'Character', params: { id, section: settings } }"
           title="Character Settings (h)"
           class="btn navButton subNavButton"
@@ -79,6 +86,7 @@
         <item-shop v-else-if="shopPage" />
         <weapon-shop v-else-if="weaponShopPage" />
         <character-settings v-else-if="settingsPage" />
+        <combat v-else-if="combatPage" />
         <combat-stats
           v-else-if="statsPage"
           :character="character"
@@ -109,6 +117,7 @@ import ItemShop from "../components/CharacterPage/ItemShop.vue";
 import CharacterSettings from "../components/CharacterPage/CharacterSettings.vue";
 import Notes from "../components/CharacterPage/Notes.vue";
 import AttrModal from "../components/Common/AttrModal.vue";
+import Combat from "../components/CharacterPage/Combat.vue";
 import { attrIsEditable } from "../api/apiUtil";
 import {
   SECTION_ABILITIES,
@@ -117,6 +126,7 @@ import {
   SECTION_SHOP,
   SECTION_STATS,
   SECTION_WEAPON_SHOP,
+  SECTION_COMBAT,
 } from "../utils/constants";
 
 export default {
@@ -131,6 +141,7 @@ export default {
     Notes,
     AttrModal,
     WeaponShop,
+    Combat,
   },
   directives: {
     responsive: ResponsiveDirective,
@@ -191,6 +202,9 @@ export default {
     settings() {
       return SECTION_SETTINGS;
     },
+    combat() {
+      return SECTION_COMBAT;
+    },
     statsPage() {
       // really only makes sense for mobile
       return this.$route.params.section === SECTION_STATS;
@@ -210,9 +224,16 @@ export default {
     weaponShopPage() {
       return this.$route.params.section === SECTION_WEAPON_SHOP;
     },
+    combatPage() {
+      return this.$route.params.section === SECTION_COMBAT;
+    },
     showRightSideBar() {
       return (
-        (this.abilitiesPage || this.inventoryPage || this.weaponShopPage) &&
+        (this.abilitiesPage ||
+          this.inventoryPage ||
+          this.shopPage ||
+          this.weaponShopPage ||
+          this.combatPage) &&
         this.$route.params.detail !== undefined
       );
     },
@@ -273,6 +294,14 @@ export default {
             this.$router.push({
               name: "Character",
               params: { id: this.id, section: SECTION_INVENTORY },
+            });
+          }
+          break;
+        case "c":
+          if (!this.combatPage) {
+            this.$router.push({
+              name: "Character",
+              params: { id: this.id, section: SECTION_COMBAT },
             });
           }
           break;

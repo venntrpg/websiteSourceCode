@@ -12,10 +12,11 @@
         Close
       </div>
     </router-link>
-    <div class="panel">
+    <div class="ml-16 mr-16">
       <ability-detail v-if="abilitiesPage" />
       <item-detail v-else-if="inventoryPage" />
       <weapon-shop-detail v-else-if="weaponShopPage" />
+      <item-shop-detail v-else-if="itemShopPage" />
     </div>
   </div>
 </template>
@@ -24,10 +25,12 @@
 import AbilityDetail from "./AbilityDetail.vue";
 import ItemDetail from "./ItemDetail.vue";
 import WeaponShopDetail from "./WeaponShopDetail.vue";
+import ItemShopDetail from "./ItemShopDetail.vue";
 import {
   SECTION_ABILITIES,
   SECTION_INVENTORY,
   SECTION_WEAPON_SHOP,
+  SECTION_SHOP,
 } from "../../utils/constants";
 
 export default {
@@ -36,6 +39,7 @@ export default {
     AbilityDetail,
     ItemDetail,
     WeaponShopDetail,
+    ItemShopDetail,
   },
   computed: {
     abilitiesPage() {
@@ -47,13 +51,9 @@ export default {
     weaponShopPage() {
       return this.$route.params.section === SECTION_WEAPON_SHOP;
     },
+    itemShopPage() {
+      return this.$route.params.section === SECTION_SHOP;
+    },
   },
 };
 </script>
-
-<style>
-.panel {
-  margin-left: 16px;
-  margin-right: 16px;
-}
-</style>

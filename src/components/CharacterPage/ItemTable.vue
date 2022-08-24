@@ -17,9 +17,9 @@
       class="alignRow tableItems"
     >
       <div class="tableData">
-        <div class="itemName">{{ item.name }}</div>
+        <div class="itemName">{{ itemName(item) }}</div>
         <div class="itemCount number">{{ item.ids.length }}</div>
-        <div class="itemDesc">{{ item.desc }}</div>
+        <div class="itemDesc">{{ itemDesc(item) }}</div>
       </div>
       <router-link :to="itemLink(item)" class="btn basicBtn link">
         <div class="basicBtnContents">
@@ -34,6 +34,7 @@
 
 <script>
 import { SECTION_INVENTORY } from "../../utils/constants";
+import { improveTextForDisplay } from "../../utils/characterStringFormatting";
 export default {
   name: "ItemTable",
   props: {
@@ -60,6 +61,12 @@ export default {
     },
   },
   methods: {
+    itemName(item) {
+      return improveTextForDisplay(item.name);
+    },
+    itemDesc(item) {
+      return improveTextForDisplay(item.desc);
+    },
     itemOpenned(item) {
       return this.$route.params.detail === item.id;
     },

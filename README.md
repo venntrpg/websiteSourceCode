@@ -26,11 +26,30 @@ yarn lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
+## Todo:
 
-Todo
+### Character sheet:
+
+- [ ] (High) Update item shop so that it opens a side panel when you click the button. Allows you to buy multiple copies of the item
+- [ ] (High) Add "Actions" page which includes actions you can take immediately. Include unarmed, improvised, any grenades in inventory, and any equipped weapons. Also, consumable items & abilities which are actively usable. Also basic actions (move, assist, delay, attack)
+- [ ] (Medium, Easy) Make component for displaying item's descriptions. If its a grenade, show its special instead
+- [ ] (Medium) Add armor to item shop & add any custom fields to item objects if any are needed. Support burden automatically. [https://vennt.fandom.com/wiki/Armor](https://vennt.fandom.com/wiki/Armor)
+- [ ] Show list of owned ammo / ammunition on weapons with the "ranged" weaponType (except grenades or "consumable").
+- [ ] (Medium) When an abilitiy is usable, when you use it it should automatically subtract any resources it used (mp, vim, etc)
+- [ ] (Medium) Improve custom item insertion. Keep a quick insertion ability & allow more complex items.
+- [ ] (Medium) Implement custom ability creation.
+- [ ] (Low) Allow users to add flavor information about character. (backstory etc)
+- [ ] (Low) Add a way to store character's flux information
+- [ ] (Low) Add greivous injury support.
+- [ ] (Low) Support weaponsmithing.
+- [ ] (Low) Hide parts of the character sheet depending on what paths have been unlocked
+- [ ] (Low) Add some way to show which abilities have been unlocked. Also add some sort of visualization of the abilities you have taken (e.g. a tree or something would be very cool)
+
+### General:
+
 - [x] move toolTip css to main / generally try to consolidate css
 - [x] split vuex into seperate modules
-- [ ] keep splitting components if possible
+- [x] keep splitting components if possible
 - [x] update double confirm button with a confirmation modal floating in the middle of the screen
 - [x] convert divs to labels for inputs
 - [x] use mustaches when possible {{ }} to replace v-text & v-html

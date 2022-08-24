@@ -24,8 +24,8 @@
     </div>
     <div v-if="ability.effect" class="mb-16">
       <p><b>Effect:</b></p>
-      <p v-if="ability.flavor" class="textBlock">
-        <i>{{ ability.flavor }}</i>
+      <p v-if="flavorStr" class="textBlock">
+        <i>{{ flavorStr }}</i>
       </p>
       <parse-ability-effect :ability="ability" class="textBlock" />
     </div>
@@ -34,6 +34,7 @@
 
 <script>
 import ParseAbilityEffect from "./ParseAbilityEffect.vue";
+import { improveTextForDisplay } from "../../../utils/characterStringFormatting";
 export default {
   components: { ParseAbilityEffect },
   name: "DisplayBasicAbilityDetails",
@@ -58,6 +59,12 @@ export default {
         return this.ability.cast_dl;
       }
       return `[ ${this.ability.cast_dl[0]} / ${this.ability.cast_dl[1]} / ${this.ability.cast_dl[2]} ]`;
+    },
+    flavorStr() {
+      if (!this.ability.flavor) {
+        return "";
+      }
+      return improveTextForDisplay(this.ability.flavor);
     },
   },
 };

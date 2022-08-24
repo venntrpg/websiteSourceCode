@@ -78,10 +78,20 @@
           class="alignRow tableItems"
         >
           <div class="tableData">
-            <div class="itemName">{{ item.name }}</div>
+            <div class="itemName">{{ itemName(item) }}</div>
             <div class="itemCost">{{ item.cost }}</div>
-            <div class="itemDesc">{{ item.desc }}</div>
+            <div class="itemDesc">{{ itemDesc(item) }}</div>
           </div>
+          <router-link :to="itemLink(item)" class="btn basicBtn link">
+            <div class="basicBtnContents">
+              <span class="material-icons">{{
+                itemOpenned(item)
+                  ? "keyboard_arrow_left"
+                  : "keyboard_arrow_right"
+              }}</span>
+            </div>
+          </router-link>
+          <!--
           <button
             v-on:click="buyButton(item)"
             :disabled="buyButtonDisabled(item)"
@@ -91,6 +101,7 @@
               <span class="material-icons">shopping_bag</span>
             </div>
           </button>
+          -->
         </div>
       </div>
     </div>
@@ -102,6 +113,8 @@ import { mapState } from "vuex";
 import CheckBox from "../Common/CheckBox.vue";
 import { itemList } from "../../utils/itemUtils";
 import { adjustAttrsAPI } from "../../utils/attributeUtils";
+import { improveTextForDisplay } from "../../utils/characterStringFormatting";
+import { SECTION_SHOP } from "../../utils/constants";
 
 const ITEM_TYPE_EQUIPMENT = "equipment";
 const ITEM_TYPE_CONSUMABLE = "consumable";
@@ -220,6 +233,32 @@ export default {
           `Purchased a ${item.name}`
         );
       }
+    },
+    itemName(item) {
+      return improveTextForDisplay(item.name);
+    },
+    itemDesc(item) {
+      const desc = item.category === "Grenade" ? item.special : item.desc;
+      return improveTextForDisplay(desc);
+    },
+    itemOpenned(item) {
+      return this.$route.params.detail === item.name;
+    },
+    itemLink(item) {
+      if (this.itemOpenned(item)) {
+        return {
+          name: "Character",
+          params: { id: this.character.id, section: SECTION_SHOP },
+        };
+      }
+      return {
+        name: "Character",
+        params: {
+          id: this.character.id,
+          section: SECTION_SHOP,
+          detail: item.name,
+        },
+      };
     },
   },
 };

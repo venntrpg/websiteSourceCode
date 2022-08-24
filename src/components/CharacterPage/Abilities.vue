@@ -23,7 +23,7 @@
         class="alignRow tableItems"
       >
         <div class="tableData">
-          <div class="abilityName">{{ ability.name }}</div>
+          <div class="abilityName">{{ abilityName(ability) }}</div>
           <div class="abilityActivation">
             {{ ability.activation }}
           </div>
@@ -106,6 +106,7 @@
 import { mapState } from "vuex";
 import Fraction from "../Common/CombatStatsComponents/Fraction.vue";
 import ParseAbilityEffect from "../Common/Abilities/ParseAbilityEffect.vue";
+import { improveTextForDisplay } from "../../utils/characterStringFormatting";
 
 export default {
   name: "Abilities",
@@ -159,7 +160,11 @@ export default {
         return 0;
       }
       return this.character.abilities.reduce((sum, ability) => {
-        if (!ability.purchase || ability.purchase.includes("sp")) {
+        if (
+          !ability.purchase ||
+          ability.purchase.includes("sp") ||
+          ability.name === "Alchemist's Training" // Alchemist's Training is free with Tinker's Training
+        ) {
           // do not include sp here
           return sum;
         }
@@ -249,6 +254,9 @@ export default {
     },
   },
   methods: {
+    abilityName(ability) {
+      return improveTextForDisplay(ability.name);
+    },
     abilitySearch() {
       // would be cool if this automatically looked up input, but we need to be careful not to run into rate limiting issues
       if (this.abilityField !== "" && this.lastSearch !== this.abilityField) {

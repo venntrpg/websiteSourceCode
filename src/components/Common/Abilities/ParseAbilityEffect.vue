@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { improveTextForDisplay } from "../../../utils/characterStringFormatting";
 export default {
   name: "parseAbilityEffect",
   props: {
@@ -13,19 +14,20 @@ export default {
       if (!this.ability) {
         return "";
       }
-      let result = "";
-      let inList = false;
 
       // pre-process special strings
+      let effect = improveTextForDisplay(this.ability.effect);
 
       // do not allow line splits on triple digit collections used in things like spells.
       // E.g. "[ 3 / 5 / 7 ]"
       const tripleDigitRegex = /\[\s\+?-?\d+\s\/\s\+?-?\d+\s\/\s\+?-?\d+\s\]/g;
-      const effect = this.ability.effect.replaceAll(tripleDigitRegex, (match) =>
+      effect = effect.replaceAll(tripleDigitRegex, (match) =>
         match.replaceAll(/\s/gi, "&nbsp;")
       );
 
       // TODO: Maybe also filter through this word by word and auto-generate links to the wiki for common words.
+      let result = "";
+      let inList = false;
       for (const line of effect.split("\n")) {
         if (line.length <= 0) {
           continue;

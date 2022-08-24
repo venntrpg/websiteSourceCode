@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h2>{{ item.name }}</h2>
-    <div class="mb-16"><b>Description:</b> {{ item.desc }}</div>
+    <h2>{{ itemName }}</h2>
+    <div class="mb-16"><b>Description:</b> {{ itemDesc }}</div>
     <div class="mb-16">
       <b>{{ bulkLabel }}:</b> <span class="number">{{ item.bulk }}</span>
     </div>
@@ -12,12 +12,19 @@
 </template>
 
 <script>
+import { improveTextForDisplay } from "../../../utils/characterStringFormatting";
 export default {
   name: "DisplayBasicItemDetails",
   props: {
     item: Object,
   },
   computed: {
+    itemName() {
+      return improveTextForDisplay(this.item.name);
+    },
+    itemDesc() {
+      return improveTextForDisplay(this.item.desc);
+    },
     bulkLabel() {
       return this.item && this.item.type && this.item.type === "container"
         ? "Carrying Capacity"
