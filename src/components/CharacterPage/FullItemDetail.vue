@@ -14,7 +14,7 @@
       </h2>
       <weapon-detail :weapon="item" />
     </div>
-    <display-basic-item-details v-else :item="item" />
+    <display-basic-item-details v-else :item="item" :prefix="prefix" />
     <div v-if="item.courses" class="mt-16 mb-16">
       <b>Courses:</b> {{ item.courses }}
     </div>
@@ -24,14 +24,17 @@
 <script>
 import DisplayBasicItemDetails from "../Common/Items/DisplayBasicItemDetails.vue";
 import WeaponDetail from "./WeaponDetail.vue";
-import { improveTextForDisplay } from "../../utils/characterStringFormatting";
+import { prefixName } from "../../utils/itemUtils";
 export default {
   components: { WeaponDetail, DisplayBasicItemDetails },
   name: "FullItemDetail",
-  props: { item: { type: Object, required: true } },
+  props: {
+    item: { type: Object, required: true },
+    prefix: { type: String, default: "" },
+  },
   computed: {
     itemName() {
-      return improveTextForDisplay(this.item.name);
+      return prefixName(this.item, this.prefix, true);
     },
   },
 };

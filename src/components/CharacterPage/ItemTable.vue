@@ -19,7 +19,7 @@
       <div class="tableData">
         <div class="itemName">{{ itemName(item) }}</div>
         <div class="itemCount number">{{ item.ids.length }}</div>
-        <div class="itemDesc">{{ itemDesc(item) }}</div>
+        <div class="itemDesc"><display-item-desc :item="item" /></div>
       </div>
       <router-link :to="itemLink(item)" class="btn basicBtn link">
         <div class="basicBtnContents">
@@ -33,9 +33,11 @@
 </template>
 
 <script>
+import DisplayItemDesc from "../Common/Items/DisplayItemDesc.vue";
 import { SECTION_INVENTORY } from "../../utils/constants";
 import { improveTextForDisplay } from "../../utils/characterStringFormatting";
 export default {
+  components: { DisplayItemDesc },
   name: "ItemTable",
   props: {
     id: {
@@ -63,9 +65,6 @@ export default {
   methods: {
     itemName(item) {
       return improveTextForDisplay(item.name);
-    },
-    itemDesc(item) {
-      return improveTextForDisplay(item.desc);
     },
     itemOpenned(item) {
       return this.$route.params.detail === item.id;

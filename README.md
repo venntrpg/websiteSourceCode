@@ -30,11 +30,12 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Character sheet:
 
-- [ ] (High) Update item shop so that it opens a side panel when you click the button. Allows you to buy multiple copies of the item
-- [ ] (High) Add "Actions" page which includes actions you can take immediately. Include unarmed, improvised, any grenades in inventory, and any equipped weapons. Also, consumable items & abilities which are actively usable. Also basic actions (move, assist, delay, attack)
-- [ ] (Medium, Easy) Make component for displaying item's descriptions. If its a grenade, show its special instead
+- [x] (Medium, Easy) Make component for displaying item's descriptions. If its a grenade, show its special instead
+- [x] (High) Update item shop so that it opens a side panel when you click the button. Allows you to buy multiple copies of the item
+- [ ] (High) Add "Combat" page which includes actions you can take immediately. Include unarmed, improvised, any grenades in inventory, and any equipped weapons. Also, consumable items & abilities which are actively usable. Also basic actions (move, assist, delay, attack)
 - [ ] (Medium) Add armor to item shop & add any custom fields to item objects if any are needed. Support burden automatically. [https://vennt.fandom.com/wiki/Armor](https://vennt.fandom.com/wiki/Armor)
-- [ ] Show list of owned ammo / ammunition on weapons with the "ranged" weaponType (except grenades or "consumable").
+- [ ] (Medium) Change scrolling behavior when you open a side panel so that the table scrolls so the item you just openned is still in view, and in reverse when you close the side panel
+- [ ] (Medium) Show list of owned ammo / ammunition on weapons with the "ranged" weaponType (except grenades or "consumable").
 - [ ] (Medium) When an abilitiy is usable, when you use it it should automatically subtract any resources it used (mp, vim, etc)
 - [ ] (Medium) Improve custom item insertion. Keep a quick insertion ability & allow more complex items.
 - [ ] (Medium) Implement custom ability creation.

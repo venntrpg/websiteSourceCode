@@ -18,7 +18,7 @@
       </button>
     </div>
     <div v-if="showSearchSettings" class="card column padded">
-      <h4 class="mt-0">Filter Item Types:</h4>
+      <h4 class="mt-0 mb-0">Filter Item Types:</h4>
       <check-box
         :checked="showEquipment"
         :text="'Show Equipment'"
@@ -43,20 +43,6 @@
         :highlight="true"
         @toggled="toggleShowWeapons"
       />
-      <div class="seperator"></div>
-      <check-box
-        :checked="spendOnPurchase"
-        :text="'Spend SP on item purchase'"
-        :highlight="true"
-        @toggled="toggleSpendOnPurchase"
-      />
-      <div class="seperator"></div>
-      <check-box
-        :checked="hideExpensive"
-        :text="'Hide items that are too expensive for you'"
-        :highlight="true"
-        @toggled="toggleHideExpensive"
-      />
     </div>
     <div v-for="(items, section) in sectionsMap" v-bind:key="section">
       <h2>{{ section }}</h2>
@@ -80,7 +66,7 @@
           <div class="tableData">
             <div class="itemName">{{ itemName(item) }}</div>
             <div class="itemCost">{{ item.cost }}</div>
-            <div class="itemDesc">{{ itemDesc(item) }}</div>
+            <div class="itemDesc"><display-item-desc :item="item" /></div>
           </div>
           <router-link :to="itemLink(item)" class="btn basicBtn link">
             <div class="basicBtnContents">
@@ -91,17 +77,6 @@
               }}</span>
             </div>
           </router-link>
-          <!--
-          <button
-            v-on:click="buyButton(item)"
-            :disabled="buyButtonDisabled(item)"
-            class="btn basicBtn"
-          >
-            <div class="basicBtnContents">
-              <span class="material-icons">shopping_bag</span>
-            </div>
-          </button>
-          -->
         </div>
       </div>
     </div>
@@ -111,8 +86,8 @@
 <script>
 import { mapState } from "vuex";
 import CheckBox from "../Common/CheckBox.vue";
+import DisplayItemDesc from "../Common/Items/DisplayItemDesc.vue";
 import { itemList } from "../../utils/itemUtils";
-import { adjustAttrsAPI } from "../../utils/attributeUtils";
 import { improveTextForDisplay } from "../../utils/characterStringFormatting";
 import { SECTION_SHOP } from "../../utils/constants";
 
@@ -122,7 +97,7 @@ const ITEM_TYPE_CONTAINER = "container";
 const ITEM_TYPE_WEAPON = "weapon";
 
 export default {
-  components: { CheckBox },
+  components: { CheckBox, DisplayItemDesc },
   name: "ItemShop",
   data() {
     return {
@@ -133,8 +108,6 @@ export default {
       showConsumables: false,
       showContainers: false,
       showWeapons: false,
-      spendOnPurchase: true,
-      hideExpensive: false,
     };
   },
   computed: {
@@ -169,15 +142,11 @@ export default {
       }
       const sections = {};
       itemList
-        .filter((item) => {
-          if (this.hideExpensive && this.buyButtonDisabled(item)) {
-            return false;
-          }
-          return (
+        .filter(
+          (item) =>
             item.name.toLowerCase().includes(this.activeSearchTerm) &&
             typeFilters.includes(item.type)
-          );
-        })
+        )
         .forEach((item) => {
           if (item.section in sections) {
             sections[item.section].push(item);
@@ -208,38 +177,8 @@ export default {
     toggleShowWeapons() {
       this.showWeapons = !this.showWeapons;
     },
-    toggleSpendOnPurchase() {
-      this.spendOnPurchase = !this.spendOnPurchase;
-    },
-    toggleHideExpensive() {
-      this.hideExpensive = !this.hideExpensive;
-    },
-    buyButtonDisabled(item) {
-      return (
-        this.spendOnPurchase && "sp" in item && item.sp > this.character.sp
-      );
-    },
-    buyButton(item) {
-      this.$store.dispatch("character/addItem", {
-        id: this.character.id,
-        item,
-        refreshCharacter: true,
-      });
-      if (this.spendOnPurchase && "sp" in item) {
-        adjustAttrsAPI(
-          this.character,
-          { sp: -item.sp },
-          true,
-          `Purchased a ${item.name}`
-        );
-      }
-    },
     itemName(item) {
       return improveTextForDisplay(item.name);
-    },
-    itemDesc(item) {
-      const desc = item.category === "Grenade" ? item.special : item.desc;
-      return improveTextForDisplay(desc);
     },
     itemOpenned(item) {
       return this.$route.params.detail === item.name;

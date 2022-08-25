@@ -13,14 +13,17 @@
 
 <script>
 import { improveTextForDisplay } from "../../../utils/characterStringFormatting";
+import { prefixName } from "../../../utils/itemUtils";
+
 export default {
   name: "DisplayBasicItemDetails",
   props: {
-    item: Object,
+    item: { type: Object, required: true },
+    prefix: { type: String, default: "" },
   },
   computed: {
     itemName() {
-      return improveTextForDisplay(this.item.name);
+      return prefixName(this.item, this.prefix, true);
     },
     itemDesc() {
       return improveTextForDisplay(this.item.desc);
