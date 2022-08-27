@@ -36,6 +36,35 @@ export function consolidateItemList(givenItems) {
   return items;
 }
 
+export function calculateItemArmor(items) {
+  if (!items) {
+    return undefined;
+  }
+  const res = { armor: 0, burden: 0, shield: 0, items: [] };
+  const releventTypes = ["armor", "shield"];
+  const key2Match = {
+    armor: /Armor Value: (\d+)/,
+    burden: /Burden: (\d+)/,
+    shield: /Shield Bonus: ([+-]*\d+)/,
+  };
+  items.forEach((item) => {
+    // only include equipped armor & shields
+    if (item.type && releventTypes.includes(item.type) && item.equipped) {
+      Object.entries(key2Match).forEach(([key, regex]) => {
+        const found = item.desc.match(regex);
+        if (found && found.length > 1) {
+          const num = parseInt(found[1]); // use capture group
+          if (!isNaN(num)) {
+            res[key] += num;
+          }
+        }
+      });
+      res.items.push(item);
+    }
+  });
+  return res;
+}
+
 export function prefixName(item, action = "", cleanup = false) {
   let name = item.name;
   if (action !== "") {

@@ -14,6 +14,8 @@
     <div
       v-for="(item, index) in items"
       v-bind:key="index"
+      v-bind:id="itemID(item)"
+      v-bind:class="itemOpenned(item) ? 'selected' : ''"
       class="alignRow tableItems"
     >
       <div class="tableData">
@@ -35,7 +37,10 @@
 <script>
 import DisplayItemDesc from "../Common/Items/DisplayItemDesc.vue";
 import { SECTION_INVENTORY } from "../../utils/constants";
-import { improveTextForDisplay } from "../../utils/characterStringFormatting";
+import {
+  improveTextForDisplay,
+  stringToLinkID,
+} from "../../utils/characterStringFormatting";
 export default {
   components: { DisplayItemDesc },
   name: "ItemTable",
@@ -63,6 +68,9 @@ export default {
     },
   },
   methods: {
+    itemID(item) {
+      return stringToLinkID(item.id);
+    },
     itemName(item) {
       return improveTextForDisplay(item.name);
     },

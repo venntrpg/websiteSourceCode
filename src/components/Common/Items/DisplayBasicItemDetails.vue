@@ -1,6 +1,9 @@
 <template>
   <div>
     <h2>{{ itemName }}</h2>
+    <div v-if="item.special" class="mb-16">
+      <i>{{ item.special }}</i>
+    </div>
     <div class="mb-16"><b>Description:</b> {{ itemDesc }}</div>
     <div class="mb-16">
       <b>{{ bulkLabel }}:</b> <span class="number">{{ item.bulk }}</span>

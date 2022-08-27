@@ -6,7 +6,7 @@ import {
   serverCharacter2Local,
 } from "@/api/apiUtil";
 import { checkResponse } from "../../utils/storeUtil";
-import { consolidateItemList } from "../../utils/itemUtils";
+import { consolidateItemList, calculateItemArmor } from "../../utils/itemUtils";
 import { CHAR_LOCAL_STORAGE, COG_LOCAL_STORAGE } from "../../utils/constants";
 
 const state = {
@@ -20,6 +20,9 @@ const state = {
 const getters = {
   consolidatedItems: (state) => {
     return consolidateItemList(state.character.items);
+  },
+  itemArmorMap: (state) => {
+    return calculateItemArmor(state.character.items);
   },
 };
 

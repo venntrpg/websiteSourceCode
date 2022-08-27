@@ -2,7 +2,7 @@
   <div v-if="item">
     <full-item-detail :item="item" :prefix="'Buy'" />
     <div class="seperator mt-24 mb-24" />
-    <form>
+    <form class="mb-64">
       <p v-if="countOwned > 0">
         You already have {{ countOwned }} {{ countName(countOwned) }}
       </p>

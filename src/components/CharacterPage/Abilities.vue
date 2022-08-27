@@ -20,6 +20,8 @@
       <div
         v-for="(ability, index) in sortedAbilities"
         v-bind:key="index"
+        v-bind:id="abilityID(ability)"
+        v-bind:class="abilityOpenned(ability) ? 'selected' : ''"
         class="alignRow tableItems"
       >
         <div class="tableData">
@@ -41,7 +43,11 @@
           class="btn basicBtn link"
         >
           <div class="basicBtnContents">
-            <span class="material-icons">keyboard_arrow_right</span>
+            <span class="material-icons">{{
+              abilityOpenned(ability)
+                ? "keyboard_arrow_left"
+                : "keyboard_arrow_right"
+            }}</span>
           </div>
         </router-link>
       </div>
@@ -106,7 +112,10 @@
 import { mapState } from "vuex";
 import Fraction from "../Common/CombatStatsComponents/Fraction.vue";
 import ParseAbilityEffect from "../Common/Abilities/ParseAbilityEffect.vue";
-import { improveTextForDisplay } from "../../utils/characterStringFormatting";
+import {
+  improveTextForDisplay,
+  stringToLinkID,
+} from "../../utils/characterStringFormatting";
 
 export default {
   name: "Abilities",
@@ -254,6 +263,12 @@ export default {
     },
   },
   methods: {
+    abilityID(ability) {
+      return stringToLinkID(ability.name);
+    },
+    abilityOpenned(ability) {
+      return this.$route.params.detail === ability.name;
+    },
     abilityName(ability) {
       return improveTextForDisplay(ability.name);
     },

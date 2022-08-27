@@ -132,9 +132,15 @@
         class="btn basicBtn attrButton noSelect"
         v-bind:class="attrButtonClass(attr)"
       >
-        <div class="basicBtnContents attrButtonContents">
-          <span class="attrLabelWide">{{ attrDisplayName(attr) }}:</span>
-          <div class="number">{{ character[attr] }}</div>
+        <div class="basicBtnContents attrButtonContents alignRow">
+          <div class="alignRow">
+            <div class="attrLabelWide">{{ attrDisplayName(attr) }}:</div>
+            <div class="number">{{ attrDisplayVal(attr) }}</div>
+          </div>
+          <div v-if="secondaryStatAttrs.includes(attr)" class="alignRow ml-48">
+            <div class="attrLabelWide">{{ attrSecondaryField(attr) }}:</div>
+            <div class="number">{{ attrSecondaryDisplay(attr) }}</div>
+          </div>
         </div>
       </button>
       <div v-if="showDropDown(attr)" class="card diceDropDown left right">
@@ -151,6 +157,14 @@
               :attr="attr"
               :character="character"
               :useCopyableDice="useCopyableDice"
+            />
+            <armor-section
+              v-else-if="
+                attr === 'armor' &&
+                itemArmorMap &&
+                itemArmorMap.items.length > 0
+              "
+              :itemArmorMap="itemArmorMap"
             />
             <attr-help v-else :attr="attr" />
             <div class="seperator mt-8 mb-8"></div>
@@ -186,6 +200,7 @@ import AttrHelp from "./CombatStatsComponents/AttrHelp.vue";
 import AdjustAttr from "./CombatStatsComponents/AdjustAttr.vue";
 import AdjustAttrLink from "./CombatStatsComponents/AdjustAttrLink.vue";
 import DiceSection from "./CombatStatsComponents/DiceSection.vue";
+import ArmorSection from "./CombatStatsComponents/ArmorSection.vue";
 import { cogTypeTitle } from "../EnemyPage/CogFlowUtils/CogTypeDescriptionUtils";
 import { getAttrDisplayName, getAttrMaxName } from "../../utils/attributeUtils";
 
@@ -212,6 +227,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    itemArmorMap: {
+      type: Object,
+      default: undefined,
+    },
   },
   components: {
     Bullet,
@@ -224,6 +243,7 @@ export default {
     AdjustAttr,
     AdjustAttrLink,
     DiceSection,
+    ArmorSection,
   },
   data() {
     return {
@@ -262,6 +282,13 @@ export default {
       optionalAttrs
         .filter((attr) => this.character[attr] !== undefined)
         .forEach((attr) => attrs.push(attr));
+      return attrs;
+    },
+    secondaryStatAttrs() {
+      let attrs = [];
+      if (this.itemArmorMap && this.itemArmorMap.items.length > 0) {
+        attrs.push("armor");
+      }
       return attrs;
     },
     showUpdateDropdown() {
@@ -303,6 +330,27 @@ export default {
     },
     attrDisplayName(attr) {
       return getAttrDisplayName(attr);
+    },
+    attrDisplayVal(attr) {
+      if (this.itemArmorMap && attr === "armor") {
+        return this.character.armor + this.itemArmorMap.armor;
+      }
+      if (this.itemArmorMap && attr === "speed") {
+        return this.character.speed - this.itemArmorMap.burden;
+      }
+      return this.character[attr];
+    },
+    attrSecondaryField(attr) {
+      if (attr === "armor") {
+        return "Burden";
+      }
+      return this.attrDisplayName(attr);
+    },
+    attrSecondaryDisplay(attr) {
+      if (attr === "armor") {
+        return this.itemArmorMap.burden;
+      }
+      return this.attrDisplayVal(attr);
     },
     getAttrMaxValue(attr) {
       return this.character[getAttrMaxName(attr)];

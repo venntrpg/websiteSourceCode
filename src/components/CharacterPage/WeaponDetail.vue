@@ -5,7 +5,7 @@
     </p>
     <p v-if="weapon.range" class="mb-0"><b>Range:</b> {{ weapon.range }}</p>
     <p v-if="weapon.attr" class="mb-0"><b>Attribute:</b> {{ weapon.attr }}</p>
-    <p v-if="usable" class="mb-0">
+    <p v-if="usable && weapon.type === 'weapon'" class="mb-0">
       <b>Accuracy:</b> {{ acc }}
       <span v-if="hasProficiency" class="mutedText">
         ({{ weapon.attr }} + proficiency)
@@ -97,6 +97,9 @@ export default {
       return Math.max(this.attrBonus * 10 + (this.hasProficiency ? 10 : 0), 0);
     },
     dice() {
+      if (!this.weapon.dmg) {
+        return undefined;
+      }
       const matched = this.weapon.dmg.match(/\d*d\d+([+-]\d+)*/gm) || [];
       if (matched.length === 0) {
         return false;

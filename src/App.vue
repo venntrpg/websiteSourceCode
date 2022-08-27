@@ -370,6 +370,9 @@ ul {
 .ml-16 {
   margin-left: 16px;
 }
+.ml-48 {
+  margin-left: 48px;
+}
 .mr-0 {
   margin-right: 0px;
 }
@@ -650,8 +653,20 @@ ul {
 .tableItems:nth-child(even) {
   background-color: var(--table-contrast);
 }
+.tableItems:first-child.noHeader {
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
 .tableItems:last-child {
   border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+.tableItems.padded {
+  padding: 8px;
+}
+.tableItems.selected {
+  border-width: 2px;
+  border-color: var(--border-focus);
+  border-style: solid;
+  border-radius: var(--border-radius);
 }
 .tableHeader {
   padding-right: 54px; /* Accounts for button on left side of table */
@@ -678,6 +693,19 @@ ul {
 }
 .tableHeader .headerFont {
   font-size: 15pt !important;
+}
+
+/* When jumping an element into view, helps move it into a good, viewable location */
+.scroll-adjust {
+  scroll-margin-top: var(--nav-height);
+}
+.subNavPage .scroll-adjust {
+  scroll-margin-top: var(--total-nav-height);
+}
+.subNavPage .table.withHeader .scroll-adjust {
+  scroll-margin-top: calc(
+    var(--total-nav-height) + 44px
+  ); /* 44px is height of sticky header */
 }
 
 /* A little bit janky way to delay animation */

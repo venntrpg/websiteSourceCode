@@ -46,7 +46,7 @@
     </div>
     <div v-for="(items, section) in sectionsMap" v-bind:key="section">
       <h2>{{ section }}</h2>
-      <div class="card column">
+      <div class="card column table withHeader">
         <div class="alignRow tableData tableHeader sticky">
           <div class="itemName headerFont">
             <b>Item</b>
@@ -61,6 +61,8 @@
         <div
           v-for="item in items"
           v-bind:key="item.name"
+          v-bind:id="itemID(item)"
+          v-bind:class="itemOpenned(item) ? 'selected' : ''"
           class="alignRow tableItems"
         >
           <div class="tableData">
@@ -88,13 +90,18 @@ import { mapState } from "vuex";
 import CheckBox from "../Common/CheckBox.vue";
 import DisplayItemDesc from "../Common/Items/DisplayItemDesc.vue";
 import { itemList } from "../../utils/itemUtils";
-import { improveTextForDisplay } from "../../utils/characterStringFormatting";
+import {
+  improveTextForDisplay,
+  stringToLinkID,
+} from "../../utils/characterStringFormatting";
 import { SECTION_SHOP } from "../../utils/constants";
 
 const ITEM_TYPE_EQUIPMENT = "equipment";
 const ITEM_TYPE_CONSUMABLE = "consumable";
 const ITEM_TYPE_CONTAINER = "container";
 const ITEM_TYPE_WEAPON = "weapon";
+const ITEM_TYPE_ARMOR = "armor";
+const ITEM_TYPE_SHIELD = "shield";
 
 export default {
   components: { CheckBox, DisplayItemDesc },
@@ -124,7 +131,9 @@ export default {
           ITEM_TYPE_EQUIPMENT,
           ITEM_TYPE_CONSUMABLE,
           ITEM_TYPE_CONTAINER,
-          ITEM_TYPE_WEAPON
+          ITEM_TYPE_WEAPON,
+          ITEM_TYPE_ARMOR,
+          ITEM_TYPE_SHIELD
         );
       } else {
         if (this.showEquipment) {
@@ -176,6 +185,9 @@ export default {
     },
     toggleShowWeapons() {
       this.showWeapons = !this.showWeapons;
+    },
+    itemID(item) {
+      return stringToLinkID(item.name);
     },
     itemName(item) {
       return improveTextForDisplay(item.name);

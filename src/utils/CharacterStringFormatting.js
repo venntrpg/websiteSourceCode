@@ -140,3 +140,10 @@ export function improveTextForDisplay(text) {
   text = text.replace(/--/g, "\u2014"); // em-dashes
   return text;
 }
+
+export function stringToLinkID(str) {
+  str = str.replace(/[ (),'":*]/gm, "-");
+  str = str.replace(/\./gm, "_");
+  str = str.replace(/[^a-zA-Z0-9-_:.]/gm, ""); // remove any invalid characters
+  return "link-" + str;
+}

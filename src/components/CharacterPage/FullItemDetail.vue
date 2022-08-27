@@ -1,6 +1,6 @@
 <template>
   <div v-if="item !== undefined">
-    <div v-if="item.type === 'weapon'">
+    <div v-if="['weapon', 'armor', 'shield'].includes(item.type)">
       <h2>
         {{ itemName
         }}<span v-if="item.category">
