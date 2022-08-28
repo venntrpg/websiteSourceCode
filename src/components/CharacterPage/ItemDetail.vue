@@ -2,6 +2,7 @@
   <div class="mb-64">
     <div v-if="item !== undefined">
       <full-item-detail :item="item" />
+      <special-item-uses :item="item" />
       <div v-if="!isDefaultWeapon">
         <div class="seperator mt-24 mb-24" />
         <button
@@ -34,6 +35,7 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 import FullItemDetail from "./FullItemDetail.vue";
+import SpecialItemUses from "./SpecialUses/SpecialItemUses.vue";
 import {
   itemList,
   weaponTypesList,
@@ -43,7 +45,7 @@ import {
 import { adjustAttrsAPI } from "../../utils/attributeUtils";
 
 export default {
-  components: { FullItemDetail },
+  components: { FullItemDetail, SpecialItemUses },
   name: "itemDetail",
   computed: {
     ...mapState("character", ["character"]),

@@ -22,7 +22,7 @@
         weapon.equipped ? "(Equipped)" : "(Unequipped)"
       }}</span>
     </p>
-    <div v-if="usable && !isDefaultWeapon">
+    <div v-if="usable && !isDefaultWeapon && weapon.category !== 'Grenade'">
       <button
         v-if="weapon.equipped"
         v-on:click="toggleEquipped"

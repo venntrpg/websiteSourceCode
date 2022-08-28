@@ -39,15 +39,13 @@ export default {
     },
     usableWeapons() {
       // TODO: append unarmed and improvised weapons to the end of this list
-      let hi = this.consolidatedItems
+      return this.consolidatedItems
         .filter(
           (item) =>
             item.type === "weapon" &&
             (item.equipped || item.category === "Grenade")
         )
         .concat(defaultWeapons);
-      console.log(hi);
-      return hi;
     },
   },
 };

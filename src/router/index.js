@@ -90,11 +90,13 @@ const scrollBehavior = (to, from, savedPosition) => {
         // attempt jump after 0.1 seconds to allow for the page to reshuffle
         setTimeout(() => {
           const el = document.getElementById(stringToLinkID(detail));
-          const height =
-            el.getBoundingClientRect().top +
-            window.pageYOffset -
-            window.innerHeight / 2;
-          window.scrollTo(0, height);
+          if (el) {
+            const height =
+              el.getBoundingClientRect().top +
+              window.pageYOffset -
+              window.innerHeight / 2;
+            window.scrollTo(0, height);
+          }
         }, 50);
       }
     }

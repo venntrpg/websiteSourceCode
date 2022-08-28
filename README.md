@@ -36,8 +36,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - [x] (Medium) Add armor to item shop & add any custom fields to item objects if any are needed. Support burden automatically. [https://vennt.fandom.com/wiki/Armor](https://vennt.fandom.com/wiki/Armor)
 - [x] (Medium) Change scrolling behavior when you open a side panel so that the table scrolls so the item you just openned is still in view, and in reverse when you close the side panel
 - [ ] (Low) Change my custom subrouting behavior to use Vue's behavior. Should hopefully improve the page's code a bit [https://router.vuejs.org/guide/essentials/named-views.html#nested-named-views](https://router.vuejs.org/guide/essentials/named-views.html#nested-named-views)
-- [ ] (Medium) Show list of owned ammo / ammunition on weapons with the "ranged" weaponType (except grenades or "consumable").
-- [ ] (Medium) When an abilitiy is usable, when you use it it should automatically subtract any resources it used (mp, vim, etc)
+- [x] (Medium) Show list of owned ammo / ammunition on weapons with the "ranged" weaponType (except grenades or "consumable").
+- [x] (Medium) When an abilitiy is usable, when you use it it should automatically subtract any resources it used (mp, vim, etc)
 - [ ] (Medium) Improve custom item insertion. Keep a quick insertion ability & allow more complex items.
 - [ ] (Medium) Implement custom ability creation.
 - [ ] (Low) Allow users to add flavor information about character. (backstory etc)

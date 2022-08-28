@@ -5,6 +5,8 @@
       <button
         v-if="showUseAbilityButton"
         :disabled="!canUseAbility"
+        :title="useButtonTitle"
+        v-on:click="useButton"
         class="btn roundedButton wide mb-16"
       >
         Use ability
@@ -101,6 +103,7 @@
 import { mapState } from "vuex";
 import DisplayBasicAbilityDetails from "../Common/Abilities/DisplayBasicAbilityDetails.vue";
 import { actualCost, canUseAbility } from "../../utils/abilityUtils";
+import { adjustAttrsAPI } from "../../utils/attributeUtils";
 
 export default {
   name: "abilityDetail",
@@ -134,8 +137,37 @@ export default {
       }
       return cost;
     },
+    useButtonTitle() {
+      const uses = [];
+      if (this.ability.cost.M) {
+        uses.push(`${this.ability.cost.M} MP`);
+      }
+      if (this.ability.cost.V) {
+        uses.push(`${this.ability.cost.V} vim`);
+      }
+      if (this.ability.cost.P) {
+        uses.push(`${this.ability.cost.P} hero points`);
+      }
+      return `Uses: ${uses.length > 0 ? uses.join(", ") : "nothing"}`;
+    },
   },
   methods: {
+    useButton() {
+      const attrs = {};
+      if (this.ability.cost.M) {
+        attrs.mp = -this.ability.cost.M;
+      }
+      if (this.ability.cost.V) {
+        attrs.vim = -this.ability.cost.V;
+      }
+      if (this.ability.cost.P) {
+        attrs.hero = -this.ability.cost.P;
+      }
+      if (!attrs) {
+        return;
+      }
+      adjustAttrsAPI(this.character, attrs, true, `Used ${this.ability.name}`);
+    },
     commentButton() {
       this.editComment = !this.editComment;
     },
