@@ -8,6 +8,17 @@ import { improveTextForDisplay } from "./characterStringFormatting";
 export const itemList = items;
 export const weaponTypesList = weaponTypes;
 
+export const defaultWeaponCategories = ["Unarmed", "Improvised"];
+export const defaultWeapons = defaultWeaponCategories.map((category) => {
+  const found = weaponTypes.find((weapon) => weapon.category === category);
+  if (!found) {
+    return found;
+  }
+  const name = `${category} Attack`;
+  return { ...found, name, id: name, ids: [name] };
+});
+export const defaultWeaponNames = defaultWeapons.map((weapon) => weapon.name);
+
 export function keys2Items(keys) {
   return keys
     .map((key) => items.find((item) => key === item.name))

@@ -36,7 +36,6 @@
 
 <script>
 import DisplayItemDesc from "../Common/Items/DisplayItemDesc.vue";
-import { SECTION_INVENTORY } from "../../utils/constants";
 import {
   improveTextForDisplay,
   stringToLinkID,
@@ -81,12 +80,16 @@ export default {
       if (this.itemOpenned(item)) {
         return {
           name: "Character",
-          params: { id: this.id, section: SECTION_INVENTORY },
+          params: { id: this.id, section: this.$route.params.section },
         };
       }
       return {
         name: "Character",
-        params: { id: this.id, section: SECTION_INVENTORY, detail: item.id },
+        params: {
+          id: this.id,
+          section: this.$route.params.section,
+          detail: item.id,
+        },
       };
     },
   },

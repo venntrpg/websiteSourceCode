@@ -22,7 +22,7 @@
         weapon.equipped ? "(Equipped)" : "(Unequipped)"
       }}</span>
     </p>
-    <div v-if="usable">
+    <div v-if="usable && !isDefaultWeapon">
       <button
         v-if="weapon.equipped"
         v-on:click="toggleEquipped"
@@ -49,7 +49,9 @@
     <p v-if="weapon.examples" class="mb-0">
       <b>Common Examples:</b> {{ weapon.examples }}
     </p>
-    <p v-if="weapon.cost" class="mb-0"><b>Cost:</b> {{ weapon.cost }}</p>
+    <p v-if="weapon.cost && !isDefaultWeapon" class="mb-0">
+      <b>Cost:</b> {{ weapon.cost }}
+    </p>
     <p class="mb-0">{{ weapon.desc }}</p>
   </div>
 </template>
@@ -57,6 +59,7 @@
 <script>
 import { mapState } from "vuex";
 import DiceCopyButton from "../Common/CombatStatsComponents/DiceCopyButton.vue";
+import { defaultWeaponCategories } from "../../utils/itemUtils";
 import { ATTRIBUTES } from "../../utils/constants";
 
 export default {
@@ -69,6 +72,9 @@ export default {
     ...mapState("character", ["character"]),
     usable() {
       return this.weapon.id !== undefined;
+    },
+    isDefaultWeapon() {
+      return defaultWeaponCategories.includes(this.weapon.category);
     },
     hasProficiency() {
       if (!this.weapon.category) {

@@ -24,6 +24,79 @@ const getters = {
   itemArmorMap: (state) => {
     return calculateItemArmor(state.character.items);
   },
+  sortedPaths: (state) => {
+    // sort by minimum purchased ability cost, at least for now - There are definetly better ways to do this sorting,
+    // like using a predefined list from scraping the server or something. Maybe I should add that to the vennt-scripts
+    // folder and automatically run and populate the resulting jsons into this repo when I deploy??
+    if (state.character.abilities === undefined) {
+      return [];
+    }
+    const pathCostMap = {};
+    state.character.abilities.forEach((ability) => {
+      let cost = parseInt(ability.purchase);
+      if (isNaN(cost)) {
+        cost = 5000; // arbitrary amount that costs a lot
+      }
+      if (
+        ability === undefined ||
+        ability.name === "NULL" ||
+        ability.path === undefined
+      ) {
+        return;
+      }
+      if (ability.path in pathCostMap) {
+        pathCostMap[ability.path] = Math.min(cost, pathCostMap[ability.path]);
+      } else {
+        pathCostMap[ability.path] = cost;
+      }
+    });
+    const paths = Object.keys(pathCostMap);
+    paths.sort((p1, p2) => pathCostMap[p1] - pathCostMap[p2]);
+    return paths;
+  },
+  sortedAbilities: (state, getters) => {
+    if (state.character.abilities === undefined) {
+      return [];
+    }
+    const abilityCopy = state.character.abilities.filter(
+      (ability) => ability !== undefined && ability.name !== "NULL"
+    );
+    return abilityCopy.sort((a1, a2) => {
+      // 1. put Passive abilities at the end of the list
+      const a1Passive = a1.cost && "Passive" in a1.cost && a1.cost.Passive;
+      const a2Passive = a2.cost && "Passive" in a2.cost && a2.cost.Passive;
+      if (!a1Passive && a2Passive) {
+        return -1;
+      } else if (a1Passive && !a2Passive) {
+        return 1;
+      }
+      // 2. put abilities which use SP instead of XP at the end of the list when passive
+      if (a1Passive && a1.purchase && a2Passive && a2.purchase) {
+        const a1SP = a1.purchase.includes("sp");
+        const a2SP = a2.purchase.includes("sp");
+        if (!a1SP && a2SP) {
+          return -1;
+        } else if (a1SP && !a2SP) {
+          return 1;
+        }
+      }
+      // 3. sort by path gathering
+      if (a1.path !== a2.path) {
+        const pathIdx = (given) =>
+          getters.sortedPaths.findIndex((path) => path === given);
+        return pathIdx(a1.path) - pathIdx(a2.path);
+      }
+      // 4. sort by XP price otherwise (for now at least)
+      const costInt = (purchase) => {
+        const cost = parseInt(purchase);
+        if (isNaN(cost)) {
+          return 0;
+        }
+        return cost;
+      };
+      return costInt(a1.purchase) - costInt(a2.purchase);
+    });
+  },
 };
 
 const mutations = {

@@ -100,6 +100,7 @@
 <script>
 import { mapState } from "vuex";
 import DisplayBasicAbilityDetails from "../Common/Abilities/DisplayBasicAbilityDetails.vue";
+import { actualCost, canUseAbility } from "../../utils/abilityUtils";
 
 export default {
   name: "abilityDetail",
@@ -107,7 +108,6 @@ export default {
   data() {
     return {
       editComment: false,
-      comment: "",
       showSettings: false,
     };
   },
@@ -125,29 +125,14 @@ export default {
       return !(this.ability && this.ability.cost && this.ability.cost.Passive);
     },
     canUseAbility() {
-      if (this.ability && this.ability.cost) {
-        if (this.ability.cost.M && this.ability.cost.M > this.character.mp) {
-          return false;
-        }
-        if (this.ability.cost.V && this.ability.cost.V > this.character.vim) {
-          return false;
-        }
-        if (this.ability.cost.P && this.ability.cost.P > this.character.hero) {
-          return false;
-        }
-        return true;
-      }
-      return false;
+      return canUseAbility(this.character, this.ability);
     },
     actualCost() {
-      if (
-        this.ability.expedited &&
-        this.character.gift !== "None" &&
-        this.ability.expedited.includes(this.character.gift)
-      ) {
-        return parseInt(this.ability.purchase) / 2;
+      const cost = actualCost(this.character, this.ability);
+      if (cost === parseInt(this.ability.purchase)) {
+        return false;
       }
-      return false;
+      return cost;
     },
   },
   methods: {

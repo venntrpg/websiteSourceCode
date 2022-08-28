@@ -1,25 +1,27 @@
 <template>
-  <div>
+  <div class="mb-64">
     <div v-if="item !== undefined">
       <full-item-detail :item="item" />
-      <div class="seperator mt-24 mb-24" />
-      <button
-        v-on:click="removeItemButton()"
-        class="btn roundedButton clear wide"
-      >
-        Remove Item
-      </button>
-      <div v-if="showSellItemButton" class="mt-8">
+      <div v-if="!isDefaultWeapon">
+        <div class="seperator mt-24 mb-24" />
         <button
-          v-on:click="sellItemButton()"
-          class="btn roundedButton wide mb-4"
+          v-on:click="removeItemButton()"
+          class="btn roundedButton clear wide"
         >
-          Sell Item for {{ sellValue }} SP
+          Remove Item
         </button>
-        <div class="pt-10 mutedText">
-          Note: This does not currently take into account any benefits your
-          character may have to get a better price. The shop value of this item
-          is {{ shopValue }} SP.
+        <div v-if="showSellItemButton" class="mt-8">
+          <button
+            v-on:click="sellItemButton()"
+            class="btn roundedButton wide mb-4"
+          >
+            Sell Item for {{ sellValue }} SP
+          </button>
+          <div class="pt-10 mutedText">
+            Note: This does not currently take into account any benefits your
+            character may have to get a better price. The shop value of this
+            item is {{ shopValue }} SP.
+          </div>
         </div>
       </div>
     </div>
@@ -32,7 +34,12 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 import FullItemDetail from "./FullItemDetail.vue";
-import { itemList, weaponTypesList } from "../../utils/itemUtils";
+import {
+  itemList,
+  weaponTypesList,
+  defaultWeapons,
+  defaultWeaponNames,
+} from "../../utils/itemUtils";
 import { adjustAttrsAPI } from "../../utils/attributeUtils";
 
 export default {
@@ -41,7 +48,15 @@ export default {
   computed: {
     ...mapState("character", ["character"]),
     ...mapGetters("character", ["consolidatedItems"]),
+    isDefaultWeapon() {
+      return defaultWeaponNames.includes(this.$route.params.detail);
+    },
     item() {
+      if (this.isDefaultWeapon) {
+        return defaultWeapons.find(
+          (weapon) => weapon.name === this.$route.params.detail
+        );
+      }
       if (this.consolidatedItems === undefined) {
         return undefined;
       }
