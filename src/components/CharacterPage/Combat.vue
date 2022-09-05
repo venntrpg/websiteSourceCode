@@ -1,6 +1,8 @@
 <template>
   <div>
     <h1>Combat</h1>
+    <p class="mutedText">Note: These are currently just for show</p>
+    <combat-time-buttons />
     <ability-table
       v-if="usableAbilities.length > 0"
       :abilities="usableAbilities"
@@ -22,9 +24,10 @@ import AbilityTable from "./AbilityTable.vue";
 import ItemTable from "./ItemTable.vue";
 import { canUseAbility } from "../../utils/abilityUtils";
 import { defaultWeapons } from "../../utils/itemUtils";
+import CombatTimeButtons from "./CombatSection/CombatTimeButtons.vue";
 
 export default {
-  components: { AbilityTable, ItemTable },
+  components: { AbilityTable, ItemTable, CombatTimeButtons },
   name: "combat",
   computed: {
     ...mapState("character", ["character"]),

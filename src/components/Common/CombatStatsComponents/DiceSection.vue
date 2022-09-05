@@ -38,77 +38,21 @@
         </div>
       </div>
     </div>
-    <div v-else>
-      <dice-copy
-        :attr="attr"
-        :character="character"
-        :settings="defaultDiceSettings"
-        class="mt-8 mb-8"
-      />
-      <button
-        v-if="!diceDropDown"
-        v-on:click="toggleDiceDropDown"
-        class="btn basicBtn wide"
-      >
-        <div class="basicBtnContents">
-          <span class="material-icons">keyboard_arrow_down</span>
-          Show Other Dice Options
-        </div>
-      </button>
-      <div v-else class="card column">
-        <button v-on:click="toggleDiceDropDown" class="btn basicBtn wide">
-          <div class="basicBtnContents">
-            <span class="material-icons">keyboard_arrow_up</span>
-            Hide Other Dice Options
-          </div>
-        </button>
-        <div class="seperator thin"></div>
-        <div class="labelText mt-8 ml-8">Hero Point boost:</div>
-        <dice-copy
-          :attr="attr"
-          :character="character"
-          :settings="heroPointDiceSettings"
-          class="mt-8"
-        />
-        <div class="labelText mt-8 ml-8">Other common settings:</div>
-        <check-box
-          :checked="defaultDiceSettings.flow"
-          :highlight="true"
-          text="Flow"
-          @toggled="toggleDiceSetting('flow')"
-          class="mt-8"
-        />
-        <check-box
-          :checked="defaultDiceSettings.ebb"
-          :highlight="true"
-          text="Ebb"
-          @toggled="toggleDiceSetting('ebb')"
-          class="mt-8"
-        />
-        <check-box
-          :checked="defaultDiceSettings.rr1s"
-          :highlight="true"
-          text="Re-roll All 1s"
-          @toggled="toggleDiceSetting('rr1s')"
-          class="mt-8"
-        />
-      </div>
-    </div>
+    <toggleable-dice-section-copyable v-else :dice="computedDice" />
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
 import { DiceRoll } from "rpg-dice-roller";
-import DiceRender from "./DiceRender.vue";
-import DiceCopy from "./DiceCopy.vue";
-import CheckBox from "../CheckBox.vue";
+import DiceRender from "../Dice/DiceRender.vue";
 import { ATTRIBUTES } from "../../../utils/constants";
 import { getAttrFullName } from "../../../utils/attributeUtils";
 import { defaultDice } from "../../../utils/diceUtils";
+import ToggleableDiceSectionCopyable from "../Dice/ToggleableDiceSectionCopyable.vue";
 
 export default {
-  components: { DiceRender, DiceCopy, CheckBox },
+  components: { DiceRender, ToggleableDiceSectionCopyable },
   name: "DiceSection",
   props: {
     character: Object,
@@ -143,24 +87,15 @@ export default {
     diceAverage() {
       return this.dice.averageTotal;
     },
-    heroPointDiceSettings() {
-      return {
-        ...this.defaultDiceSettings,
-        drop: 1,
-        end: "+9",
-      };
+    computedDice() {
+      return defaultDice(this.character, this.attr, this.defaultDiceSettings);
     },
   },
   methods: {
     rollButton() {
-      const rollStr = defaultDice(
-        this.character,
-        this.attr,
-        this.defaultDiceSettings
-      ).web;
       this.$store.commit("dice/updateLatestRoll", {
         attr: this.attr,
-        roll: new DiceRoll(rollStr),
+        roll: new DiceRoll(this.computedDice.web),
       });
     },
     toggleDiceDropDown() {

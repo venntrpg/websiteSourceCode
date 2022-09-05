@@ -17,7 +17,8 @@ export default {
       return (
         this.item &&
         this.item.weaponType &&
-        this.item.weaponType.includes("Ranged")
+        this.item.weaponType.includes("Ranged") &&
+        this.item.name !== "Improvised Attack"
       );
     },
   },

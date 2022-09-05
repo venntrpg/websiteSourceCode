@@ -17,6 +17,7 @@ const state = {
     rr1s: false,
   },
   diceDropDown: false, // shared between components to hopefully make the experience feel a bit smoother
+  useBuiltinDice: true,
 };
 
 const mutations = {
@@ -28,6 +29,9 @@ const mutations = {
   },
   toggleDiceDropDown(state) {
     state.diceDropDown = !state.diceDropDown;
+  },
+  toggleUseBuiltinDice(state) {
+    state.useBuiltinDice = !state.useBuiltinDice;
   },
 };
 

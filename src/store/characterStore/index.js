@@ -113,8 +113,7 @@ const mutations = {
     state.character[attr] = val;
   },
   updateCharacterAttributes(state, { attrs, msg }) {
-    Object.entries(attrs).forEach((pair) => {
-      const attr = pair[0];
+    Object.entries(attrs).forEach(([attr, val]) => {
       if (msg !== undefined) {
         if (!state.character.changelog) {
           state.character.changelog = [];
@@ -125,7 +124,7 @@ const mutations = {
         }
         state.character.changelog.push(log);
       }
-      state.character[attr] = pair[1];
+      state.character[attr] = val;
     });
   },
   filterCharacterChangelog(state, attr) {
@@ -221,6 +220,9 @@ const actions = {
   },
 
   updateAttributes: ({ commit }, { id, attrs, msg }) => {
+    if (Object.keys(attrs).length === 0) {
+      return;
+    }
     // upate value locally immediately so it looks seamless
     commit("updateCharacterAttributes", { attrs, msg });
     return api.updateAttributes(id, attrs, msg).then((response) => {

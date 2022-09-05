@@ -1,9 +1,13 @@
 export function buildDice(count, sides, adjust = 0, settings = {}) {
   let adjustStr = "";
-  if (adjust > 0) {
-    adjustStr = `+${adjust}`;
-  } else if (adjust < 0) {
+  if (typeof adjust === "string") {
     adjustStr = adjust;
+  } else {
+    if (adjust > 0) {
+      adjustStr = `+${adjust}`;
+    } else if (adjust < 0) {
+      adjustStr = adjust;
+    }
   }
 
   const explodeFields = { discord: "", roll20: "", web: "" };
@@ -69,6 +73,7 @@ export function buildDice(count, sides, adjust = 0, settings = {}) {
       adjustStr +
       fatiguedStr +
       endStr,
+    settings: { ...settings, adjust, count, sides },
   };
 }
 
@@ -85,4 +90,18 @@ export function heroPointBoost(character, attr, settings = {}) {
 export function flowDice(character, attr, settings = {}) {
   settings.flow = true;
   return defaultDice(character, attr, settings);
+}
+
+export function diceParseFromString(diceStr, settings = {}) {
+  const match = diceStr.match(/(\d+)d(\d+)/);
+  if (!match || match.length < 3) {
+    return undefined;
+  }
+  const count = parseInt(match[1]);
+  const sides = parseInt(match[2]);
+  if (isNaN(count) || isNaN(sides)) {
+    return undefined;
+  }
+  const adjust = diceStr.substring(match[0].length);
+  return buildDice(count, sides, adjust, settings);
 }

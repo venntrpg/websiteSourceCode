@@ -58,6 +58,7 @@ export function calculateItemArmor(items) {
     burden: /Burden: (\d+)/,
     shield: /Shield Bonus: ([+-]*\d+)/,
   };
+  const specialItems = { "Backpack, Armored": { armor: 2 } };
   items.forEach((item) => {
     // only include equipped armor & shields
     if (item.type && releventTypes.includes(item.type) && item.equipped) {
@@ -69,6 +70,12 @@ export function calculateItemArmor(items) {
             res[key] += num;
           }
         }
+      });
+      res.items.push(item);
+    } else if (specialItems[item.name]) {
+      const map = specialItems[item.name];
+      Object.entries(map).forEach(([key, val]) => {
+        res[key] += val;
       });
       res.items.push(item);
     }

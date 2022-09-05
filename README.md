@@ -38,6 +38,9 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - [ ] (Low) Change my custom subrouting behavior to use Vue's behavior. Should hopefully improve the page's code a bit [https://router.vuejs.org/guide/essentials/named-views.html#nested-named-views](https://router.vuejs.org/guide/essentials/named-views.html#nested-named-views)
 - [x] (Medium) Show list of owned ammo / ammunition on weapons with the "ranged" weaponType (except grenades or "consumable").
 - [x] (Medium) When an abilitiy is usable, when you use it it should automatically subtract any resources it used (mp, vim, etc)
+- [ ] (Medium) Add uses to some basic items.
+- [ ] (Medium) Ask around to find out what abilities / items people use that could be given custom implementations to improve their use
+- [ ] (Medium) Pop up a modal when a user levels up and prompt them to increment an attribute.
 - [ ] (Medium) Improve custom item insertion. Keep a quick insertion ability & allow more complex items.
 - [ ] (Medium) Implement custom ability creation.
 - [ ] (Low) Allow users to add flavor information about character. (backstory etc)

@@ -2,6 +2,11 @@
   <div class="mb-64">
     <div v-if="item !== undefined">
       <full-item-detail :item="item" />
+      <item-uses-map
+        v-if="foundShopItem.uses"
+        :item="item"
+        :uses="foundShopItem.uses"
+      />
       <special-item-uses :item="item" />
       <div v-if="!isDefaultWeapon">
         <div class="seperator mt-24 mb-24" />
@@ -36,6 +41,7 @@
 import { mapGetters, mapState } from "vuex";
 import FullItemDetail from "./FullItemDetail.vue";
 import SpecialItemUses from "./SpecialUses/SpecialItemUses.vue";
+import ItemUsesMap from "./SpecialUses/ItemUsesMap.vue";
 import {
   itemList,
   weaponTypesList,
@@ -45,7 +51,7 @@ import {
 import { adjustAttrsAPI } from "../../utils/attributeUtils";
 
 export default {
-  components: { FullItemDetail, SpecialItemUses },
+  components: { FullItemDetail, SpecialItemUses, ItemUsesMap },
   name: "itemDetail",
   computed: {
     ...mapState("character", ["character"]),

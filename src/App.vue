@@ -54,6 +54,7 @@ body {
 
   /* COLORS */
   /* Originally came from https://coolors.co/7e8987-4b4a67-fadf63-e6af2e-ef6f6c */
+  --purple-100: #8a87ba;
   --purple-300: #615f85;
   --purple-400: #565576;
   --purple-500: #4b4a67;
@@ -78,6 +79,9 @@ body {
   --yellow-500: #e6af2e;
   --yellow-600: #e0a51b;
 
+  --green-500: #3a8029;
+  --green-600: #47663f;
+
   --gray-950: #1d1d1d;
   --gray-900: #303030;
   --gray-800: #2a2a2a;
@@ -94,7 +98,6 @@ body {
   --gray-100: #fbfbfb;
 
   /* THEME SETTINGS */
-
   --background: var(--gray-250);
   --background-highlight: white;
   --background-low-contrast: var(--gray-300);
@@ -177,7 +180,7 @@ body {
     --main-button-hover: var(--dark-red-700);
     --main-button-active: var(--dark-red-800);
     --secondary-button: var(--purple-500);
-    --secondary-button-disabled: var(--purple-400);
+    --secondary-button-disabled: var(--purple-100);
     --secondary-button-hover: var(--purple-600);
     --secondary-button-active: var(--purple-700);
     --basic-button-disabled: var(--gray-700);
@@ -277,6 +280,14 @@ ul {
 
 .nowrap {
   white-space: nowrap;
+}
+
+.hideExtra {
+  overflow: hidden;
+}
+
+.ellipsis {
+  text-overflow: ellipsis;
 }
 
 .textBlock {
@@ -384,6 +395,10 @@ ul {
 }
 .mr-16 {
   margin-right: 16px;
+}
+
+.push-to-right {
+  margin-left: auto;
 }
 
 .wide {
@@ -632,6 +647,7 @@ ul {
 }
 .alignRow.wrap {
   flex-wrap: wrap;
+  row-gap: 4px;
 }
 .alignRow.top {
   align-items: flex-start;

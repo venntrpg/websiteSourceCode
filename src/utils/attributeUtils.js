@@ -106,8 +106,9 @@ export function generateDefaultAdjustMsg(attr, adjust) {
 export function adjustAttrsAPI(
   character,
   attrAdjustments,
-  propegateChanges,
-  msg
+  propegateChanges = true,
+  msg = "",
+  enforceMaximums = false
 ) {
   if (Object.keys(attrAdjustments).length === 0) {
     return;
@@ -126,9 +127,7 @@ export function adjustAttrsAPI(
   };
 
   // 1. get resulting effects
-  Object.entries(attrAdjustments).forEach((pair) => {
-    const attr = pair[0];
-    const adjustment = pair[1];
+  Object.entries(attrAdjustments).forEach(([attr, adjustment]) => {
     const newVal = character[attr] + adjustment;
     attrs[attr] = newVal;
     // propegate changes
@@ -163,9 +162,7 @@ export function adjustAttrsAPI(
   });
 
   // 2. clamp logic
-  Object.entries(attrs).forEach((pair) => {
-    const attr = pair[0];
-    const val = pair[1];
+  Object.entries(attrs).forEach(([attr, val]) => {
     if (attr in clampMap) {
       const baseAttr = clampMap[attr];
       if (
@@ -192,15 +189,23 @@ export function adjustAttrsAPI(
     "armor",
     "speed",
   ];
-  Object.entries(attrs).forEach((pair) => {
-    const attr = pair[0];
-    const val = pair[1];
+  Object.entries(attrs).forEach(([attr, val]) => {
     if (minZeros.includes(attr) && val < 0 && character[attr] !== 0) {
       attrs[attr] = 0;
     }
   });
 
-  // 4. do API call
+  // 4. enforce maximums
+  if (enforceMaximums) {
+    Object.entries(attrs).forEach(([attr, val]) => {
+      const maxAttr = getMaxAttr(attr);
+      if (maxAttr && currentVal(maxAttr) && val > currentVal(maxAttr)) {
+        attrs[attr] = currentVal(maxAttr);
+      }
+    });
+  }
+
+  // 5. do API call
   store.dispatch("character/updateAttributes", {
     id: character.id,
     attrs,

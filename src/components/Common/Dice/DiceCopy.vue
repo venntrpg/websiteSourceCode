@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wide">
     <dice-copy-button v-if="combineDice" :dice="dice.discord" />
     <div v-else class="alignRow gap">
       <dice-copy-button :dice="dice.discord" text="Discord" />
@@ -9,21 +9,13 @@
 </template>
 
 <script>
-import DiceCopyButton from "./DiceCopyButton.vue";
-import { defaultDice } from "../../../utils/diceUtils";
+import DiceCopyButton from "../CombatStatsComponents/DiceCopyButton.vue";
 
 export default {
   components: { DiceCopyButton },
   name: "DiceCopy",
-  props: {
-    character: { type: Object, required: true },
-    attr: { type: String, required: false },
-    settings: { type: Object, default: () => {} },
-  },
+  props: { dice: { type: Object, required: true } },
   computed: {
-    dice() {
-      return defaultDice(this.character, this.attr, this.settings);
-    },
     combineDice() {
       return this.dice.discord === this.dice.roll20;
     },

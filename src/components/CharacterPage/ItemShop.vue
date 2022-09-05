@@ -153,7 +153,8 @@ export default {
       itemList
         .filter(
           (item) =>
-            item.name.toLowerCase().includes(this.activeSearchTerm) &&
+            (item.name.toLowerCase().includes(this.activeSearchTerm) ||
+              item.desc.toLowerCase().includes(this.activeSearchTerm)) &&
             typeFilters.includes(item.type)
         )
         .forEach((item) => {
