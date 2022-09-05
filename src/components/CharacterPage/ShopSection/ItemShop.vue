@@ -87,14 +87,14 @@
 
 <script>
 import { mapState } from "vuex";
-import CheckBox from "../Common/CheckBox.vue";
-import DisplayItemDesc from "../Common/Items/DisplayItemDesc.vue";
-import { itemList } from "../../utils/itemUtils";
+import CheckBox from "../../Common/CheckBox.vue";
+import DisplayItemDesc from "../../Common/Items/DisplayItemDesc.vue";
+import { itemList } from "../../../utils/itemUtils";
 import {
   improveTextForDisplay,
   stringToLinkID,
-} from "../../utils/characterStringFormatting";
-import { SECTION_SHOP } from "../../utils/constants";
+} from "../../../utils/characterStringFormatting";
+import { SECTION_SHOP } from "../../../utils/constants";
 
 const ITEM_TYPE_EQUIPMENT = "equipment";
 const ITEM_TYPE_CONSUMABLE = "consumable";

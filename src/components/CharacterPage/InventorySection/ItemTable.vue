@@ -35,11 +35,11 @@
 </template>
 
 <script>
-import DisplayItemDesc from "../Common/Items/DisplayItemDesc.vue";
+import DisplayItemDesc from "../../Common/Items/DisplayItemDesc.vue";
 import {
   improveTextForDisplay,
   stringToLinkID,
-} from "../../utils/characterStringFormatting";
+} from "../../../utils/characterStringFormatting";
 export default {
   components: { DisplayItemDesc },
   name: "ItemTable",

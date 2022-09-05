@@ -58,9 +58,9 @@
 
 <script>
 import { mapState } from "vuex";
-import DiceCopyButton from "../Common/CombatStatsComponents/DiceCopyButton.vue";
-import { defaultWeaponCategories } from "../../utils/itemUtils";
-import { ATTRIBUTES } from "../../utils/constants";
+import DiceCopyButton from "../../Common/CombatStatsComponents/DiceCopyButton.vue";
+import { defaultWeaponCategories } from "../../../utils/itemUtils";
+import { ATTRIBUTES } from "../../../utils/constants";
 
 export default {
   components: { DiceCopyButton },

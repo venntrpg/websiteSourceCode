@@ -36,8 +36,8 @@
 
 <script>
 import { mapState } from "vuex";
-import { weaponTypesList } from "../../utils/itemUtils";
-import WeaponDetail from "./WeaponDetail.vue";
+import { weaponTypesList } from "../../../utils/itemUtils";
+import WeaponDetail from "../InventorySection/WeaponDetail.vue";
 
 export default {
   components: { WeaponDetail },

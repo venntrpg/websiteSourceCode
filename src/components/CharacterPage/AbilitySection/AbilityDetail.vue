@@ -101,9 +101,9 @@
 
 <script>
 import { mapState } from "vuex";
-import DisplayBasicAbilityDetails from "../Common/Abilities/DisplayBasicAbilityDetails.vue";
-import { actualCost, canUseAbility } from "../../utils/abilityUtils";
-import { adjustAttrsAPI } from "../../utils/attributeUtils";
+import DisplayBasicAbilityDetails from "../../Common/Abilities/DisplayBasicAbilityDetails.vue";
+import { actualCost, canUseAbility } from "../../../utils/abilityUtils";
+import { adjustAttrsAPI } from "../../../utils/attributeUtils";
 
 export default {
   name: "abilityDetail",

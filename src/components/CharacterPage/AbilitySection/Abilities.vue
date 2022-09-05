@@ -68,9 +68,9 @@
 // NOTE: could update abilityInput on every change in input with 'v-on:input="abilitySearch()"'
 
 import { mapGetters, mapState } from "vuex";
-import Fraction from "../Common/CombatStatsComponents/Fraction.vue";
+import Fraction from "../../Common/CombatStatsComponents/Fraction.vue";
 import AbilityTable from "./AbilityTable.vue";
-import { actualCost } from "../../utils/abilityUtils";
+import { actualCost } from "../../../utils/abilityUtils";
 export default {
   name: "Abilities",
   components: {

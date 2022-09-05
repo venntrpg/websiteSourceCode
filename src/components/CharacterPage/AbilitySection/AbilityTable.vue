@@ -39,11 +39,11 @@
 </template>
 
 <script>
-import ParseAbilityEffect from "../Common/Abilities/ParseAbilityEffect.vue";
+import ParseAbilityEffect from "../../Common/Abilities/ParseAbilityEffect.vue";
 import {
   improveTextForDisplay,
   stringToLinkID,
-} from "../../utils/characterStringFormatting";
+} from "../../../utils/characterStringFormatting";
 export default {
   components: { ParseAbilityEffect },
   name: "AblityTable",

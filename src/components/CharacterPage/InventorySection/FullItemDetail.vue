@@ -22,9 +22,9 @@
 </template>
 
 <script>
-import DisplayBasicItemDetails from "../Common/Items/DisplayBasicItemDetails.vue";
+import DisplayBasicItemDetails from "../../Common/Items/DisplayBasicItemDetails.vue";
 import WeaponDetail from "./WeaponDetail.vue";
-import { prefixName } from "../../utils/itemUtils";
+import { prefixName } from "../../../utils/itemUtils";
 export default {
   components: { WeaponDetail, DisplayBasicItemDetails },
   name: "FullItemDetail",

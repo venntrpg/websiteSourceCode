@@ -40,15 +40,15 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 import FullItemDetail from "./FullItemDetail.vue";
-import SpecialItemUses from "./SpecialUses/SpecialItemUses.vue";
-import ItemUsesMap from "./SpecialUses/ItemUsesMap.vue";
+import SpecialItemUses from "../SpecialUses/SpecialItemUses.vue";
+import ItemUsesMap from "../SpecialUses/ItemUsesMap.vue";
 import {
   itemList,
   weaponTypesList,
   defaultWeapons,
   defaultWeaponNames,
-} from "../../utils/itemUtils";
-import { adjustAttrsAPI } from "../../utils/attributeUtils";
+} from "../../../utils/itemUtils";
+import { adjustAttrsAPI } from "../../../utils/attributeUtils";
 
 export default {
   components: { FullItemDetail, SpecialItemUses, ItemUsesMap },

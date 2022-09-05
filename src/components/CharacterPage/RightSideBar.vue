@@ -23,10 +23,10 @@
 
 <script>
 import isUUID from "is-uuid";
-import AbilityDetail from "./AbilityDetail.vue";
-import ItemDetail from "./ItemDetail.vue";
-import WeaponShopDetail from "./WeaponShopDetail.vue";
-import ItemShopDetail from "./ItemShopDetail.vue";
+import AbilityDetail from "./AbilitySection/AbilityDetail.vue";
+import ItemDetail from "./InventorySection/ItemDetail.vue";
+import WeaponShopDetail from "./ShopSection/WeaponShopDetail.vue";
+import ItemShopDetail from "./ShopSection/ItemShopDetail.vue";
 import { defaultWeaponNames } from "../../utils/itemUtils";
 import {
   SECTION_ABILITIES,

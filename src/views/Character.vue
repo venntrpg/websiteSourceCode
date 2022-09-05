@@ -112,14 +112,14 @@ import { ResponsiveDirective } from "vue-responsive-components";
 import isUUID from "is-uuid";
 import CombatStats from "../components/Common/CombatStats.vue";
 import RightSideBar from "../components/CharacterPage/RightSideBar.vue";
-import Abilities from "../components/CharacterPage/Abilities.vue";
-import Inventory from "../components/CharacterPage/Inventory.vue";
-import WeaponShop from "../components/CharacterPage/WeaponShop.vue";
-import ItemShop from "../components/CharacterPage/ItemShop.vue";
+import Abilities from "../components/CharacterPage/AbilitySection/Abilities.vue";
+import Inventory from "../components/CharacterPage/InventorySection/Inventory.vue";
+import WeaponShop from "../components/CharacterPage/ShopSection/WeaponShop.vue";
+import ItemShop from "../components/CharacterPage/ShopSection/ItemShop.vue";
 import CharacterSettings from "../components/CharacterPage/CharacterSettings.vue";
 import Notes from "../components/CharacterPage/Notes.vue";
 import AttrModal from "../components/Common/AttrModal.vue";
-import Combat from "../components/CharacterPage/Combat.vue";
+import Combat from "../components/CharacterPage/CombatSection/Combat.vue";
 import { attrIsEditable } from "../api/apiUtil";
 import {
   SECTION_ABILITIES,

@@ -20,11 +20,11 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import AbilityTable from "./AbilityTable.vue";
-import ItemTable from "./ItemTable.vue";
-import { canUseAbility } from "../../utils/abilityUtils";
-import { defaultWeapons } from "../../utils/itemUtils";
-import CombatTimeButtons from "./CombatSection/CombatTimeButtons.vue";
+import AbilityTable from "../AbilitySection/AbilityTable.vue";
+import ItemTable from "../InventorySection/ItemTable.vue";
+import { canUseAbility } from "../../../utils/abilityUtils";
+import { defaultWeapons } from "../../../utils/itemUtils";
+import CombatTimeButtons from "./CombatTimeButtons.vue";
 
 export default {
   components: { AbilityTable, ItemTable, CombatTimeButtons },

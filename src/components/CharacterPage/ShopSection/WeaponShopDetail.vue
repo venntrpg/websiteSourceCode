@@ -49,9 +49,9 @@
 <script>
 import { mapState } from "vuex";
 import indefinite from "indefinite";
-import WeaponDetail from "./WeaponDetail.vue";
-import { weaponTypesList } from "../../utils/itemUtils";
-import { adjustAttrsAPI } from "../../utils/attributeUtils";
+import WeaponDetail from "../InventorySection/WeaponDetail.vue";
+import { weaponTypesList } from "../../../utils/itemUtils";
+import { adjustAttrsAPI } from "../../../utils/attributeUtils";
 
 export default {
   components: { WeaponDetail },

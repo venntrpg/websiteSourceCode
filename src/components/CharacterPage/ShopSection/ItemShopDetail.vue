@@ -46,10 +46,10 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import FullItemDetail from "./FullItemDetail.vue";
-import { itemList, pluralizeName } from "../../utils/itemUtils";
-import { improveTextForDisplay } from "../../utils/characterStringFormatting";
-import { adjustAttrsAPI } from "../../utils/attributeUtils";
+import FullItemDetail from "../InventorySection/FullItemDetail.vue";
+import { itemList, pluralizeName } from "../../../utils/itemUtils";
+import { improveTextForDisplay } from "../../../utils/characterStringFormatting";
+import { adjustAttrsAPI } from "../../../utils/attributeUtils";
 
 export default {
   components: { FullItemDetail },

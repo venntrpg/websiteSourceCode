@@ -97,7 +97,7 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import Fraction from "../Common/CombatStatsComponents/Fraction.vue";
+import Fraction from "../../Common/CombatStatsComponents/Fraction.vue";
 import ItemTable from "./ItemTable.vue";
 
 export default {
