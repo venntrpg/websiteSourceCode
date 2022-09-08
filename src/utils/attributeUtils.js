@@ -103,24 +103,20 @@ export function generateDefaultAdjustMsg(attr, adjust) {
   return `${pre} ${attr} by ${Math.abs(adjust)}`;
 }
 
-export function adjustAttrsAPI(
+const clampMap = {
+  maxHp: "hp",
+  maxVim: "vim",
+  maxMp: "mp",
+  maxHero: "hero",
+};
+
+// essentially a helper function for adjustAttrsAPI. This returns the attrsObject to pass to updateAttributes
+export function adjustAttrsObject(
   character,
   attrAdjustments,
   propegateChanges = true,
-  msg = "",
   enforceMaximums = false
 ) {
-  if (Object.keys(attrAdjustments).length === 0) {
-    return;
-  }
-
-  const clampMap = {
-    maxHp: "hp",
-    maxVim: "vim",
-    maxMp: "mp",
-    maxHero: "hero",
-  };
-
   const attrs = {};
   const currentVal = (attr) => {
     return attrs[attr] !== undefined ? attrs[attr] : character[attr];
@@ -205,10 +201,28 @@ export function adjustAttrsAPI(
     });
   }
 
-  // 5. do API call
+  return attrs;
+}
+
+export function adjustAttrsAPI(
+  character,
+  attrAdjustments,
+  propegateChanges = true,
+  msg = "",
+  enforceMaximums = false
+) {
+  if (Object.keys(attrAdjustments).length === 0) {
+    return;
+  }
+
   store.dispatch("character/updateAttributes", {
     id: character.id,
-    attrs,
+    attrs: adjustAttrsObject(
+      character,
+      attrAdjustments,
+      propegateChanges,
+      enforceMaximums
+    ),
     msg,
   });
 }

@@ -1,8 +1,10 @@
 <template>
   <div>
     <h1>Combat</h1>
+    <!--
     <p class="mutedText">Note: These are currently just for show</p>
     <combat-time-buttons />
+    -->
     <ability-table
       v-if="usableAbilities.length > 0"
       :abilities="usableAbilities"
@@ -24,10 +26,9 @@ import AbilityTable from "../AbilitySection/AbilityTable.vue";
 import ItemTable from "../InventorySection/ItemTable.vue";
 import { canUseAbility } from "../../../utils/abilityUtils";
 import { defaultWeapons } from "../../../utils/itemUtils";
-import CombatTimeButtons from "./CombatTimeButtons.vue";
 
 export default {
-  components: { AbilityTable, ItemTable, CombatTimeButtons },
+  components: { AbilityTable, ItemTable },
   name: "combat",
   computed: {
     ...mapState("character", ["character"]),
@@ -41,7 +42,6 @@ export default {
       );
     },
     usableWeapons() {
-      // TODO: append unarmed and improvised weapons to the end of this list
       return this.consolidatedItems
         .filter(
           (item) =>
