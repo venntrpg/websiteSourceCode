@@ -8,6 +8,7 @@ import {
   SECTION_INVENTORY,
   SECTION_SHOP,
 } from "../utils/constants";
+import { Position, Route } from "vue-router/types/router";
 
 Vue.use(VueRouter);
 
@@ -68,7 +69,11 @@ const routes = [
   { path: "*", component: NotFoundComponent },
 ];
 
-const scrollBehavior = (to, from, savedPosition) => {
+const scrollBehavior = (
+  to: Route,
+  from: Route,
+  savedPosition: Position | void
+) => {
   if (savedPosition) {
     return savedPosition; // default behavior when using forward & backward buttons
   }

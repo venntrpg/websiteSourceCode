@@ -9,7 +9,6 @@
 import HomePageLoggedOut from "../components/HomePage/HomePageLoggedOut.vue";
 import HomePageLoggedIn from "../components/HomePage/HomePageLoggedIn.vue";
 import { mapState } from "vuex";
-
 export default {
   name: "Home",
   components: {

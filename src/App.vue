@@ -6,6 +6,18 @@
 </template>
 
 <script>
+/*
+example ts component
+<script lang="ts">
+import Vue from "vue";
+
+export default Vue.extend({
+  name: "HelloWorld",
+  props: {
+    msg: String,
+  },
+});
+*/
 import Nav from "./components/Nav.vue";
 import { mapMutations } from "vuex";
 

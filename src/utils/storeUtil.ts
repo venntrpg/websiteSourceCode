@@ -1,7 +1,7 @@
 import router from "@/router/index";
 import store from "../store/index";
 
-export function checkResponse(response) {
+export function checkResponse(response: ServerResponse) {
   if (!response || response.success !== true) {
     if (response.info && response.info.includes("Authentication invalid")) {
       // user has been logged out
