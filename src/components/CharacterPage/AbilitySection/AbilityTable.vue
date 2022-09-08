@@ -44,6 +44,7 @@ import {
   improveTextForDisplay,
   stringToLinkID,
 } from "../../../utils/characterStringFormatting";
+import { SECTION_ABILITIES } from "../../../utils/constants";
 export default {
   components: { ParseAbilityEffect },
   name: "AblityTable",
@@ -68,17 +69,21 @@ export default {
       return improveTextForDisplay(ability.name);
     },
     abilityLink(ability) {
+      const section =
+        this.$route.params.section !== undefined
+          ? this.$route.params.section
+          : SECTION_ABILITIES;
       if (this.abilityOpenned(ability)) {
         return {
           name: "Character",
-          params: { id: this.id, section: this.$route.params.section },
+          params: { id: this.id, section },
         };
       }
       return {
         name: "Character",
         params: {
           id: this.id,
-          section: this.$route.params.section,
+          section,
           detail: ability.name,
         },
       };
