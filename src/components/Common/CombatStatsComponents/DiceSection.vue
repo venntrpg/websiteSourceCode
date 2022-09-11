@@ -98,12 +98,6 @@ export default {
         roll: new DiceRoll(this.computedDice.web),
       });
     },
-    toggleDiceDropDown() {
-      this.$store.commit("dice/toggleDiceDropDown");
-    },
-    toggleDiceSetting(setting) {
-      this.$store.commit("dice/toggleDiceSetting", setting);
-    },
   },
 };
 </script>

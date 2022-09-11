@@ -1,4 +1,9 @@
-export function buildDice(count, sides, adjust = 0, settings = {}) {
+export function buildDice(
+  count: number,
+  sides: number,
+  adjust: number | string = 0,
+  settings: DiceSettings = {}
+) {
   let adjustStr = "";
   if (typeof adjust === "string") {
     adjustStr = adjust;
@@ -6,7 +11,7 @@ export function buildDice(count, sides, adjust = 0, settings = {}) {
     if (adjust > 0) {
       adjustStr = `+${adjust}`;
     } else if (adjust < 0) {
-      adjustStr = adjust;
+      adjustStr = adjust.toString();
     }
   }
 
@@ -33,7 +38,7 @@ export function buildDice(count, sides, adjust = 0, settings = {}) {
     fatiguedStr = "-1";
   }
   let endStr = "";
-  if ("end" in settings) {
+  if (settings.end) {
     endStr = settings.end;
   }
   if (settings.flow) {
@@ -77,22 +82,39 @@ export function buildDice(count, sides, adjust = 0, settings = {}) {
   };
 }
 
-export function defaultDice(character, attr, settings = {}) {
-  return buildDice(3, 6, character[attr], settings);
+export function defaultDice(
+  character: Character,
+  attr: keyof Character,
+  settings: DiceSettings = {}
+) {
+  const adjust =
+    typeof character[attr] === "number" ? (character[attr] as number) : 0;
+  return buildDice(3, 6, adjust, settings);
 }
 
-export function heroPointBoost(character, attr, settings = {}) {
+export function heroPointBoost(
+  character: Character,
+  attr: keyof Character,
+  settings: DiceSettings = {}
+) {
   settings.drop = 1;
   settings.end = "+9";
   return defaultDice(character, attr, settings);
 }
 
-export function flowDice(character, attr, settings = {}) {
+export function flowDice(
+  character: Character,
+  attr: keyof Character,
+  settings: DiceSettings = {}
+) {
   settings.flow = true;
   return defaultDice(character, attr, settings);
 }
 
-export function diceParseFromString(diceStr, settings = {}) {
+export function diceParseFromString(
+  diceStr: string,
+  settings: DiceSettings = {}
+) {
   const match = diceStr.match(/(\d+)d(\d+)/);
   if (!match || match.length < 3) {
     return undefined;

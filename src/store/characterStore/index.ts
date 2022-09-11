@@ -6,103 +6,71 @@ import {
   serverCharacter2Local,
 } from "@/api/apiUtil";
 import { checkResponse } from "../../utils/storeUtil";
+import { sortedAbilities } from "../../utils/abilityUtils";
 import { consolidateItemList, calculateItemArmor } from "../../utils/itemUtils";
 import { CHAR_LOCAL_STORAGE, COG_LOCAL_STORAGE } from "../../utils/constants";
+import { ActionTree, GetterTree, MutationTree } from "vuex";
 
-const state = {
+const state: CharacterState = {
   characters: {},
-  character: {},
+  character: {
+    id: "",
+    name: "",
+    agi: 0,
+    cha: 0,
+    dex: 0,
+    int: 0,
+    per: 0,
+    spi: 0,
+    str: 0,
+    tek: 0,
+    wis: 0,
+    hp: 0,
+    maxHp: 0,
+    mp: 0,
+    maxMp: 0,
+    vim: 0,
+    maxVim: 0,
+    hero: 0,
+    maxHero: 0,
+    init: 0,
+    speed: 0,
+    xp: 0,
+    sp: 0,
+    armor: 0,
+    gift: "",
+    isEnemy: false,
+    items: [],
+    abilities: [],
+    changelog: [],
+  },
   searchAbility: "",
   searchAbilitySuggestions: [],
   searchAbilityError: "",
 };
 
-const getters = {
+const getters: GetterTree<CharacterState, RootState> = {
   consolidatedItems: (state) => {
+    if (state.character === undefined) {
+      return [];
+    }
     return consolidateItemList(state.character.items);
   },
   itemArmorMap: (state) => {
+    if (state.character === undefined) {
+      return undefined;
+    }
     return calculateItemArmor(state.character.items);
   },
-  sortedPaths: (state) => {
-    // sort by minimum purchased ability cost, at least for now - There are definetly better ways to do this sorting,
-    // like using a predefined list from scraping the server or something. Maybe I should add that to the vennt-scripts
-    // folder and automatically run and populate the resulting jsons into this repo when I deploy??
-    if (state.character.abilities === undefined) {
+  sortedAbilities: (state) => {
+    if (state.character === undefined) {
       return [];
     }
-    const pathCostMap = {};
-    state.character.abilities.forEach((ability) => {
-      let cost = parseInt(ability.purchase);
-      if (isNaN(cost)) {
-        cost = 5000; // arbitrary amount that costs a lot
-      }
-      if (
-        ability === undefined ||
-        ability.name === "NULL" ||
-        ability.path === undefined
-      ) {
-        return;
-      }
-      if (ability.path in pathCostMap) {
-        pathCostMap[ability.path] = Math.min(cost, pathCostMap[ability.path]);
-      } else {
-        pathCostMap[ability.path] = cost;
-      }
-    });
-    const paths = Object.keys(pathCostMap);
-    paths.sort((p1, p2) => pathCostMap[p1] - pathCostMap[p2]);
-    return paths;
-  },
-  sortedAbilities: (state, getters) => {
-    if (state.character.abilities === undefined) {
-      return [];
-    }
-    const abilityCopy = state.character.abilities.filter(
-      (ability) => ability !== undefined && ability.name !== "NULL"
-    );
-    return abilityCopy.sort((a1, a2) => {
-      // 1. put Passive abilities at the end of the list
-      const a1Passive = a1.cost && "Passive" in a1.cost && a1.cost.Passive;
-      const a2Passive = a2.cost && "Passive" in a2.cost && a2.cost.Passive;
-      if (!a1Passive && a2Passive) {
-        return -1;
-      } else if (a1Passive && !a2Passive) {
-        return 1;
-      }
-      // 2. put abilities which use SP instead of XP at the end of the list when passive
-      if (a1Passive && a1.purchase && a2Passive && a2.purchase) {
-        const a1SP = a1.purchase.includes("sp");
-        const a2SP = a2.purchase.includes("sp");
-        if (!a1SP && a2SP) {
-          return -1;
-        } else if (a1SP && !a2SP) {
-          return 1;
-        }
-      }
-      // 3. sort by path gathering
-      if (a1.path !== a2.path) {
-        const pathIdx = (given) =>
-          getters.sortedPaths.findIndex((path) => path === given);
-        return pathIdx(a1.path) - pathIdx(a2.path);
-      }
-      // 4. sort by XP price otherwise (for now at least)
-      const costInt = (purchase) => {
-        const cost = parseInt(purchase);
-        if (isNaN(cost)) {
-          return 0;
-        }
-        return cost;
-      };
-      return costInt(a1.purchase) - costInt(a2.purchase);
-    });
+    return sortedAbilities(state.character);
   },
 };
 
-const mutations = {
-  clearCharactersList(state) {
-    state.characters.clear();
-  },
+const mutations: MutationTree<CharacterState> = {
   setCharactersList(state, characters) {
     state.characters = characters;
   },
@@ -110,24 +78,48 @@ const mutations = {
     state.character = character;
   },
   updateCharacterAttribute(state, { attr, val }) {
-    state.character[attr] = val;
+    if (state.character == undefined) {
+      return;
+    }
+    if (typeof val === "string") {
+      state.character[attr as CharacterStrAttrs] = val;
+    } else if (typeof val === "number") {
+      state.character[attr as CharacterNumAttrs] = val;
+    }
   },
   updateCharacterAttributes(state, { attrs, msg }) {
     Object.entries(attrs).forEach(([attr, val]) => {
+      if (state.character === undefined) {
+        return;
+      }
       if (msg !== undefined) {
         if (!state.character.changelog) {
           state.character.changelog = [];
         }
-        const log = { attr, msg, time: Math.floor(Date.now() / 1000) };
-        if (state.character[attr]) {
-          log.prev = state.character[attr];
+        const log: ChangelogRow = {
+          attr,
+          msg,
+          time: Math.floor(Date.now() / 1000),
+        };
+        if (attr in state.character) {
+          const prevVal = state.character[attr as keyof Character];
+          if (typeof prevVal === "string" || typeof prevVal === "number") {
+            log.prev = prevVal;
+          }
         }
         state.character.changelog.push(log);
       }
-      state.character[attr] = val;
+      if (typeof val === "string") {
+        state.character[attr as CharacterStrAttrs] = val;
+      } else if (typeof val === "number") {
+        state.character[attr as CharacterNumAttrs] = val;
+      }
     });
   },
   filterCharacterChangelog(state, attr) {
+    if (state.character === undefined) {
+      return;
+    }
     if (!state.character.changelog) {
       state.character.changelog = [];
     }
@@ -136,10 +128,16 @@ const mutations = {
     );
   },
   appendItem(state, item) {
+    if (state.character === undefined) {
+      return;
+    }
     const localItem = serverItem2Local(item);
     state.character.items.push(localItem);
   },
   updateItem(state, item) {
+    if (state.character === undefined) {
+      return;
+    }
     const localItem = serverItem2Local(item);
     const itemList = [...state.character.items];
     const idx = itemList.findIndex((search) => search.id === localItem.id);
@@ -157,7 +155,7 @@ const mutations = {
   },
 };
 
-const actions = {
+const actions: ActionTree<CharacterState, RootState> = {
   // ------------------------- CHARACTER APIS ------------------------- //
 
   createCharacter: ({ commit }, { character, redirectToCharacter }) => {

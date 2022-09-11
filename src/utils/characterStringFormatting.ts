@@ -7,16 +7,18 @@ import {
 import { consolidateItemList } from "./itemUtils";
 import { ATTRIBUTES } from "./constants";
 
-function formatBasicAttributes(character) {
+function formatBasicAttributes(character: Character) {
   let characterText = "\n";
   ATTRIBUTES.forEach((attr) => {
-    characterText += `${attr.toUpperCase()}: ${character[attr]}  `;
+    characterText += `${attr.toUpperCase()}: ${
+      character[attr as keyof Character]
+    }  `;
   });
   characterText += "\n\n";
   return characterText;
 }
 
-function formatItem(item) {
+function formatItem(item: ConsolidatedItem) {
   let itemStr = item.name;
   if (item.type) {
     itemStr += ` (${item.type})`;
@@ -25,7 +27,7 @@ function formatItem(item) {
   return itemStr;
 }
 
-function formatAbility(ability) {
+function formatAbility(ability: Ability) {
   let abilityStr = `${ability.name}\nActivation: ${ability.activation}\n`;
   if (ability.range !== undefined) {
     abilityStr += `Range: ${ability.range}\n`;
@@ -39,7 +41,7 @@ function formatAbility(ability) {
   return abilityStr;
 }
 
-export function convertCharacter(character) {
+export function convertCharacter(character: Character) {
   if (Object.keys(character).length === 0) {
     return "";
   }
@@ -77,12 +79,12 @@ export function convertCharacter(character) {
   return characterText;
 }
 
-export function convertCombatCogFoe(character) {
+export function convertCombatCogFoe(character: Character) {
   if (Object.keys(character).length === 0) {
     return "";
   }
   const template =
-    character.template.length > 0
+    character.template && character.template.length > 0
       ? character.template.charAt(0).toUpperCase() + character.template.slice(1)
       : "";
   let characterText = `${character.name}\nLevel ${
@@ -131,7 +133,7 @@ export function convertCombatCogFoe(character) {
   return characterText;
 }
 
-export function improveTextForDisplay(text) {
+export function improveTextForDisplay(text: string) {
   // regex from https://leancrew.com/all-this/2010/11/smart-quotes-in-javascript/
   text = text.replace(/(^|[-\u2014\s(["])'/g, "$1\u2018"); // opening singles
   text = text.replace(/'/g, "\u2019"); // closing singles & apostrophes
@@ -141,7 +143,7 @@ export function improveTextForDisplay(text) {
   return text;
 }
 
-export function stringToLinkID(str) {
+export function stringToLinkID(str: string) {
   str = str.replace(/[ (),'":*]/gm, "-");
   str = str.replace(/\./gm, "_");
   str = str.replace(/[^a-zA-Z0-9-_:.]/gm, ""); // remove any invalid characters

@@ -17,20 +17,22 @@ export const defaultWeapons = defaultWeaponCategories.map((category) => {
   const name = `${category} Attack`;
   return { ...found, name, id: name, ids: [name] };
 });
-export const defaultWeaponNames = defaultWeapons.map((weapon) => weapon.name);
+export const defaultWeaponNames = defaultWeapons.map(
+  (weapon) => weapon && weapon.name
+);
 
-export function keys2Items(keys) {
+export function keys2Items(keys: string[]) {
   return keys
     .map((key) => items.find((item) => key === item.name))
     .filter((item) => item !== undefined)
-    .map((item) => localItem2Server(item));
+    .map((item) => item !== undefined && localItem2Server(item));
 }
 
-export function consolidateItemList(givenItems) {
+export function consolidateItemList(givenItems: Item[]) {
   if (givenItems === undefined) {
     return [];
   }
-  const items = [];
+  const items: ConsolidatedItem[] = [];
   givenItems.forEach((item) => {
     const foundItem = items.find(
       (search) =>
@@ -47,18 +49,30 @@ export function consolidateItemList(givenItems) {
   return items;
 }
 
-export function calculateItemArmor(items) {
+export function calculateItemArmor(items: Item[]) {
   if (!items) {
     return undefined;
   }
-  const res = { armor: 0, burden: 0, shield: 0, items: [] };
+  const res: ItemArmorAdjustment = {
+    armor: 0,
+    burden: 0,
+    shield: 0,
+    items: [],
+  };
   const releventTypes = ["armor", "shield"];
   const key2Match = {
     armor: /Armor Value: (\d+)/,
     burden: /Burden: (\d+)/,
     shield: /Shield Bonus: ([+-]*\d+)/,
   };
-  const specialItems = { "Backpack, Armored": { armor: 2 } };
+  const specialItems: {
+    [name: string]: { armor?: number; burden?: number; shield?: number };
+  } = {
+    "Backpack, Armored": { armor: 2 },
+  };
+  const adjustRes = (key: "armor" | "burden" | "shield", val: number) => {
+    res[key] += val;
+  };
   items.forEach((item) => {
     // only include equipped armor & shields
     if (item.type && releventTypes.includes(item.type) && item.equipped) {
@@ -67,23 +81,25 @@ export function calculateItemArmor(items) {
         if (found && found.length > 1) {
           const num = parseInt(found[1]); // use capture group
           if (!isNaN(num)) {
-            res[key] += num;
+            adjustRes(key as "armor" | "burden" | "shield", num);
           }
         }
       });
       res.items.push(item);
     } else if (specialItems[item.name]) {
       const map = specialItems[item.name];
-      Object.entries(map).forEach(([key, val]) => {
-        res[key] += val;
-      });
+      Object.entries(map).forEach(
+        ([key, val]) =>
+          val !== undefined &&
+          adjustRes(key as "armor" | "burden" | "shield", val)
+      );
       res.items.push(item);
     }
   });
   return res;
 }
 
-export function prefixName(item, action = "", cleanup = false) {
+export function prefixName(item: Item, action = "", cleanup = false) {
   let name = item.name;
   if (action !== "") {
     const commaPos = name.search(/,|\*| \(/gm);
@@ -105,12 +121,12 @@ export function prefixName(item, action = "", cleanup = false) {
   return name;
 }
 
-function isSpecialPlural(name) {
+function isSpecialPlural(name: string) {
   const plurals = ["Ammunition", "Ammo", "Armor", "Alcohol", "Rust"];
   return plurals.some((word) => name.includes(word));
 }
 
-export function pluralizeName(item, cleanup = false) {
+export function pluralizeName(item: Item, cleanup = false) {
   let name = item.name;
   const commaPos = name.search(/,|\*| \(/gm);
   let word = item.name;
@@ -127,3 +143,22 @@ export function pluralizeName(item, cleanup = false) {
   }
   return name;
 }
+
+/*
+type Example = {
+  a: string;
+  b: string;
+  c: number;
+};
+const example: Example = {
+  a: "",
+  b: "",
+  c: 0,
+};
+
+export function updateExample(key: string, val: string) {
+  if (key in example && typeof example[key as keyof Example] === "string") {
+    example[key as keyof Example] = val;
+  }
+}
+*/

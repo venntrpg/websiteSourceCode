@@ -3,7 +3,7 @@
     <div v-if="item !== undefined">
       <full-item-detail :item="item" />
       <item-uses-map
-        v-if="foundShopItem.uses"
+        v-if="foundShopItem && foundShopItem.uses"
         :item="item"
         :uses="foundShopItem.uses"
       />

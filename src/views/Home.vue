@@ -5,11 +5,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from "vue";
 import HomePageLoggedOut from "../components/HomePage/HomePageLoggedOut.vue";
 import HomePageLoggedIn from "../components/HomePage/HomePageLoggedIn.vue";
 import { mapState } from "vuex";
-export default {
+
+export default Vue.extend({
   name: "Home",
   components: {
     HomePageLoggedOut,
@@ -18,5 +20,5 @@ export default {
   computed: {
     ...mapState(["isLoggedIn"]),
   },
-};
+});
 </script>

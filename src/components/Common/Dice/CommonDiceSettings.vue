@@ -33,7 +33,10 @@ export default {
   },
   methods: {
     toggleDiceSetting(setting) {
-      this.$store.commit("dice/toggleDiceSetting", setting);
+      this.$store.commit("dice/setDefaultDiceSetting", {
+        setting,
+        val: !this.defaultDiceSettings,
+      });
     },
   },
 };

@@ -96,18 +96,18 @@ export default {
     },
     filteredCharacters() {
       const chars = {};
-      Object.entries(this.characters).forEach((pair) => {
-        if (!pair[1].isEnemy) {
-          chars[pair[0]] = pair[1];
+      Object.entries(this.characters).forEach(([id, char]) => {
+        if (!char.isEnemy) {
+          chars[id] = char;
         }
       });
       return chars;
     },
     filteredEnemies() {
       const chars = {};
-      Object.entries(this.characters).forEach((pair) => {
-        if (pair[1].isEnemy) {
-          chars[pair[0]] = pair[1];
+      Object.entries(this.characters).forEach(([id, char]) => {
+        if (char.isEnemy) {
+          chars[id] = char;
         }
       });
       return chars;

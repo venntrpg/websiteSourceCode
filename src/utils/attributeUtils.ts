@@ -1,35 +1,38 @@
 import { ATTRIBUTES } from "./constants";
 import store from "../store/index";
 
-export function hpByDiff(diff) {
+export function hpByDiff(diff: number) {
   return diff * 3;
 }
 
-export function vimByDiff(diff) {
+export function vimByDiff(diff: number) {
   return diff * 3;
 }
 
-export function mpByDiff(diff) {
+export function mpByDiff(diff: number) {
   return diff * 3;
 }
 
-const attrMaxMap = {
+const attrMaxMap: { [attr in keyof Character]?: keyof Character } = {
   hp: "maxHp",
   mp: "maxMp",
   vim: "maxVim",
   hero: "maxHero",
 };
 
-export function getMaxAttr(attr) {
-  return attrMaxMap[attr];
+export function getMaxAttr(attr: string) {
+  if (attr in attrMaxMap) {
+    return attrMaxMap[attr as keyof typeof attrMaxMap];
+  }
+  return undefined;
 }
 
-export function getBaseAttrFromMax(attr) {
+export function getBaseAttrFromMax(attr: string) {
   const pair = Object.entries(attrMaxMap).find((pair) => pair[1] === attr);
-  return pair === undefined ? undefined : pair[0];
+  return pair === undefined ? undefined : (pair[0] as keyof Character);
 }
 
-export function getAttrFullName(attr) {
+export function getAttrFullName(attr: string): string {
   const nameMap = {
     per: "Perception",
     tek: "Technology",
@@ -42,9 +45,8 @@ export function getAttrFullName(attr) {
     cha: "Charisma",
     hero: "Hero Points",
   };
-  const name = nameMap[attr];
-  if (name) {
-    return name;
+  if (attr in nameMap) {
+    return nameMap[attr as keyof typeof nameMap];
   }
   if (getBaseAttrFromMax(attr) !== undefined) {
     return "Maximum " + getAttrFullName(attr.substring(3).toLowerCase());
@@ -52,7 +54,7 @@ export function getAttrFullName(attr) {
   return getAttrDisplayName(attr);
 }
 
-export function getAttrDisplayName(attr) {
+export function getAttrDisplayName(attr: string) {
   if (attr === "init") {
     return "Initiative";
   }
@@ -65,11 +67,11 @@ export function getAttrDisplayName(attr) {
   return attr.charAt(0).toUpperCase() + attr.slice(1);
 }
 
-export function getAttrMaxName(attr) {
+export function getAttrMaxName(attr: string) {
   return "max" + attr.charAt(0).toUpperCase() + attr.slice(1);
 }
 
-export function generateDefaultAdjustMsg(attr, adjust) {
+export function generateDefaultAdjustMsg(attr: string, adjust: number) {
   if (adjust === 0) {
     return "";
   }
@@ -112,20 +114,29 @@ const clampMap = {
 
 // essentially a helper function for adjustAttrsAPI. This returns the attrsObject to pass to updateAttributes
 export function adjustAttrsObject(
-  character,
-  attrAdjustments,
+  character: Character,
+  attrAdjustments: AttributeAdjustments,
   propegateChanges = true,
   enforceMaximums = false
 ) {
-  const attrs = {};
-  const currentVal = (attr) => {
-    return attrs[attr] !== undefined ? attrs[attr] : character[attr];
+  const attrs: AttributeAdjustments = {};
+  const currentVal = (attr: keyof AttributeAdjustments): number => {
+    if (attrs[attr] !== undefined) {
+      return attrs[attr] as number;
+    }
+    if (typeof character[attr] !== "number") {
+      return 0;
+    }
+    return character[attr] as number;
   };
 
   // 1. get resulting effects
   Object.entries(attrAdjustments).forEach(([attr, adjustment]) => {
-    const newVal = character[attr] + adjustment;
-    attrs[attr] = newVal;
+    if (adjustment === undefined) {
+      return; // exit early to satisfy TS
+    }
+    const newVal = currentVal(attr as keyof AttributeAdjustments) + adjustment;
+    attrs[attr as keyof AttributeAdjustments] = newVal;
     // propegate changes
     if (propegateChanges) {
       // HP & VIM
@@ -159,12 +170,13 @@ export function adjustAttrsObject(
 
   // 2. clamp logic
   Object.entries(attrs).forEach(([attr, val]) => {
-    if (attr in clampMap) {
-      const baseAttr = clampMap[attr];
+    const baseAttr = getBaseAttrFromMax(attr);
+    if (typeof baseAttr === "string") {
+      const currentAttrVal = currentVal(attr as keyof AttributeAdjustments);
       if (
-        !(baseAttr in attrs) &&
-        character[baseAttr] <= character[attr] &&
-        character[baseAttr] > val
+        val !== undefined &&
+        currentVal(baseAttr) <= currentAttrVal &&
+        currentAttrVal > val
       ) {
         attrs[baseAttr] = val;
       }
@@ -186,8 +198,13 @@ export function adjustAttrsObject(
     "speed",
   ];
   Object.entries(attrs).forEach(([attr, val]) => {
-    if (minZeros.includes(attr) && val < 0 && character[attr] !== 0) {
-      attrs[attr] = 0;
+    if (
+      val !== undefined &&
+      minZeros.includes(attr) &&
+      val < 0 &&
+      character[attr as keyof AttributeAdjustments] !== 0
+    ) {
+      attrs[attr as keyof AttributeAdjustments] = 0;
     }
   });
 
@@ -195,8 +212,13 @@ export function adjustAttrsObject(
   if (enforceMaximums) {
     Object.entries(attrs).forEach(([attr, val]) => {
       const maxAttr = getMaxAttr(attr);
-      if (maxAttr && currentVal(maxAttr) && val > currentVal(maxAttr)) {
-        attrs[attr] = currentVal(maxAttr);
+      if (
+        val !== undefined &&
+        maxAttr &&
+        currentVal(maxAttr) &&
+        val > currentVal(maxAttr)
+      ) {
+        attrs[attr as keyof AttributeAdjustments] = currentVal(maxAttr);
       }
     });
   }
@@ -205,8 +227,8 @@ export function adjustAttrsObject(
 }
 
 export function adjustAttrsAPI(
-  character,
-  attrAdjustments,
+  character: Character,
+  attrAdjustments: AttributeAdjustments,
   propegateChanges = true,
   msg = "",
   enforceMaximums = false

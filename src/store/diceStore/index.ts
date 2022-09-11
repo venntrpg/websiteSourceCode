@@ -1,4 +1,6 @@
-const state = {
+import { MutationTree } from "vuex";
+
+const state: DiceState = {
   latestRoll: {
     per: null,
     tek: null,
@@ -20,12 +22,12 @@ const state = {
   useBuiltinDice: true,
 };
 
-const mutations = {
+const mutations: MutationTree<DiceState> = {
   updateLatestRoll(state, { attr, roll }) {
     state.latestRoll[attr] = roll;
   },
-  toggleDiceSetting(state, setting) {
-    state.defaultDiceSettings[setting] = !state.defaultDiceSettings[setting];
+  setDefaultDiceSetting(state, { setting, val }) {
+    state.defaultDiceSettings[setting as keyof DiceSettings] = val;
   },
   toggleDiceDropDown(state) {
     state.diceDropDown = !state.diceDropDown;

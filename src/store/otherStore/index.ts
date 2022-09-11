@@ -1,11 +1,12 @@
+import { ActionTree, MutationTree } from "vuex";
 import api from "@/api/apiOther";
 
-const state = {
+const state: OtherState = {
   randomNames: [],
   randomNamesDisabled: true,
 };
 
-const mutations = {
+const mutations: MutationTree<OtherState> = {
   appendRandomNames(state, randomNames) {
     state.randomNamesDisabled = false;
     state.randomNames = state.randomNames.concat(randomNames);
@@ -18,7 +19,7 @@ const mutations = {
   },
 };
 
-const actions = {
+const actions: ActionTree<OtherState, RootState> = {
   getRandomNames: ({ commit }) => {
     return api.getRandomNames().then((response) => {
       if (response.length && response.length > 0) {

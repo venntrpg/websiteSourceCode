@@ -1,5 +1,5 @@
 import Vue from "vue";
-import Vuex from "vuex";
+import Vuex, { ActionTree, MutationTree } from "vuex";
 import api from "@/api/api";
 import router from "@/router/index";
 import campaignStore from "./campaignStore";
@@ -11,7 +11,7 @@ Vue.use(Vuex);
 
 // ------------------------- STATE ------------------------- //
 
-const state = {
+const state: RootState = {
   isLoggedIn: false, // This variable is set in App.vue on loading the website
   username: "", // This variable is set in App.vue on loading the website
   signupErrorMsg: "",
@@ -19,7 +19,7 @@ const state = {
   pendingApis: {}, // Used to prevent spamming apis
 };
 
-const mutations = {
+const mutations: MutationTree<RootState> = {
   setIsLoggedIn(state, isLoggedIn) {
     state.isLoggedIn = isLoggedIn;
   },
@@ -40,7 +40,7 @@ const mutations = {
   },
 };
 
-const actions = {
+const actions: ActionTree<RootState, RootState> = {
   // ------------------------- ACCOUNT APIS ------------------------- //
 
   signup: ({ commit }, { username, password }) => {

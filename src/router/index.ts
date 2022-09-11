@@ -92,7 +92,7 @@ const scrollBehavior = (
       const detail = toDetail || fromDetail;
       // only attempt jump if only 1 detail is defined
       if ((toDetail !== undefined) !== (fromDetail !== undefined)) {
-        // attempt jump after 0.1 seconds to allow for the page to reshuffle
+        // attempt jump after 0.05 seconds to allow for the page to reshuffle
         setTimeout(() => {
           const el = document.getElementById(stringToLinkID(detail));
           if (el) {

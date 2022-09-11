@@ -106,7 +106,8 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from "vue";
 import { mapGetters, mapState } from "vuex";
 import { ResponsiveDirective } from "vue-responsive-components";
 import isUUID from "is-uuid";
@@ -131,7 +132,7 @@ import {
   SECTION_COMBAT,
 } from "../utils/constants";
 
-export default {
+export default Vue.extend({
   name: "Character",
   components: {
     CombatStats,
@@ -342,7 +343,7 @@ export default {
       this.showNotes = !this.showNotes;
     },
   },
-};
+});
 </script>
 
 <style scoped>
