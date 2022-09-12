@@ -148,6 +148,15 @@ type AttributeAdjustments = {
   [attr in keyof Character]?: number;
 };
 
+type CharacterAttributes = {
+  [attr: string]: {
+    val: number | string;
+    original?: number | string;
+    items: Item[];
+    abilities: Ability[];
+  };
+};
+
 type ServerCharacter = {
   id: string;
   name: string;

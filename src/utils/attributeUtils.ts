@@ -1,4 +1,6 @@
 import { ATTRIBUTES } from "./constants";
+import { attrIsEditable } from "../api/apiUtil";
+import { calculateItemArmor } from "./itemUtils";
 import store from "../store/index";
 
 export function hpByDiff(diff: number) {
@@ -247,4 +249,54 @@ export function adjustAttrsAPI(
     ),
     msg,
   });
+}
+
+export function characterAttributes(character: Character) {
+  const attrs: CharacterAttributes = {};
+  // 1. lay down ground work
+  Object.entries(character).forEach(([attr, val]) => {
+    if (
+      attrIsEditable(attr) &&
+      (typeof val === "string" || typeof val === "number")
+    ) {
+      attrs[attr] = { val, original: val, items: [], abilities: [] };
+    }
+  });
+
+  const alterAttrs = (
+    attr: string,
+    adjust: string | number,
+    items: Item[] = [],
+    abilities: Ability[] = []
+  ) => {
+    if (attrs[attr] === undefined) {
+      attrs[attr] = { val: adjust, items, abilities };
+    } else {
+      const val = attrs[attr].val;
+      if (typeof val === "string" || typeof adjust === "string") {
+        attrs[attr].val = val;
+      } else {
+        attrs[attr].val = val + adjust;
+      }
+      attrs[attr].items.push(...items);
+      attrs[attr].abilities.push(...abilities);
+    }
+  };
+
+  // 2. Fetch burden from items
+  const burdenMap = calculateItemArmor(character.items);
+  if (burdenMap !== undefined) {
+    alterAttrs("armor", burdenMap.armor, burdenMap.items);
+    alterAttrs("shield", burdenMap.shield, burdenMap.items);
+    alterAttrs("burden", burdenMap.burden, burdenMap.items);
+  }
+
+  // 3. Apply burden effects:
+  const burden = attrs.burden;
+  if (burden !== undefined) {
+    alterAttrs("speed", -burden.val);
+    alterAttrs("casting", -burden.val);
+  }
+
+  return attrs;
 }
