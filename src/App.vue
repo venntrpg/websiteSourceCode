@@ -682,12 +682,12 @@ ul {
 .tableItems.padded {
   padding: 8px;
 }
-/* TODO: try OUTLINE????? */
 .tableItems.selected {
-  border-width: 2px;
-  border-color: var(--border-focus);
-  border-style: solid;
-  border-radius: var(--border-radius);
+  border-radius: 2px;
+  outline-style: solid;
+  outline-color: var(--border-focus);
+  outline-width: 3px;
+  z-index: 2;
 }
 .tableHeader {
   padding-right: 54px; /* Accounts for button on left side of table */
