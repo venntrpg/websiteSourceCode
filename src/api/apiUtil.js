@@ -155,10 +155,13 @@ export function serverCharacter2Local(character) {
   return result;
 }
 
-export function localCharacter2Server(character) {
+export function localCharacter2Server(character, convertItems = false) {
   const result = {};
   Object.entries(character).forEach((pair) => {
     result[localAttr2Server(pair[0])] = pair[1];
   });
+  if (convertItems && character.items) {
+    result.items = character.items.map((item) => localItem2Server(item));
+  }
   return result;
 }

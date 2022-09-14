@@ -107,12 +107,9 @@ export function generateDefaultAdjustMsg(attr: string, adjust: number) {
   return `${pre} ${attr} by ${Math.abs(adjust)}`;
 }
 
-const clampMap = {
-  maxHp: "hp",
-  maxVim: "vim",
-  maxMp: "mp",
-  maxHero: "hero",
-};
+export function calcLevelDiff(newXP: number, originalXP: number) {
+  return Math.floor((newXP - originalXP) / 1000);
+}
 
 // essentially a helper function for adjustAttrsAPI. This returns the attrsObject to pass to updateAttributes
 export function adjustAttrsObject(
@@ -147,9 +144,7 @@ export function adjustAttrsObject(
         attrs.maxVim = currentVal("maxVim") + vimByDiff(adjustment);
       }
       if (attr === "xp") {
-        const newLevel = Math.floor(newVal / 1000);
-        const oldLevel = Math.floor(character[attr] / 1000);
-        const levelDiff = newLevel - oldLevel;
+        const levelDiff = calcLevelDiff(newVal, character.xp);
         if (levelDiff !== 0) {
           attrs.maxHp = currentVal("maxHp") + levelDiff;
           attrs.maxVim = currentVal("maxVim") + levelDiff;
@@ -157,15 +152,15 @@ export function adjustAttrsObject(
       }
       // MP
       if (attr === "wis") {
-        attrs.maxMp = Math.max(currentVal("maxMp") + mpByDiff(adjustment), 0);
+        attrs.maxMp = currentVal("maxMp") + mpByDiff(adjustment);
       }
       // SPEED
       if (attr === "agi") {
-        attrs.speed = Math.max(currentVal("speed") + adjustment, 0);
+        attrs.speed = currentVal("speed") + adjustment;
       }
       // INIT
       if (attr === "agi" || attr === "dex") {
-        attrs.init = Math.max(currentVal("init") + adjustment, 0);
+        attrs.init = currentVal("init") + adjustment;
       }
     }
   });
@@ -174,11 +169,15 @@ export function adjustAttrsObject(
   Object.entries(attrs).forEach(([attr, val]) => {
     const baseAttr = getBaseAttrFromMax(attr);
     if (typeof baseAttr === "string") {
-      const currentAttrVal = currentVal(attr as keyof AttributeAdjustments);
+      const originalBaseVal = character[baseAttr];
+      const originalVal = character[attr as keyof Character];
       if (
         val !== undefined &&
-        currentVal(baseAttr) <= currentAttrVal &&
-        currentAttrVal > val
+        typeof originalBaseVal === "number" &&
+        typeof originalVal === "number" &&
+        originalBaseVal <= originalVal &&
+        currentVal(baseAttr) > val
+        // example case here is hp = 10, maxHp = 10 -> maxHp changed to 7, hp should also be changed to 7
       ) {
         attrs[baseAttr] = val;
       }
@@ -186,7 +185,7 @@ export function adjustAttrsObject(
   });
 
   // 3. enforce minimums
-  const minZeros = [
+  const minZeros = new Set([
     "hp",
     "maxHp",
     "vim",
@@ -198,14 +197,9 @@ export function adjustAttrsObject(
     "xp",
     "armor",
     "speed",
-  ];
+  ]);
   Object.entries(attrs).forEach(([attr, val]) => {
-    if (
-      val !== undefined &&
-      minZeros.includes(attr) &&
-      val < 0 &&
-      character[attr as keyof AttributeAdjustments] !== 0
-    ) {
+    if (val !== undefined && minZeros.has(attr) && val < 0) {
       attrs[attr as keyof AttributeAdjustments] = 0;
     }
   });
@@ -251,7 +245,7 @@ export function adjustAttrsAPI(
   });
 }
 
-export function characterAttributes(character: Character) {
+export function characterAttributesMap(character: Character) {
   const attrs: CharacterAttributes = {};
   // 1. lay down ground work
   Object.entries(character).forEach(([attr, val]) => {

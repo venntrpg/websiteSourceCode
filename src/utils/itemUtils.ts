@@ -2,7 +2,6 @@ import indefinite from "indefinite";
 import pluralize from "pluralize";
 import items from "./data/items.json";
 import weaponTypes from "./data/weaponTypes.json";
-import { localItem2Server } from "../api/apiUtil";
 import { improveTextForDisplay } from "./characterStringFormatting";
 
 export const itemList = items;
@@ -24,8 +23,7 @@ export const defaultWeaponNames = defaultWeapons.map(
 export function keys2Items(keys: string[]) {
   return keys
     .map((key) => items.find((item) => key === item.name))
-    .filter((item) => item !== undefined)
-    .map((item) => item !== undefined && localItem2Server(item));
+    .filter((item) => item !== undefined);
 }
 
 export function consolidateItemList(givenItems: Item[]) {

@@ -40,7 +40,7 @@ const logout = () => {
 
 // https://github.com/joshmiller17/vennt-server#create-a-character
 const createCharacter = (character) => {
-  const serverCharacter = localCharacter2Server(character);
+  const serverCharacter = localCharacter2Server(character, true);
   return backendApi
     .post("/create_character", JSON.stringify(serverCharacter), {
       params: {
@@ -53,7 +53,7 @@ const createCharacter = (character) => {
 };
 
 const createEnemy = (enemy, campaign) => {
-  const serverEnemy = localCharacter2Server(enemy);
+  const serverEnemy = localCharacter2Server(enemy, true);
   const params = {
     auth_token: getAuth(),
   };

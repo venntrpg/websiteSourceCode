@@ -12,7 +12,9 @@
       </span>
     </p>
     <p v-if="dmg" class="mb-0"><b>Damage:</b> {{ dmg }}</p>
-    <dice-copy-button v-if="usable && dice" :dice="newDice" class="mt-16" />
+    <div v-if="usable && dice" class="card mt-8 padded thin">
+      <toggleable-dice-section-copyable :dice="newDiceParsed" class="wide" />
+    </div>
     <p v-if="weapon.special" class="mb-0">
       <b>Special:</b> {{ weapon.special }}
     </p>
@@ -58,18 +60,20 @@
 
 <script>
 import { mapState } from "vuex";
-import DiceCopyButton from "../../Common/CombatStatsComponents/DiceCopyButton.vue";
+import ToggleableDiceSectionCopyable from "../../Common/Dice/ToggleableDiceSectionCopyable.vue";
 import { defaultWeaponCategories } from "../../../utils/itemUtils";
+import { diceParseFromString } from "../../../utils/diceUtils";
 import { ATTRIBUTES } from "../../../utils/constants";
 
 export default {
-  components: { DiceCopyButton },
+  components: { ToggleableDiceSectionCopyable },
   name: "WeaponDetail",
   props: {
     weapon: { type: Object, required: true },
   },
   computed: {
     ...mapState("character", ["character"]),
+    ...mapState("dice", ["defaultDiceSettings"]),
     usable() {
       return this.weapon.id !== undefined;
     },
@@ -120,6 +124,9 @@ export default {
           : "") +
         (this.hasProficiency ? "+1" : "")
       );
+    },
+    newDiceParsed() {
+      return diceParseFromString(this.dice, this.defaultDiceSettings);
     },
     dmg() {
       if (!this.usable || !this.dice) {

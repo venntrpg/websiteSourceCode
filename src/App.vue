@@ -601,6 +601,9 @@ ul {
 .card.padded {
   padding: 16px;
 }
+.card.padded.thin {
+  padding: 8px;
+}
 .card.border {
   border: 1px solid var(--border);
 }
@@ -679,6 +682,7 @@ ul {
 .tableItems.padded {
   padding: 8px;
 }
+/* TODO: try OUTLINE????? */
 .tableItems.selected {
   border-width: 2px;
   border-color: var(--border-focus);
