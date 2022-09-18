@@ -109,10 +109,17 @@ export default {
       this.addItem();
     },
     addItem() {
+      const item = { ...this.item };
+      if (
+        ["container", "armor", "shield", "weapon"].includes(item.type) &&
+        item.weaponType !== "grenade"
+      ) {
+        item.equipped = true;
+      }
       for (let i = 0; i < this.parsedCount; i++) {
         this.$store.dispatch("character/addItem", {
           id: this.character.id,
-          item: this.item,
+          item,
         });
       }
     },

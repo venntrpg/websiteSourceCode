@@ -11,22 +11,15 @@
         Buy some ammo
       </div>
     </router-link>
-    <div v-else class="card column border">
-      <div
-        v-for="(item, index) in ammo"
-        v-bind:key="index"
-        class="tableItems noHeader padded"
-      >
-        <h3 class="mt-0 mb-8">{{ item.name }}</h3>
-        <p class="mt-0 mb-0">{{ item.desc }}</p>
-      </div>
-    </div>
+    <simple-item-table v-else :items="ammo" />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapState } from "vuex";
+import SimpleItemTable from "../InventorySection/SimpleItemTable.vue";
 export default {
+  components: { SimpleItemTable },
   name: "AmmoList",
   computed: {
     ...mapState("character", ["character"]),

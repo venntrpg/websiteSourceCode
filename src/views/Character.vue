@@ -68,13 +68,13 @@
         </div>
       </div>
     </nav>
-    <!--  --------------------- SIDE BAR --------------------- -->
+    <!--  --------------------- SIDE BARS --------------------- -->
     <div class="sideBar">
       <combat-stats
         :character="character"
         :showItems="shopPage"
         :useCopyableDice="true"
-        :itemArmorMap="itemArmorMap"
+        :characterAttributes="characterAttributes"
       />
     </div>
     <div v-bind:class="rightSideBarClass" class="sideBar right">
@@ -92,7 +92,7 @@
           v-else-if="statsPage"
           :character="character"
           :useCopyableDice="true"
-          :itemArmorMap="itemArmorMap"
+          :characterAttributes="characterAttributes"
         />
         <abilities v-else />
       </div>
@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapState } from "vuex";
 import { ResponsiveDirective } from "vue-responsive-components";
 import isUUID from "is-uuid";
 import CombatStats from "../components/Common/CombatStats.vue";
@@ -191,8 +191,11 @@ export default {
   },
   computed: {
     ...mapState(["isLoggedIn"]),
-    ...mapState("character", ["characters", "character"]),
-    ...mapGetters("character", ["itemArmorMap"]),
+    ...mapState("character", [
+      "characters",
+      "character",
+      "characterAttributes",
+    ]),
     stats() {
       return SECTION_STATS;
     },

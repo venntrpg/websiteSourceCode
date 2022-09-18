@@ -7,7 +7,8 @@ import {
 } from "@/api/apiUtil";
 import { checkResponse } from "../../utils/storeUtil";
 import { sortedAbilities } from "../../utils/abilityUtils";
-import { consolidateItemList, calculateItemArmor } from "../../utils/itemUtils";
+import { consolidateItemList } from "../../utils/itemUtils";
+import { characterAttributesMap } from "../../utils/attributeUtils";
 import { CHAR_LOCAL_STORAGE, COG_LOCAL_STORAGE } from "../../utils/constants";
 import { ActionTree, GetterTree, MutationTree } from "vuex";
 
@@ -56,17 +57,17 @@ const getters: GetterTree<CharacterState, RootState> = {
     }
     return consolidateItemList(state.character.items);
   },
-  itemArmorMap: (state) => {
-    if (state.character === undefined) {
-      return undefined;
-    }
-    return calculateItemArmor(state.character.items);
-  },
   sortedAbilities: (state) => {
     if (state.character === undefined) {
       return [];
     }
     return sortedAbilities(state.character);
+  },
+  characterAttributes: (state) => {
+    if (state.character === undefined) {
+      return {};
+    }
+    return characterAttributesMap(state.character);
   },
 };
 
