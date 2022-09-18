@@ -1,6 +1,7 @@
+import mexp from "math-expression-evaluator";
 import { ATTRIBUTES } from "./constants";
 import { attrIsEditable } from "../api/apiUtil";
-import { calculateItemArmor } from "./itemUtils";
+import { getShopItem } from "./itemUtils";
 import store from "../store/index";
 
 export function hpByDiff(diff: number) {
@@ -111,6 +112,20 @@ export function calcLevelDiff(newXP: number, originalXP: number) {
   return Math.floor((newXP - originalXP) / 1000);
 }
 
+const minZeros = new Set([
+  "hp",
+  "maxHp",
+  "vim",
+  "maxVim",
+  "mp",
+  "maxMp",
+  "hero",
+  "maxHero",
+  "xp",
+  "armor",
+  "speed",
+]);
+
 // essentially a helper function for adjustAttrsAPI. This returns the attrsObject to pass to updateAttributes
 export function adjustAttrsObject(
   character: Character,
@@ -184,20 +199,7 @@ export function adjustAttrsObject(
     }
   });
 
-  // 3. enforce minimums
-  const minZeros = new Set([
-    "hp",
-    "maxHp",
-    "vim",
-    "maxVim",
-    "mp",
-    "maxMp",
-    "hero",
-    "maxHero",
-    "xp",
-    "armor",
-    "speed",
-  ]);
+  // 3. enforce zero minimums
   Object.entries(attrs).forEach(([attr, val]) => {
     if (val !== undefined && minZeros.has(attr) && val < 0) {
       attrs[attr as keyof AttributeAdjustments] = 0;
@@ -247,7 +249,7 @@ export function adjustAttrsAPI(
 
 export function characterAttributesMap(character: Character) {
   const attrs: CharacterAttributes = {};
-  // 1. lay down ground work
+  // 1. Directly copy over base attribute values from the character object
   Object.entries(character).forEach(([attr, val]) => {
     if (
       attrIsEditable(attr) &&
@@ -277,13 +279,28 @@ export function characterAttributesMap(character: Character) {
     }
   };
 
-  // 2. Fetch burden from items
-  const burdenMap = calculateItemArmor(character.items);
-  if (burdenMap !== undefined) {
-    alterAttrs("armor", burdenMap.armor, burdenMap.items);
-    alterAttrs("shield", burdenMap.shield, burdenMap.items);
-    alterAttrs("burden", burdenMap.burden, burdenMap.items);
-  }
+  const equations: { [attr: string]: string } = {};
+
+  // 2. Fetch effects from items
+  character.items.forEach((item) => {
+    const shopItem = getShopItem(item);
+    if (
+      shopItem === undefined ||
+      shopItem.uses === undefined ||
+      shopItem.uses.adjust === undefined ||
+      !item.equipped
+    ) {
+      return;
+    }
+    Object.entries(shopItem.uses.adjust.attr).forEach(([attr, val]) => {
+      if (typeof val === "string" && typeof attrs[attr].val === "number") {
+        // adjust value is an equation instead of a direct adjustment, so we need to pass it on to handle later
+        equations[attr] = val;
+      } else {
+        alterAttrs(attr, val, [item]);
+      }
+    });
+  });
 
   // 3. Apply burden effects:
   const burden = attrs.burden;
@@ -291,6 +308,35 @@ export function characterAttributesMap(character: Character) {
     alterAttrs("speed", -burden.val);
     alterAttrs("casting", -burden.val);
   }
+
+  // 4. Apply pending equations
+  Object.entries(equations).forEach(([attr, equation]) => {
+    Object.entries(attrs).forEach(([replaceAttr, replaceVal]) => {
+      if (typeof replaceVal.val === "number") {
+        equation = equation.replaceAll(replaceAttr, replaceVal.val.toString());
+      }
+    });
+    // ensure all variables have been removed from the equation before attempting to solve it
+    if (/^[\d+\-*/() ]+$/.test(equation)) {
+      try {
+        const parsed = parseInt(mexp.eval(equation));
+        if (attrs[attr]) {
+          attrs[attr].val = parsed;
+        } else {
+          alterAttrs(attr, parsed);
+        }
+      } catch {
+        // throw out any errors
+      }
+    }
+  });
+
+  // 5. Enforce zero minimums
+  Object.entries(attrs).forEach(([attr, map]) => {
+    if (minZeros.has(attr) && typeof map.val === "number" && map.val < 0) {
+      attrs[attr].val = 0;
+    }
+  });
 
   return attrs;
 }

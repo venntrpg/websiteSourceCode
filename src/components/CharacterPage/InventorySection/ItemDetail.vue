@@ -43,8 +43,7 @@ import FullItemDetail from "./FullItemDetail.vue";
 import SpecialItemUses from "../SpecialUses/SpecialItemUses.vue";
 import ItemUsesMap from "../SpecialUses/ItemUsesMap.vue";
 import {
-  itemList,
-  weaponTypesList,
+  getShopItem,
   defaultWeapons,
   defaultWeaponNames,
 } from "../../../utils/itemUtils";
@@ -73,19 +72,7 @@ export default {
       );
     },
     foundShopItem() {
-      const item = itemList.find(
-        (it) =>
-          it.name === this.item.name &&
-          it.type === this.item.type &&
-          it.bulk === this.item.bulk &&
-          it.desc === this.item.desc
-      );
-      if (item) {
-        return item;
-      }
-      return weaponTypesList.find(
-        (weapon) => weapon.category === this.item.category
-      );
+      return getShopItem(this.item);
     },
     showSellItemButton() {
       return this.foundShopItem !== undefined;

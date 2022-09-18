@@ -4,12 +4,12 @@ import items from "./data/items.json";
 import weaponTypes from "./data/weaponTypes.json";
 import { improveTextForDisplay } from "./characterStringFormatting";
 
-export const itemList = items;
-export const weaponTypesList = weaponTypes;
+export const itemList = items as ShopItem[];
+export const weaponTypesList = weaponTypes as ShopItem[];
 
 export const defaultWeaponCategories = ["Unarmed", "Improvised"];
 export const defaultWeapons = defaultWeaponCategories.map((category) => {
-  const found = weaponTypes.find((weapon) => weapon.category === category);
+  const found = weaponTypesList.find((weapon) => weapon.category === category);
   if (!found) {
     return found;
   }
@@ -22,8 +22,22 @@ export const defaultWeaponNames = defaultWeapons.map(
 
 export function keys2Items(keys: string[]) {
   return keys
-    .map((key) => items.find((item) => key === item.name))
+    .map((key) => itemList.find((item) => key === item.name))
     .filter((item) => item !== undefined);
+}
+
+export function getShopItem(item: Item) {
+  const found = itemList.find(
+    (it) =>
+      it.name === item.name &&
+      it.type === item.type &&
+      it.bulk === item.bulk &&
+      it.desc === item.desc
+  );
+  if (found) {
+    return found;
+  }
+  return weaponTypesList.find((weapon) => weapon.category === item.category);
 }
 
 export function consolidateItemList(givenItems: Item[]) {

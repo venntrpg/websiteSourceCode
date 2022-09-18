@@ -50,9 +50,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 - [ ] make mobile nav button reveal a dropdown
 - [ ] Change my custom subrouting behavior to use Vue's behavior. Should hopefully improve the page's code a bit [https://router.vuejs.org/guide/essentials/named-views.html#nested-named-views](https://router.vuejs.org/guide/essentials/named-views.html#nested-named-views)
-- [ ] start converting some files to TS - especially commonly used util files
-- [ ] maybe add some unit testing for some core util functions
-- [ ] try adding zod validation to api? [https://zod.dev/?id=installation](https://zod.dev/?id=installation)
+- [x] start converting some files to TS - especially commonly used util files
+- [x] maybe add some unit testing for some core util functions
 
 ### Done todos:
 

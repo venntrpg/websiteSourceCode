@@ -32,6 +32,41 @@ type ServerItem = Item & {
   id2?: string; // sometimes used for updating item details
 };
 
+type ShopItem = {
+  name?: string;
+  bulk: number;
+  desc: string;
+  type: string;
+  section?: string;
+  courses?: string;
+  category?: string;
+  weaponType?: string;
+  range?: string;
+  attr?: string;
+  dmg?: string;
+  special?: string;
+  cost: string;
+  sp?: number;
+  examples?: string;
+  uses?: {
+    roll?: {
+      dice: string;
+      attr: string;
+    };
+    heal?: {
+      attr: { [attr: string]: number };
+    };
+    adjust?: {
+      time: "turn" | "encounter" | "rest" | "permanent";
+      attr: { [attr: string]: number | string };
+    };
+    check?: {
+      bonus: string;
+      attr: string;
+    };
+  };
+};
+
 type AbilityCost = {
   A: number;
   R: number;

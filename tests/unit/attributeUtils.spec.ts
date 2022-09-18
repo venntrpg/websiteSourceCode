@@ -18,7 +18,7 @@ import {
   adjustAttrsObject,
   characterAttributesMap,
 } from "@/utils/attributeUtils";
-import { keys2Items, calculateItemArmor } from "@/utils/itemUtils";
+import { keys2Items } from "@/utils/itemUtils";
 
 function getDefaultCharacter(): Character {
   return {
@@ -68,7 +68,11 @@ function getTestItems(keys: string[]): Item[] {
     if (item === undefined) {
       return getDefaultItem();
     }
-    return { ...item, id: `test${idx}` };
+    return {
+      ...item,
+      id: `test${idx}`,
+      name: item.name ? item.name : `test${idx}`,
+    };
   });
 }
 
@@ -147,19 +151,24 @@ describe("attributeUtils.ts", () => {
       char.items = armorItems;
       equipItems(char);
       const attrs = characterAttributesMap(char);
-      // console.log(attrs);
-      const expectedArmorMap = calculateItemArmor(armorItems);
-      if (expectedArmorMap === undefined) {
-        fail("calculateItemArmor failed");
-      }
-      expect(attrs.armor.val).toBe(char.armor + expectedArmorMap.armor);
+      expect(attrs.armor.val).toBeGreaterThan(char.armor);
       expect(attrs.armor.original).toBe(char.armor);
-      expect(attrs.armor.items).toEqual(expect.arrayContaining(armorItems));
-      expect(attrs.burden.val).toBe(expectedArmorMap.burden);
-      expect(attrs.shield.val).toBe(expectedArmorMap.shield);
-      expect(attrs.speed.val).toBe(char.speed - expectedArmorMap.burden);
+      expect(attrs.armor.items).toStrictEqual([armorItems[0]]);
+      expect(attrs.burden.val).toBeGreaterThan(0);
+      expect(attrs.shield.val).toBeGreaterThan(0);
+      expect(attrs.shield.items).toStrictEqual([armorItems[1]]);
+      expect(attrs.speed.val).toBe(0); // minimum val is 0
       expect(attrs.hero.val).toBe(char.hero);
       expect(attrs.hero.original).toBe(char.hero);
+    });
+    it("characterAttributesMap executes equations", () => {
+      const char = getDefaultCharacter();
+      char.speed = 11;
+      const armorItems = getTestItems(["Rockskin Potion"]);
+      char.items = armorItems;
+      equipItems(char);
+      const attrs = characterAttributesMap(char);
+      expect(attrs.speed.val).toBe(Math.floor(char.speed / 2));
     });
   });
 });
