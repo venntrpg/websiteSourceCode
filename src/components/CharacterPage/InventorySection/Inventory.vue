@@ -30,6 +30,7 @@
         :id="character.id"
         :items="containers"
         :itemType="'Container'"
+        :hideCount="true"
         class="mb-24"
       />
     </div>
@@ -117,7 +118,10 @@ export default {
       return this.consolidatedItems.filter((item) => item.type === "weapon");
     },
     containers() {
-      return this.consolidatedItems.filter((item) => item.type === "container");
+      const containerTypes = new Set(["container", "armor", "shield"]);
+      return this.consolidatedItems.filter((item) =>
+        containerTypes.has(item.type)
+      );
     },
     generalItems() {
       return this.consolidatedItems.filter(

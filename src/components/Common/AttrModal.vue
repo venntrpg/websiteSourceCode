@@ -26,7 +26,17 @@
                 class="ml-8"
               />
               <span v-else-if="attr in character" class="ml-8">
-                {{ character[attr] }}
+                <span class="number">{{ character[attr] }}</span>
+                <span
+                  v-if="
+                    characterAttributes[attr] &&
+                    characterAttributes[attr].val !== character[attr]
+                  "
+                  class="mutedText ml-8"
+                  >(Temporary Value:
+                  <span class="number">{{ characterAttributes[attr].val }}</span
+                  >)</span
+                >
               </span>
               <span v-else class="ml-8">Not yet defined</span>
             </div>
@@ -114,6 +124,7 @@ export default {
   props: {
     character: Object,
     attr: String,
+    characterAttributes: Object,
   },
   mounted() {
     // When the user is using keyboard navigation, jump focus to modal

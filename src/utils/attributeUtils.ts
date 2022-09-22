@@ -193,6 +193,7 @@ export function adjustAttrsObject(
         originalBaseVal <= originalVal &&
         currentVal(baseAttr) > val
         // example case here is hp = 10, maxHp = 10 -> maxHp changed to 7, hp should also be changed to 7
+        // if hp = 15, maxHp = 10 -> maxHp changed to 7, keep hp at 15
       ) {
         attrs[baseAttr] = val;
       }
