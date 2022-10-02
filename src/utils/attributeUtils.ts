@@ -109,7 +109,7 @@ export function generateDefaultAdjustMsg(attr: string, adjust: number) {
 }
 
 export function calcLevelDiff(newXP: number, originalXP: number) {
-  return Math.floor((newXP - originalXP) / 1000);
+  return Math.floor(newXP / 1000) - Math.floor(originalXP / 1000);
 }
 
 const minZeros = new Set([
@@ -236,14 +236,23 @@ export function adjustAttrsAPI(
     return;
   }
 
+  const attrs = adjustAttrsObject(
+    character,
+    attrAdjustments,
+    propegateChanges,
+    enforceMaximums
+  );
+
+  if (propegateChanges && attrs.xp) {
+    const levelDiff = calcLevelDiff(attrs.xp, character.xp);
+    if (levelDiff > 0) {
+      store.commit("character/setLevelsToProcess", levelDiff);
+    }
+  }
+
   store.dispatch("character/updateAttributes", {
     id: character.id,
-    attrs: adjustAttrsObject(
-      character,
-      attrAdjustments,
-      propegateChanges,
-      enforceMaximums
-    ),
+    attrs,
     msg,
   });
 }

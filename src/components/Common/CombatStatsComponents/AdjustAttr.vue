@@ -45,8 +45,7 @@
 import {
   getAttrDisplayName,
   generateDefaultAdjustMsg,
-  calcLevelDiff,
-  adjustAttrsObject,
+  adjustAttrsAPI,
 } from "../../../utils/attributeUtils";
 import {
   ATTRIBUTES,
@@ -132,18 +131,7 @@ export default {
           this.reason !== ""
             ? this.reason
             : generateDefaultAdjustMsg(this.attr, adjust);
-        const updateObject = adjustAttrsObject(this.character, attrs, true);
-        if (updateObject.xp) {
-          const levelDiff = calcLevelDiff(updateObject.xp, this.character.xp);
-          if (levelDiff > 0) {
-            console.log(levelDiff);
-          }
-        }
-        this.$store.dispatch("character/updateAttributes", {
-          id: this.character.id,
-          updateObject,
-          reason,
-        });
+        adjustAttrsAPI(this.character, attrs, true, reason);
         this.adjust = "";
         this.reason = "";
       }

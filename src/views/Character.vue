@@ -97,9 +97,7 @@
         <abilities v-else />
       </div>
     </div>
-    <attr-modal
-      v-if="showAttrModal"
-      :attr="attrToEdit"
+    <character-modals
       :character="character"
       :characterAttributes="characterAttributes"
     />
@@ -119,9 +117,8 @@ import WeaponShop from "../components/CharacterPage/ShopSection/WeaponShop.vue";
 import ItemShop from "../components/CharacterPage/ShopSection/ItemShop.vue";
 import CharacterSettings from "../components/CharacterPage/CharacterSettings.vue";
 import Notes from "../components/CharacterPage/Notes.vue";
-import AttrModal from "../components/Common/AttrModal.vue";
 import Combat from "../components/CharacterPage/CombatSection/Combat.vue";
-import { attrIsEditable } from "../api/apiUtil";
+import CharacterModals from "../components/CharacterPage/CharacterModals.vue";
 import {
   SECTION_ABILITIES,
   SECTION_INVENTORY,
@@ -142,9 +139,9 @@ export default {
     ItemShop,
     CharacterSettings,
     Notes,
-    AttrModal,
     WeaponShop,
     Combat,
+    CharacterModals,
   },
   directives: {
     responsive: ResponsiveDirective,
@@ -247,14 +244,6 @@ export default {
     fullScreenAvailable() {
       return document.fullscreenEnabled;
     },
-    attrToEdit() {
-      return this.$route.query.attr;
-    },
-    showAttrModal() {
-      return (
-        this.attrToEdit !== undefined && attrIsEditable(this.$route.query.attr)
-      );
-    },
     showInventoryButton() {
       return !(
         this.character.id &&
@@ -266,12 +255,6 @@ export default {
     },
   },
   methods: {
-    isFullsceen() {
-      return document.fullscreenElement === null;
-    },
-    updateFullscreenKey() {
-      this.fullscreenUpdateKey = this.fullscreenUpdateKey + 1;
-    },
     keyMapper(e) {
       const src = e.srcElement.localName;
       if (["button", "input", "textarea"].includes(src)) {
@@ -326,6 +309,12 @@ export default {
           }
           break;
       }
+    },
+    isFullsceen() {
+      return document.fullscreenElement === null;
+    },
+    updateFullscreenKey() {
+      this.fullscreenUpdateKey = this.fullscreenUpdateKey + 1;
     },
     tryFullscreen() {
       if (this.fullScreenAvailable) {

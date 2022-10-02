@@ -275,6 +275,7 @@ type CharacterState = {
   searchAbility: string;
   searchAbilitySuggestions: string[];
   searchAbilityError: string;
+  levelsToProcess: number;
 };
 
 type DiceState = {

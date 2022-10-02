@@ -48,6 +48,7 @@ const state: CharacterState = {
   searchAbility: "",
   searchAbilitySuggestions: [],
   searchAbilityError: "",
+  levelsToProcess: 0,
 };
 
 const getters: GetterTree<CharacterState, RootState> = {
@@ -153,6 +154,9 @@ const mutations: MutationTree<CharacterState> = {
   },
   setSearchAbilityError(state, error) {
     state.searchAbilityError = error;
+  },
+  setLevelsToProcess(state, levels) {
+    state.levelsToProcess = levels;
   },
 };
 

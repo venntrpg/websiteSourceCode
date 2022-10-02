@@ -22,7 +22,7 @@
       class="sideBar"
       v-bind:class="[getHiddenSidebarClass, getMobileSidebarClass]"
     >
-      <CombatStats :character="createCharacter" :showItems="true" />
+      <combat-stats :character="createCharacter" :showItems="true" />
     </div>
     <!--  --------------------- START OF CHARACTER CREATION FLOW --------------------- -->
     <div
@@ -102,7 +102,7 @@
             Amnis, each one providing unique boons to your character.
           </i>
         </p>
-        <GiftSelection :gift="create.gift" @giftUpdated="giftUpdated" />
+        <gift-selection :gift="create.gift" @giftUpdated="giftUpdated" />
         <!-- ----- STEP 4 ----- -->
         <h2>Step 4: Attribute scores</h2>
         <p>In this step, you select your base attributes.</p>
@@ -110,8 +110,7 @@
           <p class="textBlock mt-0">
             1. Select three attributes you used most as a child.
           </p>
-          <AttributeSelection
-            :attributes="validAttributes"
+          <attribute-selection
             :selected="create.childAttrs"
             :maxChoices="3"
             @selectedUpdated="childAttrsUpdated"
@@ -121,8 +120,7 @@
           <p class="textBlock mt-0">
             2. Select three attributes you used most in the last six years.
           </p>
-          <AttributeSelection
-            :attributes="validAttributes"
+          <attribute-selection
             :selected="create.adultAttrs"
             :maxChoices="3"
             @selectedUpdated="adultAttrsUpdated"
@@ -130,13 +128,12 @@
         </div>
         <div class="card column padded mb-24">
           <p class="textBlock mt-0">3. Choose one:</p>
-          <RadioButtonSelection
+          <radio-button-selection
             :options="getAdditionalAttrChoiceOptions"
             :selected="create.additionalAttrChoice"
             @selectedUpdated="additionalAttrChoiceUpdated"
           />
-          <AttributeSelection
-            :attributes="validAttributes"
+          <attribute-selection
             :selected="create.additionalAttrs"
             :maxChoices="maxAdditionalAttrsChoices"
             :disabledChoices="blockAdditionalAttrsChoices"
@@ -160,8 +157,7 @@
             <li>Weak... ...You might want to pick STR.</li>
             <li>Repulsive... ...You might want to pick CHA.</li>
           </ul>
-          <AttributeSelection
-            :attributes="validAttributes"
+          <attribute-selection
             :selected="create.badAttrs"
             :maxChoices="1"
             :disabledChoices="blockBadAttrsChoices"
@@ -179,8 +175,7 @@
               >Course of Flux</a
             >)
           </p>
-          <AttributeSelection
-            :attributes="validAttributes"
+          <attribute-selection
             :selected="create.grate1"
             :maxChoices="1"
             @selectedUpdated="grate1Updated"
@@ -196,8 +191,7 @@
               >Course of Flux</a
             >)
           </p>
-          <AttributeSelection
-            :attributes="validAttributes"
+          <attribute-selection
             :selected="create.grate3"
             :maxChoices="1"
             @selectedUpdated="grate3Updated"
@@ -231,14 +225,14 @@
         </p>
         <div class="card column padded mb-24">
           <p class="textBlock mt-0">1. What do you keep at your side?</p>
-          <RadioButtonSelection
+          <radio-button-selection
             :options="getSideEquipmentOptions"
             :selected="create.sideItem"
             @selectedUpdated="sideItemUpdated"
           />
           <div v-if="showRememberOptions">
             <p>Select "Something to Remember" benefit:</p>
-            <RadioButtonSelection
+            <radio-button-selection
               :options="getRememberOptions"
               :selected="create.rememberItem"
               @selectedUpdated="rememberItemUpdated"
@@ -251,7 +245,7 @@
             This is your starting Item Container. If you buy another item
             container, it replaces this one.
           </p>
-          <RadioButtonSelection
+          <radio-button-selection
             :options="getOutfitOptions"
             :selected="create.outfit"
             @selectedUpdated="outfitUpdated"
@@ -259,7 +253,7 @@
         </div>
         <div class="card column padded">
           <p class="textBlock mt-0">3. What did you bring with you?</p>
-          <RadioButtonSelection
+          <radio-button-selection
             :options="getItemSetOptions"
             :selected="create.itemSet"
             @selectedUpdated="itemSetUpdated"
@@ -269,7 +263,7 @@
         <h2>Step 7: XP and Abilities</h2>
         <div class="card column padded">
           <p class="textBlock mt-0">Are you new to adventuring?</p>
-          <RadioButtonSelection
+          <radio-button-selection
             :options="getInexperiencedOptions"
             :selected="getInexperiencedOption"
             @selectedUpdated="experienceUpdated"
@@ -382,9 +376,6 @@ export default {
     },
     getMobileSidebarClass() {
       return this.showingStats ? "showStats" : "";
-    },
-    validAttributes() {
-      return ATTRIBUTES;
     },
     // formulas come from https://vennt.fandom.com/wiki/Character_Creation
     calculateHP() {
@@ -555,7 +546,7 @@ export default {
     },
     /*
     blockChildAttrsChoices() {
-      return this.validAttributes.filter(
+      return ATTRIBUTES.filter(
         (attr) =>
           (this.create.gift === attr &&
             this.create.adultAttrs.includes(attr)) ||
@@ -563,7 +554,7 @@ export default {
       );
     },
     blockAdultAttrsChoices() {
-      return this.validAttributes.filter(
+      return ATTRIBUTES.filter(
         (attr) =>
           (this.create.gift === attr &&
             this.create.childAttrs.includes(attr)) ||
@@ -574,7 +565,7 @@ export default {
     blockAdditionalAttrsChoices() {
       switch (this.create.additionalAttrChoice) {
         case "one":
-          return this.validAttributes.filter(
+          return ATTRIBUTES.filter(
             // block if attribute has only been selected by one of the previous options
             (attr) =>
               this.create.gift === attr ||
@@ -583,7 +574,7 @@ export default {
           );
         case "zero":
           // block if any attribute modifiers have already been selected
-          return this.validAttributes.filter(
+          return ATTRIBUTES.filter(
             (attr) =>
               this.create.gift === attr ||
               this.create.childAttrs.includes(attr) ||
@@ -605,7 +596,7 @@ export default {
       return 0;
     },
     blockBadAttrsChoices() {
-      return this.validAttributes.filter(
+      return ATTRIBUTES.filter(
         (attr) =>
           this.create.gift === attr ||
           this.create.childAttrs.includes(attr) ||
@@ -775,7 +766,7 @@ export default {
       this.backupCreate();
     },
     isValidAttribute(attr) {
-      return this.validAttributes.includes(attr);
+      return ATTRIBUTES.includes(attr);
     },
     calculateAttribute(attr) {
       if (!this.isValidAttribute(attr)) {

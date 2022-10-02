@@ -12,20 +12,28 @@
           radio_button_checked
         </span>
         <span v-else class="material-icons space">radio_button_unchecked</span>
-        <span>{{ attr.toUpperCase() }}</span>
+        <span
+          >{{ attr.toUpperCase() }}
+          <span v-if="character && attr in character"
+            >(<span class="number">{{ character[attr] }}</span
+            >)</span
+          ></span
+        >
       </div>
     </button>
   </div>
 </template>
 
 <script>
+import { ATTRIBUTES } from "../../utils/constants";
 export default {
   name: "AttributeSelection",
   props: {
-    attributes: Array,
-    selected: Array,
-    maxChoices: Number,
-    disabledChoices: Array,
+    attributes: { type: Array, default: () => ATTRIBUTES },
+    selected: { type: Array, required: true },
+    maxChoices: { type: Number, required: true },
+    disabledChoices: { type: Array, default: () => [] },
+    character: { type: Object, required: false },
   },
   methods: {
     isSelected(attr) {
@@ -34,7 +42,7 @@ export default {
     buttonDisabled(attr) {
       const disabled =
         this.selected.length >= this.maxChoices && !this.isSelected(attr);
-      if (this.disabledChoices && this.disabledChoices.length > 0) {
+      if (this.disabledChoices.length > 0) {
         return this.disabledChoices.includes(attr) || disabled;
       }
       return disabled;
