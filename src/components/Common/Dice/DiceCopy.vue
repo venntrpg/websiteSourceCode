@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import DiceCopyButton from "../CombatStatsComponents/DiceCopyButton.vue";
+import DiceCopyButton from "./DiceCopyButton.vue";
 
 export default {
   components: { DiceCopyButton },

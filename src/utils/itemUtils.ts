@@ -3,6 +3,14 @@ import pluralize from "pluralize";
 import items from "./data/items.json";
 import weaponTypes from "./data/weaponTypes.json";
 import { improveTextForDisplay } from "./characterStringFormatting";
+import {
+  ITEM_TYPE_ARMOR,
+  ITEM_TYPE_CONSUMABLE,
+  ITEM_TYPE_CONTAINER,
+  ITEM_TYPE_EQUIPMENT,
+  ITEM_TYPE_SHIELD,
+  ITEM_TYPE_WEAPON,
+} from "./constants";
 
 export const itemList = items as ShopItem[];
 export const weaponTypesList = weaponTypes as ShopItem[];
@@ -58,7 +66,41 @@ export function consolidateItemList(givenItems: Item[]) {
       foundItem.ids.push(item.id);
     }
   });
+  sortConsolidatedItems(items);
   return items;
+}
+
+export function sortConsolidatedItems(items: ConsolidatedItem[]) {
+  const itemCategories = [
+    ITEM_TYPE_WEAPON,
+    ITEM_TYPE_CONSUMABLE,
+    ITEM_TYPE_EQUIPMENT,
+    ITEM_TYPE_ARMOR,
+    ITEM_TYPE_SHIELD,
+    ITEM_TYPE_CONTAINER,
+  ];
+  const itemCategoryWeights: { [category: string]: number } = {};
+  itemCategories.forEach((category, idx) => {
+    itemCategoryWeights[category] = idx;
+  });
+
+  items.sort((a, b) => {
+    // 1. Sort by item category
+    if (
+      a.category !== undefined &&
+      b.category !== undefined &&
+      a.category !== b.category &&
+      itemCategoryWeights[a.category] !== undefined &&
+      itemCategoryWeights[b.category] !== undefined
+    ) {
+      return itemCategoryWeights[a.category] - itemCategoryWeights[b.category];
+    } else if (a.category !== undefined && b.category === undefined) {
+      return -1;
+    } else if (a.category === undefined && b.category !== undefined) {
+      return 1;
+    }
+    return a.name.localeCompare(b.name);
+  });
 }
 
 export function prefixName(item: Item, action = "", cleanup = false) {

@@ -35,7 +35,7 @@ export default {
     toggleDiceSetting(setting) {
       this.$store.commit("dice/setDefaultDiceSetting", {
         setting,
-        val: !this.defaultDiceSettings,
+        val: !this.defaultDiceSettings[setting],
       });
     },
   },

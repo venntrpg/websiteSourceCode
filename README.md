@@ -30,13 +30,10 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Character sheet:
 
-- [ ] Change the way attributes are handled. Need to support temporary stats changes, but should still have a way to access the original value -> Change the way armor is handled to reflect this too. Numbers that come from the api should be the base value which we can then modify. OR we need to change the value on the server and then be able to revert it. That would require more server changes. -> For now, I think the easiest thing to do is to make an "attributes" getter that returns an object of objects with the computed value, the original value, how it was modified, and the attribute's filtered history. That way all data is congregated in a way that is convinient to access.
-- [ ] Split `adjustAttrsAPI` into a function that generates the attrs object and one that actually does the API, so it can be used for input validation etc.
 - [ ] (High) Add "Combat" page which includes actions you can take immediately. Include unarmed, improvised, any grenades in inventory, and any equipped weapons. Also, consumable items & abilities which are actively usable. Also basic actions (move, assist, delay, attack)
 - [ ] (High) Sort items better
 - [ ] (Medium) Add uses to some basic items.
 - [ ] (Medium) Ask around to find out what abilities / items people use that could be given custom implementations to improve their use
-- [ ] (Medium) Pop up a modal when a user levels up and prompt them to increment an attribute.
 - [ ] (Medium) Improve custom item insertion. Keep a quick insertion ability & allow more complex items.
 - [ ] (Medium) Implement custom ability creation.
 - [ ] (Low) Allow users to add flavor information about character. (backstory etc)
@@ -55,13 +52,15 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Done todos:
 
+- [x] (Medium) Pop up a modal when a user levels up and prompt them to increment an attribute.
+- [x] Change the way attributes are handled. Need to support temporary stats changes, but should still have a way to access the original value -> Change the way armor is handled to reflect this too. Numbers that come from the api should be the base value which we can then modify. OR we need to change the value on the server and then be able to revert it. That would require more server changes. -> For now, I think the easiest thing to do is to make an "attributes" getter that returns an object of objects with the computed value, the original value, how it was modified, and the attribute's filtered history. That way all data is congregated in a way that is convinient to access.
+- [x] Split `adjustAttrsAPI` into a function that generates the attrs object and one that actually does the API, so it can be used for input validation etc.
 - [x] (Medium, Easy) Make component for displaying item's descriptions. If its a grenade, show its special instead
 - [x] (High) Update item shop so that it opens a side panel when you click the button. Allows you to buy multiple copies of the item
 - [x] (Medium) Add armor to item shop & add any custom fields to item objects if any are needed. Support burden automatically. [https://vennt.fandom.com/wiki/Armor](https://vennt.fandom.com/wiki/Armor)
 - [x] (Medium) Change scrolling behavior when you open a side panel so that the table scrolls so the item you just openned is still in view, and in reverse when you close the side panel
 - [x] (Medium) Show list of owned ammo / ammunition on weapons with the "ranged" weaponType (except grenades or "consumable").
 - [x] (Medium) When an abilitiy is usable, when you use it it should automatically subtract any resources it used (mp, vim, etc)
-
 - [x] move toolTip css to main / generally try to consolidate css
 - [x] split vuex into seperate modules
 - [x] keep splitting components if possible

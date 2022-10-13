@@ -25,8 +25,8 @@
           </button>
           <div class="pt-10 mutedText">
             Note: This does not currently take into account any benefits your
-            character may have to get a better price. The shop value of this
-            item is {{ shopValue }} SP.
+            character may have to get a better (or worse) price. The shop value
+            of this item is {{ shopValue }} SP.
           </div>
         </div>
       </div>

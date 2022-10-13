@@ -27,3 +27,11 @@ export const SECTION_SETTINGS = "settings";
 export const SECTION_SHOP = "shop";
 export const SECTION_WEAPON_SHOP = "weaponShop";
 export const SECTION_COMBAT = "combat";
+
+// item categories
+export const ITEM_TYPE_EQUIPMENT = "equipment";
+export const ITEM_TYPE_CONSUMABLE = "consumable";
+export const ITEM_TYPE_CONTAINER = "container";
+export const ITEM_TYPE_WEAPON = "weapon";
+export const ITEM_TYPE_ARMOR = "armor";
+export const ITEM_TYPE_SHIELD = "shield";

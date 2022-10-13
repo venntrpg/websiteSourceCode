@@ -32,6 +32,24 @@ type ServerItem = Item & {
   id2?: string; // sometimes used for updating item details
 };
 
+type Uses = {
+  roll?: {
+    dice: string;
+    attr: string;
+  };
+  heal?: {
+    attr: { [attr: string]: number };
+  };
+  adjust?: {
+    time: "turn" | "encounter" | "rest" | "permanent";
+    attr: { [attr: string]: number | string };
+  };
+  check?: {
+    bonus: string;
+    attr: string;
+  };
+};
+
 type ShopItem = {
   name?: string;
   bulk: number;
@@ -48,23 +66,7 @@ type ShopItem = {
   cost: string;
   sp?: number;
   examples?: string;
-  uses?: {
-    roll?: {
-      dice: string;
-      attr: string;
-    };
-    heal?: {
-      attr: { [attr: string]: number };
-    };
-    adjust?: {
-      time: "turn" | "encounter" | "rest" | "permanent";
-      attr: { [attr: string]: number | string };
-    };
-    check?: {
-      bonus: string;
-      attr: string;
-    };
-  };
+  uses?: Uses;
 };
 
 type AbilityCost = {

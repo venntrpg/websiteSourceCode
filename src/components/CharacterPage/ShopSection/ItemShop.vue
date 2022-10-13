@@ -94,14 +94,15 @@ import {
   improveTextForDisplay,
   stringToLinkID,
 } from "../../../utils/characterStringFormatting";
-import { SECTION_SHOP } from "../../../utils/constants";
-
-const ITEM_TYPE_EQUIPMENT = "equipment";
-const ITEM_TYPE_CONSUMABLE = "consumable";
-const ITEM_TYPE_CONTAINER = "container";
-const ITEM_TYPE_WEAPON = "weapon";
-const ITEM_TYPE_ARMOR = "armor";
-const ITEM_TYPE_SHIELD = "shield";
+import {
+  SECTION_SHOP,
+  ITEM_TYPE_EQUIPMENT,
+  ITEM_TYPE_CONSUMABLE,
+  ITEM_TYPE_CONTAINER,
+  ITEM_TYPE_WEAPON,
+  ITEM_TYPE_ARMOR,
+  ITEM_TYPE_SHIELD,
+} from "../../../utils/constants";
 
 export default {
   components: { CheckBox, DisplayItemDesc },
