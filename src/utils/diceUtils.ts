@@ -85,30 +85,33 @@ export function buildDice(
 export function defaultDice(
   character: Character,
   attr: keyof Character,
-  settings: DiceSettings = {}
+  givenSettings: DiceSettings = {},
+  diceToggles: DiceToggles = {}
 ) {
   const adjust =
     typeof character[attr] === "number" ? (character[attr] as number) : 0;
-  return buildDice(3, 6, adjust, settings);
-}
 
-export function heroPointBoost(
-  character: Character,
-  attr: keyof Character,
-  settings: DiceSettings = {}
-) {
-  settings.drop = 1;
-  settings.end = "+9";
-  return defaultDice(character, attr, settings);
-}
-
-export function flowDice(
-  character: Character,
-  attr: keyof Character,
-  settings: DiceSettings = {}
-) {
-  settings.flow = true;
-  return defaultDice(character, attr, settings);
+  let diceCount = 3;
+  const settings = { ...givenSettings };
+  Object.entries(diceToggles).forEach(([key, toggle]) => {
+    if (
+      settings.otherToggles !== undefined &&
+      settings.otherToggles[key] &&
+      toggle.attr === attr
+    ) {
+      if (toggle.diceNumberAdjust !== undefined) {
+        diceCount = diceCount + toggle.diceNumberAdjust;
+      }
+      if (toggle.end !== undefined) {
+        if (settings.end !== undefined) {
+          settings.end = settings.end + toggle.end;
+        } else {
+          settings.end = toggle.end;
+        }
+      }
+    }
+  });
+  return buildDice(diceCount, 6, adjust, settings);
 }
 
 export function diceParseFromString(
@@ -126,4 +129,22 @@ export function diceParseFromString(
   }
   const adjust = diceStr.substring(match[0].length);
   return buildDice(count, sides, adjust, settings);
+}
+
+// TODO: This should probably either come from the ability / items themselves
+// OR for now just move out into a seperate JSON file
+const diceAbilities: { name: string; toggle: DiceToggle }[] = [
+  { name: "Sleight of Hand", toggle: { attr: "dex", end: "+3" } },
+];
+
+export function diceToggles(character: Character) {
+  const toggles: DiceToggles = {};
+  diceAbilities.forEach((diceAbility) => {
+    if (
+      character.abilities.some((ability) => ability.name === diceAbility.name)
+    ) {
+      toggles[diceAbility.name] = diceAbility.toggle;
+    }
+  });
+  return toggles;
 }

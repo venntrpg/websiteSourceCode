@@ -243,6 +243,16 @@ type PartialServerCharacter = {
     | ChangelogRow[];
 };
 
+type DiceToggle = {
+  attr?: string;
+  end?: string;
+  diceNumberAdjust?: number;
+  default?: boolean; // currently not really supported
+};
+type DiceToggles = {
+  [key: string]: DiceToggle;
+};
+
 type DiceSettings = {
   explodes?: boolean;
   rr1s?: boolean;
@@ -251,6 +261,11 @@ type DiceSettings = {
   end?: string;
   flow?: boolean;
   ebb?: boolean;
+  otherToggles?: {
+    [key: string]: {
+      toggled: boolean;
+    };
+  };
 };
 
 // temporary definition until I improve the way temporary attr adjustments are calculated:

@@ -1,6 +1,7 @@
 <template>
   <div>
     <dice-copy :dice="dice" class="mb-4" />
+    <dice-other-toggles :attr="attr" />
     <drop-down :title="'Other Dice Options'" :useDiceToggle="true">
       <div class="labelText mt-8 ml-8">Hero Point boost:</div>
       <div class="alignRow split">
@@ -18,10 +19,17 @@ import CommonDiceSettings from "./CommonDiceSettings.vue";
 import DropDown from "../DropDown.vue";
 import HeroPointButton from "../HeroPointButton.vue";
 import { buildDice } from "../../../utils/diceUtils";
+import DiceOtherToggles from "./DiceOtherToggles.vue";
 export default {
-  components: { DiceCopy, DropDown, CommonDiceSettings, HeroPointButton },
+  components: {
+    DiceCopy,
+    DropDown,
+    CommonDiceSettings,
+    HeroPointButton,
+    DiceOtherToggles,
+  },
   name: "ToggleableDiceSectionCopyable",
-  props: { dice: { type: Object, required: true } },
+  props: { dice: { type: Object, required: true }, attr: String },
   computed: {
     heroPointDice() {
       return buildDice(

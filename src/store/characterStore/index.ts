@@ -11,6 +11,7 @@ import { consolidateItemList } from "../../utils/itemUtils";
 import { characterAttributesMap } from "../../utils/attributeUtils";
 import { CHAR_LOCAL_STORAGE, COG_LOCAL_STORAGE } from "../../utils/constants";
 import { ActionTree, GetterTree, MutationTree } from "vuex";
+import { diceToggles } from "@/utils/diceUtils";
 
 const state: CharacterState = {
   characters: {},
@@ -69,6 +70,12 @@ const getters: GetterTree<CharacterState, RootState> = {
       return {};
     }
     return characterAttributesMap(state.character);
+  },
+  diceToggles: (state) => {
+    if (state.character === undefined) {
+      return {};
+    }
+    return diceToggles(state.character);
   },
 };
 

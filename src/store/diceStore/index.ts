@@ -17,6 +17,7 @@ const state: DiceState = {
     flow: false,
     ebb: false,
     rr1s: false,
+    otherToggles: {},
   },
   diceDropDown: false, // shared between components to hopefully make the experience feel a bit smoother
   useBuiltinDice: true,

@@ -1,12 +1,13 @@
 <template>
   <toggleable-dice-section-copyable
     :dice="dice"
+    :attr="check.attr"
     class="card column padded thin"
   />
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import ToggleableDiceSectionCopyable from "@/components/Common/Dice/ToggleableDiceSectionCopyable.vue";
 import { defaultDice } from "@/utils/diceUtils";
 export default {
@@ -19,11 +20,17 @@ export default {
   computed: {
     ...mapState("character", ["character"]),
     ...mapState("dice", ["defaultDiceSettings"]),
+    ...mapGetters("character", ["diceToggles"]),
     dice() {
-      return defaultDice(this.character, this.check.attr, {
-        ...this.defaultDiceSettings,
-        end: this.check.bonus,
-      });
+      return defaultDice(
+        this.character,
+        this.check.attr,
+        {
+          ...this.defaultDiceSettings,
+          end: this.check.bonus,
+        },
+        this.diceToggles
+      );
     },
   },
 };

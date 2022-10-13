@@ -38,12 +38,16 @@
         </div>
       </div>
     </div>
-    <toggleable-dice-section-copyable v-else :dice="computedDice" />
+    <toggleable-dice-section-copyable
+      v-else
+      :dice="computedDice"
+      :attr="attr"
+    />
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import { DiceRoll } from "rpg-dice-roller";
 import DiceRender from "../Dice/DiceRender.vue";
 import { ATTRIBUTES } from "../../../utils/constants";
@@ -64,6 +68,7 @@ export default {
   },
   computed: {
     ...mapState("dice", ["latestRoll", "defaultDiceSettings", "diceDropDown"]),
+    ...mapGetters("character", ["diceToggles"]),
     attrFullName() {
       return getAttrFullName(this.attr);
     },
@@ -88,7 +93,12 @@ export default {
       return this.dice.averageTotal;
     },
     computedDice() {
-      return defaultDice(this.character, this.attr, this.defaultDiceSettings);
+      return defaultDice(
+        this.character,
+        this.attr,
+        this.defaultDiceSettings,
+        this.diceToggles
+      );
     },
   },
   methods: {
