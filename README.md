@@ -31,7 +31,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ### Character sheet:
 
 - [ ] (High) Add "Combat" page which includes actions you can take immediately. Include unarmed, improvised, any grenades in inventory, and any equipped weapons. Also, consumable items & abilities which are actively usable. Also basic actions (move, assist, delay, attack)
-- [ ] (High) Sort items better
 - [ ] (Medium) Add uses to some basic items.
 - [ ] (Medium) Ask around to find out what abilities / items people use that could be given custom implementations to improve their use
 - [ ] (Medium) Improve custom item insertion. Keep a quick insertion ability & allow more complex items.
@@ -52,6 +51,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Done todos:
 
+- [x] (High) Sort items better
 - [x] (Medium) Pop up a modal when a user levels up and prompt them to increment an attribute.
 - [x] Change the way attributes are handled. Need to support temporary stats changes, but should still have a way to access the original value -> Change the way armor is handled to reflect this too. Numbers that come from the api should be the base value which we can then modify. OR we need to change the value on the server and then be able to revert it. That would require more server changes. -> For now, I think the easiest thing to do is to make an "attributes" getter that returns an object of objects with the computed value, the original value, how it was modified, and the attribute's filtered history. That way all data is congregated in a way that is convinient to access.
 - [x] Split `adjustAttrsAPI` into a function that generates the attrs object and one that actually does the API, so it can be used for input validation etc.
