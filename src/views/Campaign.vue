@@ -7,11 +7,8 @@
       </div>
     </div>
     <div v-bind:class="getHiddenSidebarClass" class="page sideBarPage">
-      <div class="largePageWidth main">
-        <player-view v-if="characterPage" />
-        <GMView v-else-if="gmPage" />
-        <campaign-options v-else :campaignName="campaignName" />
-      </div>
+      <campaign-screen v-if="characterPage || gmPage" />
+      <campaign-options v-else :campaignName="campaignName" />
     </div>
   </div>
 </template>
@@ -21,8 +18,7 @@ import { mapState } from "vuex";
 import isUUID from "is-uuid";
 import CombatStats from "../components/Common/CombatStats.vue";
 import CampaignOptions from "../components/CampaignPage/CampaignOptions.vue";
-import GMView from "../components/CampaignPage/GMView.vue";
-import PlayerView from "../components/CampaignPage/PlayerView.vue";
+import CampaignScreen from "@/components/CampaignPage/CampaignScreen.vue";
 
 export default {
   name: "Campaign",
@@ -35,8 +31,7 @@ export default {
   components: {
     CombatStats,
     CampaignOptions,
-    GMView,
-    PlayerView,
+    CampaignScreen,
   },
   beforeMount() {
     if (!this.isLoggedIn) {

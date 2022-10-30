@@ -126,7 +126,7 @@ export default {
       );
     },
     newDiceParsed() {
-      return diceParseFromString(this.dice, this.defaultDiceSettings);
+      return diceParseFromString(this.newDice, this.defaultDiceSettings);
     },
     dmg() {
       if (!this.usable || !this.dice) {

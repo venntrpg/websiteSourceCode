@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="largePageWidth main">
     <h1 class="centeredText">{{ campaign.name }}</h1>
     <div v-if="isGm">
       <p>You are the GM!</p>
