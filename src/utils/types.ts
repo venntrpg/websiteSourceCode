@@ -233,6 +233,7 @@ type ServerCharacter = {
   changelog: ChangelogRow[];
 };
 
+// TODO: probably should use Partial<>
 type PartialServerCharacter = {
   [attr in keyof ServerCharacter]?:
     | string
@@ -276,6 +277,50 @@ type ItemArmorAdjustment = {
   items: Item[];
 };
 
+type CampaignRole = "player" | "GM" | "spectator";
+type CampaignInitStyles = "traditional" | "async";
+
+type Campaign = {
+  entities: {
+    [id: string]: {
+      owner: string;
+      name: string;
+      gm_only: boolean;
+      actions: number;
+      reactions: number;
+      health: string;
+      id?: string;
+    };
+  };
+  in_combat: boolean;
+  init: {
+    roll: number;
+    bonus: number;
+    entity_id: string;
+  }[];
+  init_index: number;
+  init_round: number;
+  init_styles: CampaignInitStyles;
+  members: {
+    [user: string]: CampaignRole;
+  };
+  name: string;
+  owner: string;
+  id?: string; // this gets inserted by the api
+};
+
+type CampaignListItem = {
+  id: string;
+  name: string;
+};
+
+type CampaignList = CampaignListItem[];
+
+type CampaignInvite = {
+  from: string;
+  id: string;
+};
+
 // ------------------------- VUEX ------------------------- //
 
 type RootState = {
@@ -284,6 +329,12 @@ type RootState = {
   signupErrorMsg: string;
   loginErrorMsg: string;
   pendingApis: { [api: string]: boolean | number };
+};
+
+type CampaignState = {
+  campaigns: CampaignList;
+  campaignInvites: CampaignInvite[];
+  campaign: Campaign;
 };
 
 type CharacterState = {

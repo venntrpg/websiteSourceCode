@@ -1,14 +1,25 @@
 import api from "@/api/api";
 import router from "@/router/index";
+import { ActionTree, MutationTree } from "vuex";
 import { checkResponse } from "../../utils/storeUtil";
 
-const state = {
+const state: CampaignState = {
   campaigns: [],
   campaignInvites: [],
-  campaign: {},
+  campaign: {
+    entities: {},
+    in_combat: false,
+    init: [],
+    init_index: 0,
+    init_round: 0,
+    init_styles: "traditional",
+    members: {},
+    name: "",
+    owner: "",
+  },
 };
 
-const mutations = {
+const mutations: MutationTree<CampaignState> = {
   setCampaigns(state, campaigns) {
     state.campaigns = campaigns;
   },
@@ -18,12 +29,17 @@ const mutations = {
   setCampaignsInvites(state, campaignInvites) {
     state.campaignInvites = campaignInvites;
   },
+  filterCampaignInvites(state, id) {
+    state.campaignInvites = state.campaignInvites.filter(
+      (invite) => invite.id !== id
+    );
+  },
   setCampaign(state, campaign) {
     state.campaign = campaign;
   },
 };
 
-const actions = {
+const actions: ActionTree<CampaignState, RootState> = {
   // ------------------------- CAMPAIGN APIS ------------------------- //
 
   createCampaign: ({ commit }, { name, redirectToCampaign }) => {
@@ -53,8 +69,11 @@ const actions = {
   getCampaign: ({ commit }, campaginId) => {
     return api.getCampaign(campaginId).then((response) => {
       if (checkResponse(response) && response.value) {
-        const campaign = response.value;
+        const campaign: Campaign = response.value;
         campaign.id = campaginId; // insert id for future reference
+        Object.entries(campaign.entities).forEach(([id, entity]) => {
+          entity.id = id;
+        });
         commit("setCampaign", response.value);
       }
     });
@@ -91,20 +110,19 @@ const actions = {
     });
   },
 
-  // eslint-disable-next-line no-unused-vars
-  acceptCampaignInvite: ({ commit }, campaginId) => {
+  acceptCampaignInvite: ({ commit, dispatch }, campaginId) => {
     return api.acceptCampaignInvite(campaginId).then((response) => {
       if (checkResponse(response)) {
-        console.log(response);
+        commit("filterCampaignInvites", campaginId);
+        dispatch("listCampaigns");
       }
     });
   },
 
-  // eslint-disable-next-line no-unused-vars
   declineCampaignInvite: ({ commit }, campaginId) => {
     return api.declineCampaignInvite(campaginId).then((response) => {
       if (checkResponse(response)) {
-        console.log(response);
+        commit("filterCampaignInvites", campaginId);
       }
     });
   },

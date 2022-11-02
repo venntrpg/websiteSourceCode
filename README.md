@@ -44,6 +44,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### General:
 
+- [ ] Redo website layout to use grid instead of weird floating mechanism I'm using now for sidebars
+- [ ] Redo nav bar so it changes based on the page being viewed / allows for the removal of the subnav in most cases
 - [ ] make mobile nav button reveal a dropdown
 - [ ] Change my custom subrouting behavior to use Vue's behavior. Should hopefully improve the page's code a bit [https://router.vuejs.org/guide/essentials/named-views.html#nested-named-views](https://router.vuejs.org/guide/essentials/named-views.html#nested-named-views)
 - [x] start converting some files to TS - especially commonly used util files

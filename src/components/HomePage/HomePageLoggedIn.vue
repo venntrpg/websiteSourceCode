@@ -30,19 +30,49 @@
         {{ campaign.name }}
       </div>
     </router-link>
+    <div v-if="campaignInvites.length > 0">
+      <label>Pending Campaign Invites</label>
+      <div class="card column border mt-8 mb-16">
+        <div
+          v-for="(campaignInvite, index) in campaignInvites"
+          v-bind:key="campaignInvite.id + index"
+          class="tableItems noHeader padded"
+        >
+          <div class="alignRow split">
+            <div>{{ campaignInvite.from }}'s campaign</div>
+            <div class="alignRow gap">
+              <button
+                type="button"
+                v-on:click="acceptCampaignInvite(campaignInvite.id)"
+                class="btn roundedButton"
+              >
+                Join Campaign
+              </button>
+              <button
+                type="button"
+                v-on:click="declineCampaignInvite(campaignInvite.id)"
+                class="btn roundedButton clear"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <label for="campaign-input">Create a New Campaign</label>
-    <div class="alignRow">
+    <div class="alignRow mt-8 new-campaign-section">
       <input
         placeholder="New Campaign Name"
         v-model="campaignName"
         v-on:keyup.enter="newCampaignButton()"
         id="campaign-input"
-        class="input campaignInput"
+        class="input"
       />
       <button
         v-on:click="newCampaignButton()"
         :disabled="newCampaignButtonDisabled"
-        class="btn roundedButton campaignButton"
+        class="btn roundedButton nowrap campaignButton"
       >
         Make New Campaign
       </button>
@@ -119,6 +149,12 @@ export default {
       // if xp < 1000, still return level 1
       return level <= 0 ? 1 : level;
     },
+    acceptCampaignInvite(campaginId) {
+      this.$store.dispatch("campaign/acceptCampaignInvite", campaginId);
+    },
+    declineCampaignInvite(campaginId) {
+      this.$store.dispatch("campaign/declineCampaignInvite", campaginId);
+    },
     newCampaignButton() {
       if (!this.newCampaignButtonDisabled) {
         this.$store.dispatch("campaign/createCampaign", {
@@ -132,12 +168,6 @@ export default {
 </script>
 
 <style scoped>
-.alignRow {
-  margin-top: 8px;
-}
-.campaignInput {
-  max-width: 500px;
-}
 .campaignButton {
   width: 300px;
   margin-left: 8px;
@@ -145,7 +175,7 @@ export default {
 }
 
 @media screen and (max-width: 600px) {
-  .alignRow {
+  .new-campaign-section {
     flex-direction: column;
   }
   .campaignInput {

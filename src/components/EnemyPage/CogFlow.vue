@@ -284,6 +284,7 @@ export default {
         level: this.cog.level,
         acc: this.calculateAcc,
         abilities,
+        items: [],
       };
       // add attributes
       ATTRIBUTES.forEach((attr) => {

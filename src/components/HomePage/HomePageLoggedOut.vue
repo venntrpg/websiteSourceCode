@@ -1,8 +1,8 @@
 <template>
   <div class="mediumPageWidth centeredText">
     <h1 class="logo">VENNT</h1>
-    <router-link to="/login" class="btn roundedButton">LOGIN</router-link>
-    <router-link to="/signup" class="btn roundedButton clear">
+    <router-link to="/login" class="btn roundedButton mb-8">LOGIN</router-link>
+    <router-link to="/signup" class="btn roundedButton clear mb-8">
       SIGNUP
     </router-link>
     <p>
@@ -24,10 +24,6 @@
   font-size: 100pt;
   font-weight: 300;
   color: var(--logo-color);
-}
-
-.btn {
-  margin-bottom: 8px;
 }
 
 @media screen and (max-width: 500px) {
